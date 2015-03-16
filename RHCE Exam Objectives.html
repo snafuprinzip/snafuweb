@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>RHCE Exam Objectives</title>
+    <link rel="stylesheet" type="text/css" href="standard.css" />
+    <link rel="stylesheet" type="text/css" href="druck.css" media="print">
+    <meta name="google-translate-customization" content="f2f52d23790f216e-e14bb519d115ee50-g1c5848ab8654a98e-20"></meta>  
+</head>
+
+  <body>
+    <div id="contents">
+
+      <div id="header">
+	<img src="images/header.png" alt="Site Header">
+      </div>
+
+      <nav>
+	<ul>
+	  <li><a href="index.html">HOME</a></li>
+	  <li><a href="RHCSA Exam Objectives.html">RHCSA</a></li>
+	  <li class="selected"><a href="RHCE Exam Objectives.html">RHCE</a></li>
+	  <li><a href="RHEL7.html">RHEL7</a></li>
+	  <li><a href="kurse.html">KURSE</a></li>
+	  <li><a href="notizen.html">NOTIZEN</a></li>
+	  <li><a href="impressum.html">IMPRESSUM</a></li>
+	</ul>
+      </nav>
+
+      <div id="maincontents">
+
+<!--  
+	<div id="google_translate_element"></div>
+	<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+	</script>
+	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+-->
+
+	<h1>RHCE Exam objectives</h1>
+	<p>
+	  RHCE exam candidates should be able to accomplish the following without
+	  assistance. These have been grouped into several categories.
+	</p>
+
+
+
+
+<!--	<div class="page-break"></div> -->
+	<div id="systemconfig">
+	  <h2>System configuration and management</h2>
+	  <h3>Route IP traffic and create static routes.</h3>
+	  <p>
+	    Um statische Routen zu setzen nutzen wir das ip Kommando
+	  </p>
+	  <p><code>root@server1:~&gt; <strong>ip route add &lt;cidr&gt; via &lt;gateway&gt; dev &lt;interface&gt;</strong></code></p>
+	  <p>z.B.</p>
+	  <p><code>root@server1:~&gt; <strong>ip route add 85.214.0.0/16 via 192.168.122.1 dev eth0</strong></code></p>
+	  <p>
+	    Um diese persistent zu machen erstellen wir eine <em>/etc/sysconfig/network-scripts/route-&lt;interface&gt;</em> Datei mit der gleichen Syntax,
+	    allerdings ohne das vorangestellte "ip route add" und das Interface kann, wenn man möchte, weggelassen werden.
+	  </p>
+	  <p><code>85.214.0.0/16 via 192.168.122.1</code></p>
+
+
+	  <h3>Use iptables to implement packet filtering and configure network address translation (NAT). </h3>
+	  <p>
+	    NAT, bzw. IP Masquerading, wie es unter Linux traditionell genannt wird wird auf Routern eingesetzt, um Systemen, die kein Interface 
+	    im Zielnetz haben den Zugriff zu ermöglichen. Dabei ersetzt das Routersystem nach aussen hin die IP Adresse durch die eigene Adresse.
+	  </p>
+	  <p>
+	    Nehmen wir mal an, dass wir zwei Netze haben, z.B. ein Produktions- (172.168.1.0/24) und ein Deployment-LAN (192.168.0.0/24). Desweiteren 
+	    haben wir zwei Rechner, router1, welcher über zwei Interfaces (eines pro Netz) verfügt, und tester1, welcher nur über ein Interface im 
+	    Produktions-LAN verfügt, da die IP Adressen im Deployment-LAN arg begrenzt sind und nicht ausreichend zur Verfügung stehen.
+	    Nun muss, tester1 aber den Satellite Server im Deployment-LAN trotzdem erreichen um notwendige Pakete installieren zu können.
+	  </p>
+	  <table class="direktiven">
+	    <tr>
+	      <th>router1</th>
+	      <td>
+		eth0: 172.168.1.1 im 172.168.1.0/24 (Produktion)<br>
+		eth1: 192.168.0.2 im 192.168.0.0/24 (Deployment)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>tester1</th>
+	      <td>
+		eth0: 172.168.1.2 im 172.168.1.0/24 (Produktion)
+	      </td>
+	    </tr>
+	  </table>
+
+	  <p>
+	    Als erstes aktivieren wir das routing auf router1, in dem wir den ip_forward Kernelparameter auf 1 setzen (siehe nächstes Kapitel).
+	  </p>
+	  <p><code>root@router1:~&gt; <strong>echo 1 > /proc/sys/net/ipv4/ip_forward</strong></code></p>
+	  <p>
+	    Auf der tester1 muss für den Satellite Server natürlich eine route mit dem gateway router1 (172.168.1.1) angelegt sein.
+	  </p>
+	  <p><code>root@tester1:~&gt; <strong>ip route add satellite1 via 172.168.1.1 dev eth0</strong></code></p>
+	  <p>bzw.</p>
+	  <p><code>root@tester1:~&gt; <strong>ip route add default via 172.168.1.1 dev eth0</strong></code></p>
+	  <p>Auf router1 muss der Datenverkehr von eth0 zu eth1 und zurück explizit erlaubt werden.</p>
+	  <p><code>root@router1:~&gt; <strong>iptables -I FORWARD -i eth0 -o eth1 -j ACCEPT</strong></code></p>
+	  <p><code>root@router1:~&gt; <strong>iptables -I FORWARD -i eth1 -o eth0 -j ACCEPT</strong></code></p>
+	  <p>Und zu guter Letzt muss natürlich die eigentliche NAT Regel gesetzt werden.</p>
+	  <p><code>root@router1:~&gt; <strong>iptables -t nat -I POSTROUTING -o eth1 -j MASQUERADE</strong></code></p>
+	  
+
+
+	  <h3>Use /proc/sys and sysctl to modify and set kernel runtime parameters.</h3>
+	  <p>
+	    Kernel Parameter können unter <em>/proc/sys/</em> eingesehen oder gesetzt werden, in dem wir einfach mit dem echo Kommando hineinschreiben.<br>
+	    Um Parameter persistent zu setzen dient die <em>/etc/sysctl.conf</em>, dort kann man für jede Datei im /proc/sys die gleichen Parameter setzen, 
+	    allerdings trennen wir die Pfade nicht mit dem "/", sondern einem Punkt. Diese Parameter können mit dem <em>sysctl</em> Kommando ebenfalls in 
+	    die /proc/sys Dateien geschrieben werden.<br>
+	    Um z.B. das ip Forwarding im Kernel zu aktivieren, haben wir folgende beiden Möglichkeiten:
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>echo 1 > /proc/sys/net/ipv4/ip_forward</strong></code>
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf</strong></code>
+	    <code>root@server1:~&gt; <strong>sysctl -p /etc/sysctl.conf</strong></code>
+	  </p>
+	  <p>Um die aktuell gesetzten Parameter ausgeben zu lassen einfach</p>
+	  <code>root@server1:~&gt; <strong>sysctl -a</strong></code>
+
+	  <h3>Configure a system to authenticate using Kerberos.</h3>
+	  <p>Die Anbindung an Kerberos konfigurieren wir am besten über die grafischen Tools.</p>
+	  <p><code>root@server1:~&gt; <strong>authconfig-tui</strong></code></p>
+	  <p><code>root@server1:~&gt; <strong>system-config-authentication</strong></code></p>
+	  
+
+	  <h3> Configure a system as an iSCSI initiator that persistently mounts an iSCSI target.</h3>
+	  <table class="serviceinfo">
+	    <caption>iSCSI initiator Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		iscsi-initiator-utils
+		iscsi-target-utils
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		iscsi
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		iscsiadm
+	      </td>
+	    </tr>
+	  </table>
+
+	  <p>
+	    Wir gehen davon aus, dass das iSCSI Target bereits auf server1 (192.168.122.50) eingerichtet wurde und nun auf tester1 (iSCSI initiator) gemountet werden soll.
+	    Gibt es kein Target zum testen kann man sich wie weiter unten beschrieben eines einrichten.
+	  </p>
+	  <p>Zu aller erst müssen wir das Target "entdecken":</p>
+	  <p><code>root@tester1:~&gt; <strong>iscsiadm -m discovery -t sendtargets -p server1</strong></code></p>
+	  <p>
+	    Anschliessend starten wir den Service neu und können dann hoffentlich bereits das device sehen, partitionieren und formatieren. 
+	    Zum mounten sollte die UUID des Dateisystems herangezogen werden, da die device Zuordnung nicht boot-persistent ist und sich entsprechend ändern kann.
+	  </p>
+
+	  <h6>iSCSI Target zu Testzwecken einrichten</h6>
+	  <table class="serviceinfo">
+	    <caption>iSCSI Target Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		iscsi-target-utils
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		tgtd 
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp/udp:3260
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		tgtadm
+	      </td>
+	    </tr>
+	  </table>
+	  <p>
+	    Dieser Schritt gehört eigentlich nicht zur Prüfung, wenn man aber ein iSCSI Target als initiator nutzen möchte ist es schön, das auch testen zu können.
+	  </p>
+	  <p>Nachdem wir den <em>tgtd</em> Service gestartet und die Firewall (tcp/upd:3260) geöffnet haben erstellen wir das Target:</p>
+	  <p><code>root@server1:~&gt; <strong>tgtadm --lld iscsi --mode target --op new --tid=1 --targetname iqn.3141.15.example.com:target1</strong></code></p>
+
+	  <p>Dann fügen wir noch eine LUN hinzu und teilen diese einem storage device, in unserem Falle ein logical volume, zu:</p>
+	  <p><code>root@server1:~&gt; <strong>tgtadm --lld iscsi --mode logicalunit --op new --tid=1 --lun=1 --backing-store=/dev/vg0/scsitarget1vol</strong></code></p>
+	  <p>Und zu guter Letzt müssen wir das Target noch (da es ja nur für Testzwecke ist für alle Welt) aktivieren:</p>
+	  <p><code>root@server1:~&gt; <strong>tgtadm --lld iscsi --mode target --op bind --tid=1 --initiator-address=ALL</strong></code></p>
+	  <p>Kontrollieren ob alle geklappt hat:</p>
+	  <p><code>root@server1:~&gt; <strong>tgtadm --lld iscsi --op show --mode target</strong></code></p>
+
+
+	  <h3>Produce and deliver reports on system utilization (processor, memory, disk, and network).</h3>
+	  <p>
+	    Hierzu benötigen wir vor allem die Hilfe des sar (system activity report) Utilities. 
+	    Einzelne Tage findet man unter /var/log/sa/sa??, diese können mit "-f sa??" ausgewählt werden um diesen spezifischen Tag anzuzeigen.
+	  </p>
+
+	  <h6>Alles anzeigen</h6>
+	  <code>root@server1:~&gt; <strong>sar -A</strong></code>
+
+	  <h6>CPU Informationen</h6>
+	  <p><code>root@firefly:~&gt; <strong>sar [-P &lt;cpu id&gt;]</strong>
+Linux 2.6.32-358.23.2.el6.x86_64 (firefly.thyatis.mystara) 23.11.2013 _x86_64_(2 CPU)
+
+00:00:01        CPU     %user     %nice   %system   %iowait    %steal     %idle
+00:10:01        all      0,39      0,36      0,27      0,31      0,00     98,68
+00:20:01        all      0,40      0,37      0,27      0,26      0,00     98,71
+00:30:01        all      0,38      0,36      0,26      0,26      0,00     98,74
+00:40:01        all      0,39      0,36      0,26      0,24      0,00     98,76
+00:50:01        all      0,41      0,37      0,28      0,31      0,00     98,63
+01:00:01        all      0,41      0,37      0,29      0,41      0,00     98,52
+...</code></p>
+
+	  <h6>Hauptspeicher</h6>
+	  <p><code>root@firefly:~&gt; <strong>sar -r</strong>
+Linux 2.6.32-358.23.2.el6.x86_64 (firefly.thyatis.mystara) 23.11.2013 _x86_64_(2 CPU)
+
+00:00:01    kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit
+00:10:01     10078892   5807488     36,56    369276   4577608    891552      2,73
+00:20:01     10073348   5813032     36,59    369428   4577616    897608      2,75
+00:30:01     10073452   5812928     36,59    369532   4577624    897612      2,75
+00:40:01     10073544   5812836     36,59    369656   4577628    897604      2,75
+00:50:01     10079200   5807180     36,55    369852   4577640    892332      2,73
+01:00:01     10079008   5807372     36,56    370040   4577972    890588      2,73
+01:10:01     10079156   5807224     36,55    370172   4577652    890244      2,73
+01:20:01     10079136   5807244     36,55    370288   4577672    890248      2,73
+01:30:01     10074848   5811532     36,58    370384   4577672    894656      2,74
+01:40:01     10074972   5811408     36,58    370500   4577688    894648      2,74
+01:50:01     10077332   5809048     36,57    370644   4577688    891552      2,73
+02:00:01     10081012   5805368     36,54    370860   4577696    887296      2,72
+02:10:01     10080784   5805596     36,54    370972   4577704    887296      2,72
+...</code></p>
+	  <p><code>root@firefly:~&gt; <strong>sar -R</strong>
+Linux 2.6.32-358.23.2.el6.x86_64 (firefly.thyatis.mystara) 23.11.2013 _x86_64_(2 CPU)
+
+00:00:01      frmpg/s   bufpg/s   campg/s
+00:10:01         1,78      0,07     -0,13
+00:20:01        -2,31      0,06      0,00
+00:30:01         0,04      0,04      0,00
+00:40:01         0,04      0,05      0,00
+00:50:01         2,36      0,08      0,01
+01:00:01        -0,08      0,08      0,14
+01:10:01         0,06      0,06     -0,13
+01:20:01        -0,01      0,05      0,01
+01:30:01        -1,79      0,04      0,00
+01:40:01         0,05      0,05      0,01
+01:50:01         0,98      0,06      0,00
+02:00:01         1,53      0,09      0,00
+...</code></p>
+
+	  <h6>Disk Informationen</h6>
+	  <p><code>root@firefly:~&gt; <strong>sar -B</strong>
+Linux 2.6.32-358.23.2.el6.x86_64 (firefly.thyatis.mystara) 23.11.2013 _x86_64_(2 CPU)
+
+00:00:01     pgpgin/s pgpgout/s   fault/s  majflt/s  pgfree/s pgscank/s pgscand/s pgsteal/s    %vmeff
+00:10:01         0,00      2,18    203,44      0,00    911,41      0,00      0,00      0,00      0,00
+00:20:01         0,00      1,57    234,33      0,00    926,70      0,00      0,00      0,00      0,00
+00:30:01         0,00      1,24    174,14      0,00    890,56      0,00      0,00      0,00      0,00
+00:40:01         0,00      1,12    120,93      0,00    899,64      0,00      0,00      0,00      0,00
+00:50:01         0,00      1,49    253,31      0,00    948,80      0,00      0,00      0,00      0,00
+01:00:01         0,00      2,72    253,13      0,00    918,23      0,00      0,00      0,00      0,00
+01:10:01         0,00      1,32    207,12      0,00    912,68      0,00      0,00      0,00      0,00
+01:20:01         0,00      1,22    226,92      0,00    921,20      0,00      0,00      0,00      0,00
+01:30:01         0,00      1,18    254,64      0,00    964,43      0,00      0,00      0,00      0,00
+01:40:01         0,00      1,18    190,14      0,00    893,57      0,00      0,00      0,00      0,00
+01:50:01         0,00      1,32    215,55      0,00    910,64      0,00      0,00      0,00      0,00
+02:00:01         0,00      2,14    248,31      0,00   1244,72      0,00      0,00      0,00      0,00
+02:10:01         0,00      1,20    200,36      0,00    900,10      0,00      0,00      0,00      0,00
+...</code></p>
+	  <p><code>root@firefly:~&gt; <strong>sar -d</strong>
+Linux 2.6.32-358.23.2.el6.x86_64 (firefly.thyatis.mystara) 23.11.2013 _x86_64_(2 CPU)
+
+00:00:01          DEV       tps  rd_sec/s  wr_sec/s  avgrq-sz  avgqu-sz     await     svctm     %util
+00:10:01       dev8-0      0,41      0,00      4,48     11,02      0,01     20,18     15,79      0,64
+00:10:01      dev8-16      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-0      0,16      0,00      1,28      8,00      0,00      3,07      1,21      0,02
+00:10:01     dev253-1      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-2      0,28      0,00      2,24      8,00      0,01     22,38     20,89      0,59
+00:10:01     dev253-3      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-4      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-5      0,12      0,00      0,96      8,00      0,00     17,12     14,04      0,17
+00:10:01     dev253-6      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-7      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+00:10:01     dev253-8      0,00      0,00      0,00      0,00      0,00      0,00      0,00      0,00
+...</code></p>
+
+
+	  <h3>Use shell scripting to automate system maintenance tasks.</h3>
+	  <p>
+	    Puh, das Thema ist natürlich sehr umfassend, zumal es sich dabei um zwei Themenbereiche umfasst: bash-scripting und cron/anacron.
+	    Wenn ich mal irgendwann Zeit habe wird das Thema nachgeholt. (-:
+	  </p>
+
+	  <h3>Configure a system to log to a remote system.</h3>
+	  <p>
+	    Das Logging auf einen entfernten Loghost ist mit rsyslog sehr einfach umzusetzen. Dazu müssen wir in der <em>/etc/rsyslog.conf</em> statt einer Datei einfach
+	    @&lt;loghost&gt;:514 (port für syslog ist 514, siehe /etc/services). Um z.B. alle mail logs weiterzuleiten können wir folgendes konfigurieren:
+	  </p>
+	  <p><code>mail.*	@firefly:514</code></p>
+
+	  <h3>Configure a system to accept logging from a remote system.</h3>
+
+	  <table class="serviceinfo">
+	    <caption>rsyslog Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>rsyslog</td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>rsyslog</td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/rsyslog.conf
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+		(-:
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp/udp:514
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	  </table>
+
+	  <p>
+	    Um den rsyslogd für den Netzwerkempfang zu aktivieren müssen wir die Kommentarzeichen der folgenden Zeilen für udp bzw. tcp einfach entfernen und schon lauscht der Dienst.<br>
+	    Die erste Zeile lädt das dazu notwendige Modul hinzu, die zweite legt den Port fest, auf dem gelauscht werden soll.
+	  </p>
+	  <p>
+	    <code>$ModLoad imudp.so
+$UDPServerRun 514</code>
+	  </p>
+	  <p>
+	    <code>$ModLoad imtcp.so
+$InputTCPServerRun 514</code>
+	  </p>
+  
+
+	</div> <!-- systemconfig -->
+
+
+
+
+	<div class="page-break"></div>
+	<div id="networkservices">
+	  <h2>Network services</h2>
+	  <p>
+	    Network services are an important subset of the exam objectives. RHCE
+	    candidates should be capable of meeting the following objectives for each
+	    of the network services listed below:
+	  </p>
+	  <h3>Install the packages needed to provide the service.</h3>
+	  <h3>Configure SELinux to support the service.</h3>
+	  <h3>Configure the service to start when the system is booted.</h3>
+	  <h3>Configure the service for basic operation.</h3>
+	  <h3>Configure host-based and user-based security for the service.</h3>
+	</div> <!-- networkservices -->
+
+
+
+
+	<div class="page-break"></div>
+	<div id="http">
+	  <h2>HTTP/HTTPS</h2>
+	  <table class="serviceinfo">
+	    <caption>HTTP(S) Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>httpd<br>
+	      mod_ssl</td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>httpd</td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/httpd/conf/httpd.conf<br>
+		/etc/httpd/conf.d/
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+		/var/log/httpd/
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp:80 (http)<br>
+		tcp:443 (https)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		<pre>httpd_enable_homedirs          (ein  ,  ein)  Allow httpd to read home directories</pre>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		<code>service httpd &lt;status|configtest|graceful|reload|restart&gt;
+htpasswd</code>
+	      </td>
+	    </tr>
+	  </table>
+
+	  <h5>Basiskonfiguration</h5>
+	  <p>
+	    Für die Basiskonfiguration gibt es eine Reihe wichtiger Direktiven in der <em>/etc/httpd/httpd.conf</em> bzw. in den einzelnen Konfigurationsdateien in
+	    <em>/etc/httpd/conf.d</em>, von denen hier eine Auswahl vorgestellt wird.
+	  </p>
+	  <table class="direktiven">
+	    <caption>Wichtige apache Direktiven</caption>
+	    <tr>
+	      <th>ServerRoot</th>
+	      <td>Gibt an wo die Konfigurationsdateien liegen.</td>
+	    </tr>
+	    <tr>
+	      <th>Timeout</th>
+	      <td>Ab wann geht ein Request in den Timeout (default 120 Sek.).</td>
+	    </tr>
+	    <tr>
+	      <th>Listen</th>
+	      <td>Definiert unter welchem Port (default 80) der apache lauschen soll.</td>
+	    </tr>
+	    <tr>
+	      <th>User</th>
+	      <td>Als welcher User soll der Webserver laufen?</td>
+	    </tr>
+	    <tr>
+	      <th>Group</th>
+	      <td>Unter welcher Gruppe soll der Webserver laufen?</td>
+	    </tr>
+	    <tr>
+	      <th>LoadModule</th>
+	      <td>Angegebenes Modul soll beim Start des Webservers geladen werden (Module befinden sich in: "/usr/lib[64]/httpd/modules").</td>
+	    </tr>
+	    <tr>
+	      <th><em>DocumentRoot</em></th>
+	      <td>Gibt an wo die zu liefernden html Seiten liegen.</td>
+	    </tr>
+	    <tr>
+	      <th><em>ServerName</em></th>
+	      <td>Definiert einen Servernamen oder eine IP Adresse und Port.</td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall
+	      <ul>
+		<li>tcp:80 (http)</li>
+		<li>tcp:443 (https)</li>
+	      </ul>
+	    </li>
+	    <li>apache Directory-Konfiguration:
+	      <ul>
+		<li>alle hosts sind entweder per default erlaubt und müssen explizit verboten werden:<br>
+		  <code>&lt;Directory /var/www/html&gt;
+	Order deny,allow
+	Deny from 192.168.0.0/255.255.255.0 
+	Deny from attacker.evilempire.com
+        Deny from .bandidos.com
+&lt;/Directory&gt;</code>
+		</li>
+		<li>oder alle hosts sind per default verboten und müssen explizit erlaubt werden:<br>
+		  <code>&lt;Directory /var/www/html&gt;
+	Order allow,deny
+	Allow from 192.168.0.0/255.255.255.0
+	Allow from admin.internal.com
+        Deny from all
+&lt;/Directory&gt;</code>
+		</li>
+	      </ul>
+	    </li>
+	  </ul>
+	  </p>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>
+	    Dazu erstellen wir erst ein web passwort Datei <em>/etc/httpd/webusers</em> und fügen ihr zwei user hinzu:
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>htpasswd -c [-m] /etc/httpd/webusers bakunin</strong>
+root@server1:~&gt; <strong>htpasswd /etc/httpd/webusers malatesta</strong></code>
+	    <p class="note">-m für MD5-Verschlüsselung</p>
+	  </p>
+	  <p>
+	    fügen die Benutzer einer Webgruppe hinzu, in dem wir manuell eine Datei, z.B. <em>/etc/httpd/webgroups</em> erstellen:
+	  </p>
+	  <p>
+	    <code>colleagues: bakunin malatesta</code>
+	  </p>
+	  <p>
+	    und erlauben in der apache Konfiguration der Gruppe Zugriff auf das Verzeichnis:
+	  </p>
+	  <p>
+	    <code>&lt;Directory /var/www/html&gt;
+	AuthType Basic
+	AuthName "zutritt nur für befugte"
+	AuthUserFile /etc/httpd/webusers
+	AuthGroupFile /etc/httpd/webgroups
+	Require group colleagues
+&lt;/Directory&gt;</code>
+	  </p>
+
+	  <h5>SELinux</h5>
+	  <p>
+	    Jedes neue html oder cgi-script Verzeichnis sollte die gleichen Rechte haben wie die default Verzeichnisse, also am besten mit chcon setzen und mit 
+	    semanage fcontext relabel-fest machen.
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>chcon -R --reference /var/www/html /www</strong>
+root@server1:~&gt; <strong>semanage fcontext -a -u system_u -t httpd_sys_content_t "/www(/.*)?"</strong></code>
+	  </p>
+
+	  <h3>Configure a virtual host.</h3>
+	  <p>
+	    Es müssen die <em>NameVirtualHost *:80</em> und <em>NameVirtualHost *:443</em> gesetzt sein um namensbasierte virtuelle Hosts überhaupt zu ermöglichen.<br>
+	    Jeder virtuelle Host benötigt entsprechende <em>ServerName</em> bzw. <em>ServerAlias</em> Direktiven und kann immmer nur für einen Port definiert werden.
+	    Möchte man also sowohl http als auch https einsetzen, so müssen für diesen virtuellen Host zwei <em>VirtualHost</em> Direktiven definiert werden (*:80 und *:443).
+	  </p>
+	  <p>
+	    <code>NameVirtualHost *:80
+NameVirtualHost *:443
+
+&lt;VirtualHost *:80&gt;
+   ServerAdmin	webmaster@snafuprinzip.thyatis.mystara
+   DocumentRoot	/var/www/vhosts/snafuprinzip/htdocs
+   ServerName	snafuprinzip.thyatis.mystara
+   CustomLog	"/var/www/vhosts/snafuprinzip/logs/access.log" common
+   ErrorLog	"/var/www/vhosts/snafuprinzip/logs/error.log"
+
+  &lt;Directory "/var/www/vhosts/snafuprinzip/htdocs"&gt;
+     Options Indexes FollowSymLinks
+     DirectoryIndex index.html
+     AllowOverride None
+     Order Allow,Deny
+     Allow from all
+  &lt;/Directory&gt;
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:443&gt;
+   ServerAdmin	webmaster@snafuprinzip.thyatis.mystara
+   DocumentRoot	/var/www/vhosts/snafuprinzip/htdocs
+   ServerName	snafuprinzip.thyatis.mystara
+   CustomLog	"/var/www/vhosts/snafuprinzip/logs/access.log" common
+   ErrorLog	"/var/www/vhosts/snafuprinzip/logs/error.log"
+   SSLCertificateFile		"/etc/pki/tls/certs/snafuprinzip.pem"
+   SSLCertificateKeyFile	"/etc/pki/tls/certs/snafuprinzip.pem"
+
+  &lt;Directory "/var/www/vhosts/snafuprinzip/htdocs"&gt;
+     Options Indexes FollowSymLinks
+     DirectoryIndex index.html
+     AllowOverride None
+     Order Allow,Deny
+     Allow from all
+  &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code>
+	  </p>
+	  <p>
+	    Der Status der virtuellen Hosts lässt sich ganz einfach überprüfen:
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>httpd -D DUMP_VHOSTS</strong></code>
+	  </p>
+
+
+	  <h3>Configure private directories.</h3>
+	  <p>
+	    Um die Nutzung privater Website Verzeichnisse im Stile von "http://server/~user" zu ermöglichen muss die <em>UserDir</em> Direktive auf einen Verzeichnisnamen im 
+	    Heimatverzeichnis der Nutzer verweisen in welchem dieser seine .html-Dateien ablegen kann. Ausserdem kann diese Direktive genutzt werden die Nutzung auf einzelne Nutzer
+	    zu beschränken.
+	  </p>
+	  <p>
+	    <code>UserDir enabled malatesta
+UserDir public_html</code>
+	  </p>
+	  <p>
+	    Das Heimatverzeichnis des Nutzers muss das x-bit für alle gesetzt haben und r-x für das eigentliche html Verzeichnis. 
+	    Ausserdem muss für letzteres noch der SELinux Kontext korrekt gesetzt werden.
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>chmod 711 $HOME</strong>
+root@server1:~&gt; <strong>chmod 755 $HOME/public_html</strong>
+root@server1:~&gt; <strong>semanage fcontext -a -t httpd_sys_content_t "/home/.*/public_html(/.*)?"</strong>
+root@server1:~&gt; <strong>restorecon -v /home/*/public_html</strong></code>
+	  </p>
+	  <p>
+	    und wo wir gerade bei SELinux sind muss dem apache noch der Zugriff auf die Heimatverzeichnisse erlaubt werden.
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>setsebool -P httpd_enable_homedirs on</strong></code>
+	  </p>
+
+
+	  <h3>Deploy a basic CGI application.</h3>
+	  <p>Um eine CGI Applikation zu installieren muss man natürlich erst einmal eine schreiben, die eine html-Seite erzeugt.</p>
+	  <p>
+	    <code>#!/usr/bin/python
+
+print "Content-type: text/html\n" # 2. carriage return muss sein!
+print "<html><body>Hallo Welt</body></html>"</code>
+	  </p>
+	  <p>Das Skript kopieren wir nach <em>/var/www/cgi-bin</em> als default Skriptverzeichnis und setzen das x-bit und die passenden SELinux Kontexte, falls nötig.</p>
+	  <p>Das Ergebnis kontrollieren wir mit</p>
+	  <p><code>root@server1:~&gt; <strong>elinks http://localhost/cgi-bin/hallo.py</strong></code></p>
+
+	  <p>
+	    Kommt das default Verzeichnis aus irgendwelchen Gründen nicht in Betracht, so müssen wir ein eigenes Verzeichnis erstellen, mit passenden SELinux Kontexten
+	    (<em>httpd_sys_script_exec_t</em>) versehen und in die <em>/etc/httpd/conf/httpd.conf</em> konfigurieren:
+	  </p>
+	  <p>
+	    <code>ScriptAlias /cgi-bin /www/cgi-bin
+&lt;Directory /www/cgi-bin&gt;
+   Options ExecCGI FollowSymLinks
+   AddHandler cgi-script .cgi .py .pl
+   Order allow,deny
+   Allow from all
+&lt;/Directory&gt;</code>
+	  </p>
+
+
+	  <h3>Configure group-managed content.</h3>
+	  <p class="note">
+	    siehe Nutzerbasierte Sicherheit oben
+	  </p>
+
+
+	  <h3>Weitere Themen</h3>
+	  <h5>SSL Zertifikate</h5>
+	  <h6>Zertifikat erstellen</h6>
+	  <p class="note">
+	    Der Domänenname muss mit dem dem ServerName bzw. ServerAlias des (virtuellen Hosts) exakt übereinstimmen.
+	  </p>
+	  <code>cd /etc/pki/tls/certs/
+make newcert.pem</code>
+	  <h6>Zertifikat in die Konfiguration übernehmen</h6>
+	  <code>SSLCertificateFile	/etc/pki/tls/certs/newcert.pem
+SSLCertificateKeyFile	/etc/pki/tls/certs/newcert.pem</code>
+	  
+	  <h5>.htaccess Dateien</h5>
+	  <p>
+	    .htaccess Dateien steuern die Konfiguration für das aktuelle Verzeichnis und sollten ausschliesslich verwendet werden, wenn man keinen Zugriff 
+	    auf die eigentlichen Konfigurationsdateien hat. Um diese zu erlauben muss in der Hauptkonfiguration die <em>AllowOverride all</em> Direktive 
+	    für dieses Verzeichnis gesetzt sein.
+	  </p>
+	  
+	  <h5>Funktion testen</h5>
+	  <code>root@server1:~&gt; <strong>elinks &lt;http|https&gt;://&lt;hostname&gt;/[pfad];</strong></code>
+	</div> <!-- http -->
+
+
+	<div class="page-break"></div>
+	<div id="dns">
+	  <h2>DNS</h2>
+	  <p class="note">Note: Candidates are not expected to configure master or slave name servers.</p>
+	  <table class="serviceinfo">
+	    <caption>DNS Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		bind<br>
+		bind-utils
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		named
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp/udp:53
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+	  <p>Die Konfigurationsdatei <em>/etc/named.conf</em> sieht direkt nach der Installation wie folgt aus:</p>
+	  <p>
+	    <code>//
+// named.conf
+//
+// Provided by Red Hat bind package to configure the ISC BIND named(8) DNS
+// server as a caching only nameserver (as a localhost DNS resolver only).
+//
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+
+options {
+<strong>        listen-on port 53 { 127.0.0.1; };
+        listen-on-v6 port 53 { ::1; };</strong>
+        directory       "/var/named";
+        dump-file       "/var/named/data/cache_dump.db";
+        statistics-file "/var/named/data/named_stats.txt";
+        memstatistics-file "/var/named/data/named_mem_stats.txt";
+<strong>        allow-query     { localhost; };</strong>
+        recursion yes;
+
+        dnssec-enable yes;
+        dnssec-validation yes;
+        dnssec-lookaside auto;
+
+        /* Path to ISC DLV key */
+        bindkeys-file "/etc/named.iscdlv.key";
+
+        managed-keys-directory "/var/named/dynamic";
+};
+
+logging {
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+
+zone "." IN {
+        type hint;
+        file "named.ca";
+};
+
+include "/etc/named.rfc1912.zones";
+include "/etc/named.root.key";</code>
+	  </p>
+	  <p>
+	    Um den Dienst zu konfigurieren müssen wir die hervorgehobenen Zeilen anpassen und die IP Adresse und Port Nummer des Listeners für IPv4 und IPv6, sowie das zu bedienende
+	    Netzwerk spezifizieren oder via "{ any; };" komplett öffnen.
+	  </p>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall
+	      <ul>
+		<li>tcp/udp:53</li>
+	      </ul>
+	    </li>
+	    <li>Konfigurationsdatei<br>
+	      <ul>
+		<li>Interfaces festlegen, auf denen gelauscht werden soll<br>
+		  <code>listen-on port 53 { 127.0.0.1; &lt;interface ip&gt;; };</code>
+		</li>
+		<li>Festlegen, welche Netze wir bedienen möchten, z.B.:<br>
+		  <code>allow-query       { 192.168.122.0/24; };</code>
+		</li>
+	      </ul>
+	    </li>
+	  </ul>
+	  
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>Keine.</p>
+
+	  <h5>SELinux</h5>
+	  <p>Keine Besonderheiten.</p>
+
+
+	  <h3>Configure a caching-only name server.</h3>
+	  <p>Um aus der Basiskonfiguration einen "caching-only" Server zu machen genügt es die folgenden Zeilen aus der <em>/etc/named.conf</em> auszukommentieren:</p>
+	  <p>
+	    <code>//        dnssec-enable yes;
+//        dnssec-validation yes;
+//        dnssec-lookaside auto;
+
+        /* Path to ISC DLV key */
+//        bindkeys-file "/etc/named.iscdlv.key";</code>
+	  </p>
+	  <p>
+	    und den Service neu starten. <br>
+	    Das Ergebnis testet man am Besten mit dig und vergleicht die "Query time" des ersten und jedes weiteren Versuches, ab dem zweiten Versuch sollte es 
+	    wegen des Caches erheblich schneller gehen.
+	  </p>
+
+
+	  <h3>Configure a caching-only name server to forward DNS queries.</h3>
+	  <p>
+	    Um einem caching-only server erlauben Anfragen weiterzureichen genügt es die beiden folgenden Zeilen mit der Adresse des anderen Nameservers zu den 
+	    options hinzuzufügen:
+	  </p>
+	  <p>
+	    <code>         forwarders      { 192.168.122.1; };
+	 forward only;</code>
+	  </p>
+
+	  <h3>Weitere Themen</h3>
+	</div> <!-- dns -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="ftp">
+	  <h2>FTP</h2>
+	  <table class="serviceinfo">
+	    <caption>FTP Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		vsftpd
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		vsftpd
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/vsftpd/vsftp.conf<br>
+		/etc/vsftpd/user_list<br>
+		/etc/vsftpd/ftpusers
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp/udp:20<br>
+		tcp/udp:21
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		ftp_home_dir
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall mit -[!]s Option</li>
+	    <li>TCPWrappers<br>
+	      <code>vsftpd: EXCEPT 192.168.100.0/255.255.255.0</code>
+	    </li>
+	  </ul>
+	    
+	  
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <ul>
+	    <li>PAM<br>
+	      <em>/etc/pam.d/vsftpd</em>
+	    </li>
+	    <li>Konfiguration
+	      <ul>
+		<li>Benutzer in <em>/etc/vsftpd/ftpusers</em> werden in der default Konfiguration bereits via PAM abgelehnt</li>
+		<li>Je nachdem ob die <em>userlist_deny</em> Direktive in der Konfiguration auf YES oder NO gestellt ist, 
+		  werden die user in <em>/etc/vsftpd/users_list</em> entsprechend zugelassen (und alle anderen verboten) oder verboten (und alle anderen damit erlaubt).
+		</li>
+	      </ul>
+	    </li>
+	  </ul>
+
+	  <h5>SELinux</h5>
+	  <p>
+	    Möchte man den regulären Usern ermöglichen via ftp auf ihre Homeverzeichnisse zuzugreifen, so muss neben der notwendigen vsftpd.conf Änderung auch noch folgende
+	    SELinux Variable bejaht werden.
+	  </p>
+	  <p><code>root@server1:~&gt; <strong>setsebool -P ftp_home_dirs on</strong></code></p>
+
+
+	  <h3>Configure anonymous-only download.</h3>
+	  <p>
+	    In der default Konfiguration ist der anonymous download bereits aktiviert, alles was uns also noch zu tun verbleibt ist allen anderen den Zugriff zu verwehren und
+	    evtl. noch ein public ftp directory vorzugeben.
+	  </p>
+	  <p>
+	    <code>anonymous_enable=YES
+local_enable=NO
+write_enable=NO
+
+anon_root=/var/ftp/pub</code>
+	  </p>
+	  <p>
+	    Kommt es zu Problemen beim auflisten eines Directories nach dem Motto: "no route to host", dann ist dies die Meldung der iptables Firewall und wir müssen noch
+	    das ip connection tracker (<em>ip_conntrack_ftp</em>) Modul mit in die <em>/etc/sysconfig/iptables-config</em> übernehmen, da die Firewall sonst nicht in der
+	    Lage ist die einzelnen udp Anfragen der richtigen Verbindung zuzuordnen.
+	  </p>
+	  <p><code>IPTABLES_MODULES="ip_conntrack_ftp"</code></p>
+
+	      
+
+	  <h3>Weitere Themen</h3>
+	  
+	</div> <!-- ftp -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="nfs">
+	  <h2>NFS</h2>
+	  <table class="serviceinfo">
+	    <caption>NFS Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		nfs-utils<br>
+		nfs4-acl-tools
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		nfs<br>
+		nfslock<br>
+		rpcbind
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/sysconfig/nfs<br>
+		/etc/exports
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp/udp:111<br>
+		<strong>tcp/udp:2049</strong><br>
+		alle in /etc/sysconfig/nfs definierten RPC ports (<em>rpcinfo -p</em>)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		nfs_export_all_ro<br>
+		nfs_export_all_rw
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		exportfs<br>
+		showmount -e &lt;host&gt;<br>
+		nfsstat
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+	  <p> Einfach in der /etc/exports einen Eintrag im folgenden Format vornehmen.</p>
+	  <p>
+	    <code>&lt;/pfad/zum/share&gt; &lt;host&gt;(&lt;berechtigungen&gt;,&lt;optionen&gt;) [&lt;host&gt;(&lt;berechtigungen&gt;,&lt;optionen&gt;) ...]</code>
+	  </p>
+	  <p>
+	    Beispiele für shares in der <em>/etc/exports</em> aus der manpage
+	  </p>
+	  <p>
+	    <code># sample /etc/exports file
+/               master(rw) trusty(rw,no_root_squash)
+/projects       proj*.local.domain(rw)
+/usr            *.local.domain(ro) @trusted(rw)
+/home/joe       pc001(rw,all_squash,anonuid=150,anongid=100)
+/pub            *(ro,insecure,all_squash)
+/srv/www        -sync,rw server @trusted @external(ro)</code>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Ist in der /etc/exports Datei implizit verankert, siehe auch die nachfolgende Tabelle mit Export-Optionen. 
+	      Als Hostanweisung können einzelne Systeme mit hostname oder ip, netzwerk-segmente und sogar wildcards angebeben werden.<br>
+	      <code>/home   192.168.122.150(rw,root_squash)
+/home   ade*(rw,no_root_squash)
+/home   192.168.122.0/24(ro,root_squash,noexec,nosuid)</code>
+	    </li>
+	    <li>TCPWrapper:<br><code>portmap: 192.168.122.0/255.255.255.0</code></li>
+	  </ul>
+	  
+	  <table class="direktiven">
+	    <caption>Gebräuchliche NFS Export Optionen</caption>
+	    <tr>
+	      <th>ro,rw</th>
+	      <td>Exportiert das Verzeichnis lediglich lesend (ro), bzw. lesend und schreibend (rw).</td>
+	    </tr>
+	    <tr>
+	      <th>sync</th>
+	      <td>NFS Server bestätigt erst, wenn die Änderungen auch auf Disk geschrieben wurden.</td>
+	    </tr>
+	    <tr>
+	      <th>wdelay</th>
+	      <td>Verzögert das Schreiben auf Disk auf Seiten des NFS Servers, wenn angenommen werden kann, dass eine andere 
+		Anforderung zum Schreiben bald folgen wird.</td>
+	    </tr>
+	    <tr>
+	      <th>root_squash</th>
+	      <td>Der root User bekommt keinerlei Rechte auf dem share, schon gar keine Sonderrechte.</td>
+	    </tr>
+	    <tr>
+	      <th>noexec</th>
+	      <td>Verhindert das Ausführen von Kommandos von diesem share.</td>
+	    </tr>
+	    <tr>
+	      <th>nosuid</th>
+	      <td>Ignoriert setuid und setgid bits auf dem share.</td>
+	    </tr>
+	  </table>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>Lediglich standard Linux Dateirechte und im Falle von NFS4 auch noch ACLs.</p>
+
+	  <h5>SELinux</h5>
+	  <p>Keine Besonderheiten.</p>
+
+	  <h3>Provide network shares to specific clients.</h3>
+	  <p> Einfach in der /etc/exports einen Eintrag im folgenden Format vornehmen und die hosts explizit festlegen.</p>
+	  <p>
+	    <code>&lt;/pfad/zum/share&gt; &lt;host&gt;(&lt;berechtigungen&gt;,&lt;optionen&gt;) [&lt;host&gt;(&lt;berechtigungen&gt;,&lt;optionen&gt;) ...]</code>
+	  </p>
+
+	  <h3>Provide network shares suitable for group collaboration.</h3>
+	  <p>
+	    Da NFS im Grunde lediglich mit den Standard Unix Dateirechten arbeitet funktioniert dies genauso wie bei einem regulären Gruppenverzeichnis.<br>
+	    Alle Benutzer müssen einer gemeinsamen Gruppe angehören und das share Verzeichnis muss zum einen root:gruppe gehören und zum anderen 2770 Rechte haben.
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>chown root:&lt;gruppe&gt; &lt;/pfad/zum/share&gt;</strong></code>
+	    <code>root@server1:~&gt; <strong>chmod 2770 &lt;/pfad/zum/share&gt;</strong></code>
+	    <code>root@server1:~&gt; <strong>groupmems -g &lt;gruppe&gt; -a &lt;user&gt;</strong></code>
+	  </p>
+
+	  <h3>Weitere Themen</h3>
+
+	  <h5>Funktion testen</h5>
+	  <p>
+	    Lokale shares anzeigen lassen
+	  </p>
+	  <code>root@firefly:~&gt <strong>exportfs</strong>
+	    /nfssrv       192.168.197.128/27
+	    /nfssrv/home  192.168.197.128/27
+	    /nfssrv/share 192.168.197.128/27</code>
+
+	  <p>
+	    Remote Shares anzeigen lassen
+	  </p>
+	  <code>root@firefly:~&gt <strong>showmount -e &lt;host&gt;</strong></code>
+	  <code>root@firefly:~&gt <strong>/etc/auto.net &lt;host&gt;</strong></code>
+	  
+	  <p>Exports Liste neu laden</p>
+	  <code>root@firefly:~&gt <strong>exportfs -a</strong></code>
+	  
+
+	  <h5>Empfohlene Mount Optionen</h5>
+	  <p>
+	    Während es prinzipiell möglich ist das Filesystem ohne weitere Optionen einzuhängen empfiehlt RedHat eine Reihe von Mount Optionen, die die Beeinträchtigung des
+	    Client-Systems bei einem Ausfall des NFS Servers auf ein minimum reduzieren sollen. <br>
+	    Am besten schauen wir uns einfach die /etc/fstab auf dem Client an, die _netdev Option
+	    habe ich lediglich angehängt, um dafür zu sorgen, dass der NFS Mount erst nach dem Start des Netzwerkservices unternommen wird.
+	  </p>
+	  <code>firefly:/home/home		nfs4	rsize=8192,wsize=8192,timeo=14,intr,_netdev	0 0
+firefly:/share/home/share	nfs4	rsize=8192,wsize=8192,timeo=14,intr,_netdev     0 0</code>
+
+	  <h5>NFS4 Konfiguration</h5>
+	  <p>
+	    NFS4 hat viele Vorteile, z.B. Performance, ACL Support, lediglich ein port (2049) nötig u.v.m., hat aber bzgl. der Konfiguration einige Besonderheiten.<br>
+	    Es muss zuallererst ein export mit der Option <em>(ro,fsid=0)</em> definiert werden, welches als eine Art /-Verzeichnis für die weiteren shares bildet.
+	    Die weiteren shares müssen darunter eingehängt sein, also am besten die bestehenden mounts mit der <em>bind</em> Option noch einmal unter dem "NFS-root" einzuhängen.<br>
+	    Beispiel:
+	  </p>
+	  <h6>/etc/exports</h6>
+	  <code>/nfssrv		192.168.197.128/27(ro,fsid=0)
+/nfssrv/home	192.168.197.128/27(rw,sync,nohide)
+/nfssrv/share	192.168.197.128/27(rw,nohide,sync,insecure,root_squash,no_subtree_check)</code>
+
+	  <h6>/etc/fstab</h6>
+	  <code>UUID=f32ef025-5c37-40fc-84bc-2dd212086729	/home		ext4    acl,nosuid	1 2
+UUID=e82f67f7-f39b-4f57-b72c-24e60c8f02c3	/var/share	ext4	acl,nosuid	1 2
+
+# NFS exports
+/home						/nfssrv/home	none	bind		0 0
+/var/share					/nfssrv/share	none	bind		0 0</code>
+	    
+	</div> <!-- nfs -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="smb">
+	  <h2>SMB</h2>
+	  <table class="serviceinfo">
+	    <caption>SMB Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		samba<br>
+		samba-common<br>
+		samba-client<br>
+		cifs-utils (to mount cifs shares on the client)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		smb
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/samba/smb.conf
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+		/var/log/samba/
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp:139 (smbd)<br>
+		tcp:445 (smbd)<br>
+		udp:137 (nmbd)<br>
+		udp:138 (nmbd)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		samba_enable_home_dirs<br>
+		samba_export_all_ro<br>
+		samba_export_all_rw
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		/etc/auto.smb &lt;host&gt;<br>
+		smbclient<br>
+		smbpasswd<br>
+		testparm
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+	  <p>
+	    Im Grunde muss nur die Workgroup bzw. Domäne und der security modus für die Art der Passwortabfrage (s.u.) global festgelegt werden.
+	  </p>
+	  <p>
+	    <code>workgroup = &lt;WORKGROUP&gt</code>
+	  </p>
+
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall</li>
+	    <li>TCPWrapper (wenn mit Unterstützung kompiliert wurde, ggfs. testen)<br>
+	      <code>smbd: 192.168.122.0</code>
+	    </li>
+	    <li>Pro Server bzw. Share kann eine <em>hosts allow</em> bzw. <em>hosts deny</em> Direktive definitiert werden.<br>
+	      <code>hosts allow = 127.0.0.1 192.168.122.0/24
+hosts deny = 0.0.0.0/0</code>
+	    </li>
+	  </ul>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <h6>Account Verwaltung</h6>
+	  <p>
+	    Account hinzufügen (klappt nur, wenn der entsprechende Linux Nutzer bereits existiert oder via <em>/etc/samba/smbusers</em> übersetzt wird)
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>smbpasswd -a &lt;username&gt;</strong></code>
+	  </p>
+	  <p>
+	    Accounts auflisten
+	  </p>
+	    <code>root@server1:~&gt; <strong>pdbedit -w -L</strong></code>
+	  </p>
+	  <p>
+	    Account (de-) aktivieren
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>smbpasswd -e &lt;username&gt;</strong></code>
+	    <code>root@server1:~&gt; <strong>smbpasswd -d &lt;username&gt;</strong></code>
+	  </p>
+	  <p>
+	    Account löschen
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>smbpasswd -x &lt;username&gt;</strong></code>
+	  </p>
+
+	  <h6>Zugriffsrechte für shares</h6>
+	  <p>
+	    Der Zugriff auf shares unterliegt zum einen den Linux Permissions, darüberhinaus kann für jeden share mit der <em>valid users</em> Direktive noch weiter auf 
+	    Basis von Nutzern und Gruppen eingeschränkt werden.
+	  </p>
+	  <p>
+	    <code>valid users = &lt;user&gt; @&lt;group&gt;</code>
+	  </p>
+
+	  <h5>SELinux</h5>
+	  <p>
+	    Jeder share muss für SELinux als solcher gekennzeichnet werden.
+	  </p>
+	  <p>
+	    <code>root@server:~&gt; <strong>semanage fcontext -a -t samba_share_t "/smbshare(/.*)?"</strong>
+root@server:~&gt; <strong>restorecon -vR /smbshare</strong></code>
+	  </p>
+	  <p>
+	    Soll samba ausserdem Zugriff auf die Homeverzeichnisse bekommen, so muss noch folgende boolesche Variable gesetzt werden.
+	  </p>
+	  <p>
+	    <code>root@server:~&gt; <strong>setsebool -P samba_enable_home_dirs on</strong></code>
+	  </p>
+
+	  <h3>Provide network shares to specific clients.</h3>
+	  <p class="note">siehe Host-basierte Sicherheit</p>
+
+	  <h3>Provide network shares suitable for group collaboration.</h3>
+	  <p>
+	    Um einen share für die Gruppenarbeit zu erstellen benötigen wir natürlich ein Verzeichnis zum sharen, 
+	    welches der Gruppe gehören, die Rechte 660 und den SELinux Kontext Typ "samba_share_t" haben muss.<br>
+	    Ausserdem sollten die beiden SELinux Booleans "samba_export_all_ro" und "samba_export_all_rw" eingeschaltet sein.
+	  </p>
+	  <p>Zu guter Letzt bleibt nur den share in der samba Konfiguration zu definieren:</p>
+	  <p>
+	    <code>[gruppenshare]
+browseable = yes
+path = /gruppenshare
+force group = +gruppe
+valid users = @gruppe malatesta
+write list = @gruppe
+create mask = 0770
+force create mode = 660</code>
+	  </p>
+	      
+	    
+
+	  <h3>Weitere Themen</h3>
+	  
+	  <h5>Share konfigurieren</h5>
+	  <p>Ein in der <em>/etc/samba/smb.conf</em> definierter Share hat die folgende Form:</p>
+	  <p>
+	    <code>#============================ Share Definitions ==============================
+
+[homes]
+comment = Home Directories
+browseable = no
+writable = yes
+;valid users = %S
+;valid users = MYDOMAIN\%S</code>
+	  </p>
+	  <p>
+	    Bei einem share werden üblicherweise die folgenden Parameter gesetzt:
+	  </p>
+	  <table class="direktiven">
+	    <caption>samba share Parameter</caption>
+	    <tr>
+	      <th>[&lt;name des shares&gt;]</th>
+	      <td>Beginn einer neuen Share Definition unter dem angegebenen Namen</td>
+	    </tr>
+	    <tr>
+	      <th>path = &lt;Pfad&gt;</th>
+	      <td>Pfad zum zu sharenden Verzeichnis</td>
+	    </tr>
+	    <tr>
+	      <th>browseable = &lt;yes|no&gt;</th>
+	      <td>Ist der share sichtbar?</td>
+	    </tr>
+	    <tr>
+	      <th>writeable = &lt;yes|no&gt;</th>
+	      <td>Ist der share beschreibbar?</td>
+	    </tr>
+	    <tr>
+	      <th>printable = &lt;yes|no&gt;</th>
+	      <td>Share ist ein Drucker und kein Verzeichnis</td>
+	    </tr>
+	    <tr>
+	      <th>group = &lt;gruppe&gt;</th>
+	      <td>Alle Nutzer, die sich mit diesem Share verbinden nutzen &lt;gruppe&gt; als ihre primäre Gruppe.</td>
+	    </tr>
+	  </table>
+
+	  <h5>Security Modes</h5>
+	  <p>Lokale Passwortdatenbank (default)</p>
+	  <p><code>security = user</code></p>
+	  <p>Member einer Domain, PasswortDB auf Domain Controller</p>
+	  <p><code>security = domain
+workgroup = EXAMPLE</code></p>
+	  <p>Member einer ActiveDirectory Domain via Kerberos, PasswortDB auf Domain Controller</p>
+	  <p><code>security = ads
+realm = EXAMPLE.COM
+password server = kerberos.example.com</code></p>
+	  <p><br>
+	    <em><strong>Die beiden folgenden Modi sollten NICHT mehr verwendet werden!</strong></em><br>
+	    Wenn Samba nicht in der Lage ist als domain member zu arbeiten
+	  </p>
+	  <p><code>security = server
+encrypt passwords = yes
+password server = &lt;NETBIOS name des domain controllers&gt;</code></p>
+	  <p>Jeder share benötigt ein Passwort</p>
+	  <p><code>security=share</code></p>
+
+	  <h5>Einer Domain beitreten</h5>
+	  <code>root@server:~&gt; <strong>net rpc join -U root</strong></code>
+
+	  <h5>Shares mounten</h5>
+	  <p>
+	    Zum mounten muss entweder der Benutzer und das Passwort direkt mit den <em>user</em> und <em>password</em> Direktiven angeben, oder wahlweise mit der 
+	    <em>credentials</em> Direktive auf eine Datei mit den beiden vorher genannten Direktiven verweisen, die entsprechend besser abgesichert (<em>0600</em>) werden kann.
+	  </p>
+
+	  <h6>Manuell</h6>
+	    <code>root@server1:~&gt; <strong>mount -t cifs &lt;server&gt;:&lt;share&gt; /mnt -o user=&lt;user&gt;</strong></code>
+	  <h6>/etc/fstab Beispiel</h6>
+	    <code>//&lt;server&gt/&lt;share&gt;	&lt;mountpoint&gt;	cifs	user=&lt;user&gt;,password=&lt;passwort&gt; 0 0</code>
+
+	  <h5>Funktion testen</h5>
+	  <p>
+	    Shares anzeigen
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>smbclient -L &lt;hostname&gt; -U &lt;username&gt;</strong></code>
+	  </p>
+	  <p>
+	    In shares hineinschauen
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>smbclient //&lt;hostname&gt;/&lt;share&gt; -U &lt;username&gt;</strong></code>
+	  </p>
+	  <p>
+	    Allow / Deny Direktiven für einen bestimmten host testen
+	  </p>
+	  <p>
+	    <code>root@server1:~&gt; <strong>testparm /etc/samba/smb.conf &lt;hostname&gt; &lt;ip adresse&gt;</strong></code>
+	  </p>
+
+	</div> <!-- smb -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="smtp">
+	  <h2>SMTP</h2>
+	  <table class="serviceinfo">
+	    <caption>Postfix Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		postfix
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		postfix
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/postfix/main.cf
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+		/var/log/maillog
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		tcp:25
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		allow_postfix_local_write_mail_spool
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		postfix<br>
+		postqueue
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+	  <p>Zu aller erst sollten wir sicherstellen, dass postfix auch der präferierte MTA ist und nicht etwa sendmail.</p>
+	  <p><code>root@server1:~&gt; <strong>alternatives --config mta</strong></code></p>
+	  <p>
+	    Desweiteren müssen wir in der <em>/etc/postfix/main.cf</em> die in der folgenden Tabelle aufgeführten Direktiven zwingend definieren.
+	    Bei meiner 6.4er Installation waren die defaults allerdings so ausreichend, dass ich lediglich die <em>inet_interfaces</em> von 127.0.0.1
+	    auf alle Interfaces erweitern musste und schon lief alles. (-:
+	  </p>
+	  <p>
+	    <table class="direktiven">
+	      <caption>Zwingend erforderliche postfix Direkten in der /etc/postfix/main.cf</caption>
+	      <tr>
+		<th>myhostname</th>
+		<td>FQDN des postfix servers.</td>
+	      </tr>
+	      <tr>
+		<th>mydomain</th>
+		<td>Domain Name.</td>
+	      </tr>
+	      <tr>
+		<th>myorigin</th>
+		<td>Name von dem die ausgehenden Mails abgeschickt werden.</td>
+	      </tr>
+	      <tr>
+		<th>inet_interfaces</th>
+		<td>Die Interfaces auf denen Mail empfangen werden soll.</td>
+	      </tr>
+	      <tr>
+		<th>mydestination</th>
+		<td>Domains für die postfix Mails akzeptiert.</td>
+	      </tr>
+	    </table>
+	  </p>
+	  <p>Beispielkonfiguration:</p>
+	  <p>
+	    <code>myhostname = firefly.thyatis.mystara
+mydomain = thyatis.mystara
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost
+mynetworks = 192.168.197.128/27, 127.0.0.0/8
+inet_interfaces = all</code>
+	  </p>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall</li>
+	    <li>Konfigurationsdateien
+	      <ul>
+		<li><em>/etc/postfix/access</em><br>
+		  kann dazu genutzt werden host und user basierte Zugangsregeln zu erstellen
+		</li>
+		<li><em>/etc/postfix/main.cf</em><br>
+		  kann auf ein bestimmtes interface beschränkt werden<br>
+		  <code>inet_interfaces = 192.168.122.50</code>
+		</li>
+	      </ul>
+	    </li>
+	  </ul>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>
+	    Wir können mit Hilfe der postfix eigenen Konfigurationsdatenbanken sowohl die Liste der erlaubten Emfänger und die der Sender auf einzelne User beschränken.
+	    Hierzu legen wir zuerst eine Datei mit Nutzern und optionaler Ablehnungsnachricht unter <em>/etc/postfix/restricted_users</em> an:
+	  </p>
+	  <p>
+	    <code>gast.localdomain reject This user is not allowed to &lt;receive|send&gt; emails</code>
+	  </p>
+	  <p>
+	    Und fügen in der <em>/etc/postfix/main.cf</em> einen entsprechenden Eintrag hinzu:
+	  </p>
+	  <p>
+	    <ul>
+	      <li><code>smtpd_recipient_restrictions = 
+    check_recipient_address hash:/etc/postfix/restricted_users
+    reject_unauth_destination &lt;check_relay_domains|reject_unauth_destination|reject|defer|defer_if_permit&gt;</code></li>
+	      <li><code>smtpd_recipient_restrictions = 
+    check_sender_address hash:/etc/postfix/restricted_senders
+    reject_unauth_destination &lt;check_relay_domains|reject_unauth_destination|reject|defer|defer_if_permit&gt;</code></li>
+	    </ul>
+	  </p>
+	  <p>
+	    Zu guter Letzt müssen wir noch die Änderungen in das postfix datenbank Format umwandeln.
+	  </p>
+	  <p>
+	    <code>root@serenity:~&gt; <strong>postmap /etc/postfix/restricted_users</strong></code>
+	  </p>
+
+	  <h5>SELinux</h5>
+
+
+	  <h3>Configure a mail transfer agent (MTA) to accept inbound email from other systems.</h3>
+	  <p>
+	    Server einfach wie in der Basiskonfiguration angegeben konfigurieren und wie folgt testen.
+	  </p>
+	  <p>
+	    <code>root@serenity:~&gt; <strong>mail -s "testmail" mleimenm@firefly</strong>
+Der Doktor wird heute 50!
+Herzlichen Glückwunsch Dr. Who!
+EOT	    </code>
+	  </p>
+
+	  <h3>Configure an MTA to forward (relay) email through a smart host.</h3>
+	  <p>Einfach in der <em>/etc/postfix/main.cf</em> die <em>relayhost</em> Direktive auf den smart host verweisen lassen.</p>
+	  <p><code>relayhost = [firefly.thyatis.mystara]</code></p>
+
+	  <h3>Weitere Themen</h3>
+	  <h6>Qeue erneut senden</h6>
+	  <code>root@serenity:~&gt; <strong>postqueue -f</strong></code>
+	</div> <!-- smtp -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="ssh">
+	  <h2>SSH</h2>
+	  <table class="serviceinfo">
+	    <caption>SSH Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		openssh-server
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		sshd
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/sshd/sshd_config
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+		/var/log/secure
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		22
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+		sshd_forward_ports<br>
+		sftpd_write_ssh_home<br>
+		ssh_sysadm_login
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		ssh<br>
+		sftp<br>
+		ssh-keygen<br>
+		ssh-copy-id
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall<br>
+	      tcp:22
+	    </li>
+	    <li>TCPWrapper<br>
+	      sshd: EXCEPT 192.168.122.1
+	    </li>
+	  </ul>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>
+	    Der Benutzerzugriff kann über die <em>/etc/ssh/sshd_config</em> darauf beschränkt werden, dass sich der root User nicht anmelden darf oder dass sich generell nur 
+	    ganz bestimmte Nutzer anmelden dürfen.
+	  </p>
+	  <p>
+	    <code>PermitRootLogin no
+AllowUsers bakunin proudhon malatesta</code>
+	  </p>
+
+	  <h5>SELinux</h5>
+
+
+	  <h3>Configure key-based authentication.</h3>
+	  <h3>Configure additional options described in documentation.</h3>
+	  <h3>Weitere Themen</h3>
+	</div> <!-- ssh -->
+
+
+
+
+
+	<div class="page-break"></div>
+	<div id="ntp">
+	  <h2>NTP</h2>
+	  <table class="serviceinfo">
+	    <caption>NTP Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		ntp
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		ntpd
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+		/etc/ntp.conf
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+		udp:123
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		ntpq -p
+	      </td>
+	    </tr>
+	  </table>
+
+
+	  <h5>Basiskonfiguration</h5>
+
+	  <h5>Host-basierte Sicherheit</h5>
+	  <ul>
+	    <li>Firewall:<br>
+	      udp:123</li>
+	    <li>Konfiguration:<br>
+	      <code>restrict 192.168.122.0 mask 255.255.255.0 nomodify notrap</code></li>
+	  </ul>
+
+	  <h5>Nutzer-basierte Sicherheit</h5>
+	  <p>Keine</p>
+
+	  <h5>SELinux</h5>
+	  <p>Keine Besonderheiten</p>
+
+
+	  <h3>Synchronize time using other NTP peers.</h3>
+	  <p>Einfach, nachdem man die Firewall geöffnet hat, die folgende Zeile in der <em>/etc/ntp.conf</em> wieder einkommentieren und auf das lokale Netzwerk anpassen.</p> 
+	  <p>
+	    <code># Hosts on local network are less restricted.
+#restrict 192.168.122.0 mask 255.255.255.0 nomodify notrap</code>
+	  </p>
+
+	  <h3>Weitere Themen</h3>
+	  <h5>RPM Paket erstellen, welches eine einzelne Datei enthält</h5>
+	  <p class="note">Dieses Thema gab es mal als Prüfungspunkt, ist von der aktuellen Liste aber verschwunden.<p>
+
+	</div> <!-- ntp -->
+
+      </div> <!-- maincontents -->
+
+
+
+
+
+      <div id="footer">
+	&copy; 2013, Michael Leimenmeier
+	<br>
+	All Rights reserved.
+      </div> <!-- footer -->
+
+    </div> <!-- contents -->
+  </body>
+</html>
