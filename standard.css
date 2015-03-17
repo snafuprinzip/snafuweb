@@ -83,6 +83,13 @@ h3 {
    padding:	    20px 0px 0px 0px;
 }
 
+h4 { 
+   font-size:	    110%; 
+   color:           #954b4b;
+   padding:	    20px 0px 0px 0px;
+   font-family:      'Muli', sans-serif;
+}
+
 h5 { 
    font-size:	    100%; 
    color:           #954b4b;
