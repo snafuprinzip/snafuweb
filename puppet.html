@@ -77,7 +77,7 @@
 	      </td>
 	    </tr>
 	  </table>
-	  <h4>Installation</h4>
+	  <h3>Installation</h3>
 	  <p>Repository: <br>
 	  <code>root@puppet:~&gt; <strong>sudo rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm</strong></code></p>
 	  <p>Server: <br>
@@ -85,7 +85,7 @@
 	  <p>Client: <br>
 	  <code>root@puppet:~&gt; <strong>sudo yum install puppet</strong></code></p>
 
-	  <h4>N&uuml;tzliche puppet Kommandos</h4>
+	  <h3>N&uuml;tzliche puppet Kommandos</h3>
 	  <p><strong>Systeminformationen sammeln mit facter:</strong><br>
 	    (alle facter ausgaben k&ouml;nnen auch als Variablen in den puppet templates genutzt werden)
 	  <code>root@puppet:~&gt; <strong>facter operatingsystem operatingsystemrelease</strong>
@@ -173,7 +173,7 @@ virtual => kvm</code></p>
 	  <p><strong>&Auml;nderungen anwenden</strong><br>
 	  <code>root@puppet:~&gt; <strong>puppet apply --modulepath=/var/puppet/modules /var/puppet/manifests/site.pp</strong></code></p>
 
-	  <h4>Puppet Konfigurationssprache</h4>
+	  <h3>Puppet Konfigurationssprache</h3>
 	  <p><strong>Verzeichnisstruktur</strong><br>
 	  <code><strong>
 - puppet/
@@ -327,6 +327,45 @@ package { [ 'php5-cli', 'php5-fpm', 'php-pear' ]:
 	    </code>
 	  </p>
 
+
+	  <h4>Virtuelle Definitionen</h4>
+	  <p>Anhand des user moduls l&auml;sst sich der Einsatz von virtuellen Definitionen am besten demonstrieren.</p>
+	  <p><strong>Die Modulstruktur</strong></p>
+	  <code>
+modules/user/
+├── files
+│   ├── ahaeusgen.pub
+│   ├── fbeckmann.pub
+│   ├── git
+│   ├── git.pub
+│   ├── itertzanlis.pub
+│   ├── jsperling.pub
+│   ├── mleimenmeier-bash_aliases
+│   ├── mleimenmeier-bash_logout
+│   ├── mleimenmeier-bash_profile
+│   ├── mleimenmeier-bashrc
+│   ├── mleimenmeier-emacs
+│   ├── mleimenmeier-gitconfig
+│   ├── mleimenmeier.pub
+│   ├── mreiniger.pub
+│   ├── puppet.pub
+│   ├── rdomanski.pub
+│   ├── root.pub
+│   ├── sbartels.pub
+│   ├── shebisch.pub
+│   └── ssoebbing.pub
+└── manifests
+    ├── account.pp
+    ├── colleagues_group.pp
+    ├── colleagues.pp
+    ├── init.pp
+    ├── personal.pp
+    ├── private.pp
+    ├── root.pp
+    ├── sysadmins.pp
+    ├── user_dotfile.pp
+    └── virtual.pp
+	  </code>
 	  </div> <!-- puppet -->
 	    
 
