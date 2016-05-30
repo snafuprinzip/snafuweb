@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>Notizen</title>
+    <link rel="stylesheet" type="text/css" href="standard.css" />
+  </head>
+  <body>
+    <div id="contents">
+
+      <div id="header">
+	<img src="images/header.png" alt="Site Header">
+      </div>
+
+      <nav>
+	<ul>
+	  <li><a href="index.html">HOME</a></li>
+	  <li><a href="RHCSA Exam Objectives.html">RHCSA</a></li>
+	  <li><a href="RHCE Exam Objectives.html">RHCE</a></li>
+	  <li><a href="RHEL7.html">RHEL7</a></li>
+	  <li><a href="kurse.html">KURSE</a></li>
+	  <li><a href="puppet.html">PUPPET</a></li>
+          <li><a href="docker.html">DOCKER</a></li>
+          <li><a href="openshift.html">OPENSHIFT</a></li>
+	  <li class="selected"><a href="notizen.html">NOTIZEN</a></li>
+	  <li><a href="impressum.html">IMPRESSUM</a></li>
+      </nav>
+
+      <div id="maincontents">
+	<!--	<div class="page-break"></div> -->
+	<h1>Docker</h1>
+
+	<div id="Docker">
+	  <h2>Docker</h2>
+	  <table class="serviceinfo">
+	    <caption>Docker Service Information</caption>
+	    <tr>
+	      <th>Pakete:</th>		
+	      <td>
+		docker-io (epel-release)
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Services:</th>		
+	      <td>
+		docker
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationswerkzeuge:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Konfigurationsdateien:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Logdateien / -verzeichnis:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Notwendige Ports:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>SELinux Booleans:</th>		
+	      <td>
+	      </td>
+	    </tr>
+	    <tr>
+	      <th>Wichtige Kommandos:</th>		
+	      <td>
+		docker
+	      </td>
+	    </tr>
+	  </table>
+
+	  <h3>Installation</h3>
+	  <p><code>root@docker:~&gt; <strong>yum -y install epel-release</strong>
+root@docker:~&gt; <strong>yum -y install docker-io</strong></code></p>
+	  
+	  <h3>Container</h3>
+
+	  <h4>Container anzeigen</h4>
+	    <code>root@docker:~&gt; <strong>docker ps [-a|-l]</strong>
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS                      PORTS               NAMES
+af6580ae3795        ubuntu:latest       "/bin/bash"          9 minutes ago       Up 9 minutes                                    mad_mestorf
+9d02b0838847        busybox:latest      "echo hello world"   14 minutes ago      Exited (0) 14 minutes ago                       distracted_sammet
+
+root@docker:~&gt; <strong>docker ps -l</strong>
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+af6580ae3795        ubuntu:latest       "/bin/bash"         10 minutes ago      Up 10 minutes                           mad_mestorf  </code>
+	    -a zeigt alle, auch die gestoppten, Container an
+
+
+	  <h4>Container l&ouml;schen</h4>
+	    <code>root@docker:~&gt; <strong>docker rm 9d02b0838847</strong>
+9d02b0838847</code>
+	  <h4>Kommando in einem Container interaktiv ausf&uuml;hren</h4>
+	  <code>root@docker:~&gt; <strong>docker run -i -t ubuntu:latest /bin/bash</strong>
+ubuntu:latest: The image you are pulling has been verified
+27d47432a69b: Pulling fs layer
+5f92234dcf1e: Pulling fs layer
+51a9c7c1f8bb: Pulling fs layer
+5ba9dab47459: Pulling fs layer
+511136ea3c5a: Already exists
+51a9c7c1f8bb: Download complete
+5ba9dab47459: Download complete
+5f92234dcf1e: Download complete
+27d47432a69b: Download complete
+27d47432a69b: Pull complete
+5f92234dcf1e: Pull complete
+51a9c7c1f8bb: Pull complete
+5ba9dab47459: Pull complete
+Status: Downloaded newer image for ubuntu:latest
+
+root@bf35f82fcd6d:/#<strong> uname -a</strong>
+Linux bf35f82fcd6d 2.6.32-504.el6.x86_64 #1 SMP Wed Oct 15 04:27:16 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux</code>
+	  -i steht f&uuml;r den interaktiven Modus<br> 
+	  -t stellt ein tty zur Verf&uuml;gung
+
+	  <h4>Einen Service im Container starten (detached mode)</h4>
+	  <code>root@docker:~&gt; <strong>docker run -d -p 1234:1234 python:2.7 python -m SimpleHTTPServer 1234</strong></code>
+	  -d startet den Docker im detached Modus<br> 
+	  -p ext:int &ouml;ffnet einen externen Port ext auf den internen port int
+
+	  <h4>Container inspizieren</h4>
+	    <code>root@docker:~&gt; <strong>docker inspect c74d9d6963f2</strong>
+[{
+    "AppArmorProfile": "",
+    "Args": [
+        "-m",
+        "SimpleHTTPServer",
+        "1234"
+    ],
+    "Config": {
+        "AttachStderr": false,
+        "AttachStdin": false,
+        "AttachStdout": false,
+        "Cmd": [
+            "python",
+            "-m",
+            "SimpleHTTPServer",
+            "1234"
+        ],
+        "CpuShares": 0,
+        "Cpuset": "",
+        "Domainname": "",
+        "Entrypoint": null,
+        "Env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+            "LANG=C.UTF-8",
+            "PYTHON_VERSION=2.7.9"
+        ],
+        "ExposedPorts": {
+            "1234/tcp": {}
+        },
+        "Hostname": "c74d9d6963f2",
+        "Image": "python:2.7",
+        "MacAddress": "",
+        "Memory": 0,
+        "MemorySwap": 0,
+        "NetworkDisabled": false,
+        "OnBuild": null,
+        "OpenStdin": false,
+        "PortSpecs": null,
+        "StdinOnce": false,
+        "Tty": false,
+        "User": "",
+        "Volumes": null,
+        "WorkingDir": ""
+    },
+    "Created": "2015-02-16T09:10:14.862667293Z",
+    "Driver": "devicemapper",
+    "ExecDriver": "native-0.2",
+    "HostConfig": {
+        "Binds": null,
+        "CapAdd": null,
+        "CapDrop": null,
+        "ContainerIDFile": "",
+        "Devices": [],
+        "Dns": null,
+        "DnsSearch": null,
+        "ExtraHosts": null,
+        "IpcMode": "",
+        "Links": null,
+        "LxcConf": [],
+        "NetworkMode": "bridge",
+        "PortBindings": {
+            "1234/tcp": [
+                {
+                    "HostIp": "",
+                    "HostPort": "1234"
+                }
+            ]
+        },
+        "Privileged": false,
+        "PublishAllPorts": false,
+        "RestartPolicy": {
+            "MaximumRetryCount": 0,
+            "Name": ""
+        },
+        "SecurityOpt": null,
+        "VolumesFrom": null
+    },
+    "HostnamePath": "/var/lib/docker/containers/c74d9d6963f29c6b909944836ab013bd94374a5393777353ec7c2575a0802aaa/hostname",
+    "HostsPath": "/var/lib/docker/containers/c74d9d6963f29c6b909944836ab013bd94374a5393777353ec7c2575a0802aaa/hosts",
+    "Id": "c74d9d6963f29c6b909944836ab013bd94374a5393777353ec7c2575a0802aaa",
+    "Image": "31ff30c97af164c705355fc6e358e6c57b343bfff749e34b2449eaea18ad9c6c",
+    "MountLabel": "",
+    "Name": "/cocky_hypatia",
+    "NetworkSettings": {
+        "Bridge": "docker0",
+        "Gateway": "172.17.42.1",
+        "IPAddress": "172.17.0.6",
+        "IPPrefixLen": 16,
+        "MacAddress": "02:42:ac:11:00:06",
+        "PortMapping": null,
+        "Ports": {
+            "1234/tcp": [
+                {
+                    "HostIp": "0.0.0.0",
+                    "HostPort": "1234"
+                }
+            ]
+        }
+    },
+    "Path": "python",
+    "ProcessLabel": "",
+    "ResolvConfPath": "/var/lib/docker/containers/c74d9d6963f29c6b909944836ab013bd94374a5393777353ec7c2575a0802aaa/resolv.conf",
+    "State": {
+        "Error": "",
+        "ExitCode": 0,
+        "FinishedAt": "0001-01-01T00:00:00Z",
+        "OOMKilled": false,
+        "Paused": false,
+        "Pid": 3770,
+        "Restarting": false,
+        "Running": true,
+        "StartedAt": "2015-02-16T09:10:17.280982191Z"
+    },
+    "Volumes": {},
+    "VolumesRW": {}
+}
+] </code>
+
+	  <h4>Container erstellen, starten, stoppen und entfernen</h4>
+	  <code>root@docker:~&gt; <strong>docker create -P --expose=1234 python:2.7 python -m SimpleHTTPServer 1234</strong>
+85bd081a5e14c8b3848055fa5c2d3f31c52d6dc994fcf3f56873462446514f5d</code><br>
+	  <code>root@docker:~&gt; <strong>docker ps -a</strong>
+CONTAINER ID        IMAGE               COMMAND                CREATED              STATUS                        PORTS                    NAMES
+85bd081a5e14        python:2.7          "python -m SimpleHT"   About a minute ago                                                          clever_turing</code><br>
+	  <code>root@docker:~&gt; <strong>docker start 85bd081a5e14</strong>
+85bd081a5e14</code><br>
+	  <code>root@docker:~&gt; <strong>docker ps</strong>
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                     NAMES
+85bd081a5e14        python:2.7          "python -m SimpleHT"   3 minutes ago       Up 42 seconds       0.0.0.0:49153->1234/tcp   clever_turing</code><br>
+	  <code>root@docker:~&gt; <strong>docker restart 85bd081a5e14</strong>
+85bd081a5e14</code><br>
+	  <code>root@docker:~&gt; <strong>docker kill 85bd081a5e14</strong>
+85bd081a5e14</code><br>
+	  <code>root@docker:~&gt; <strong>docker rm 85bd081a5e14</strong>
+85bd081a5e14</code>
+
+
+	  <h3>Images</h3>
+	  <h4>Images anzeigen </h4>
+	  <code>root@docker:~&gt; <strong>docker images</strong>
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+ubuntu              latest              5ba9dab47459        2 weeks ago         192.7 MB
+busybox             latest              4986bf8c1536        6 weeks ago         2.433 MB</code>
+
+	  <h4>Images (von https://registry.hub.docker.com) laden</h4>
+	  <code>root@docker:~&gt; <strong>docker pull &lt;service&gt;:&lt;version&gt;</strong></code>
+
+	  <h4>Images l&ouml;schen</h4>
+	    <code>root@docker:~&gt; <strong>docker rmi 4986bf8c1536</strong>
+Untagged: busybox:latest
+Deleted: 4986bf8c15363d1c5d15512d5266f8777bfba4974ac56e3270e7760f6f0a8125
+Deleted: ea13149945cb6b1e746bf28032f02e9b5a793523481a0a18645fc77ad53c4ea2
+Deleted: df7546f9f060a2268024c8a230d8639878585defcc1bc6f79d2728a13957871b</code>
+
+	  <h3>Best Practices</h3>
+	  <h4>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h4>
+	  <p>
+	    Zu allererst laden wir unsere images aus dem Hub:
+	  </p>
+	  <code>root@docker:~&gt; <strong>docker pull wordpress:latest</strong></code>
+	  <code>root@docker:~&gt; <strong>docker pull mysql:latest</strong></code>
+	  <code>root@docker:~&gt; <strong>docker images</strong>
+REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+wordpress           latest              9ddd01387f02        4 days ago          470.2 MB
+mysql               latest              0beee7f478c8        10 days ago         283.1 MB</code>
+	  
+	  <p>
+	    Als n&auml;chstes starten wir den MySQL Container und setzen den hostnamen &uuml;ber die 
+	    Kommandozeile und das MySQL root Passwort &uuml;ber eine Environment Variable:
+	  </p>
+	  <code>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
+	                                 -e MYSQL_DATABASE=wordpress \
+	                                 -e MYSQL_USER=wordpress \
+	                                 -e MYSQL_PASSWORD=wordpresspwd \
+	                                 -d mysql</strong></code>
+
+	  <p>
+	    Den WordPress Container starten wir mit dem MySQL Container verlinkt; Docker konfiguriert dabei
+	    das Netzwerk so dass die von dem MySQL Container offerierten Ports vom WordPress Container aus
+	    erreichbar sind.
+	  </p>
+	  <code>root@docker:~&gt; <strong>docker run --name wordpress --link mysqlwp:mysql -p 80:80 \
+	                   -e WORDPRESS_DB_NAME=wordpress \
+	                   -e WORDPRESS_DB_USER=wordpress \
+	                   -e WORDPRESS_DB_PASSWORD=wordpressdbpwd \
+	                   -d wordpress</strong></code>
+
+	  <p>
+	    Nun laufen beide Container im Hintergrund, wobei Port 80 des Wordpress Containers auf Port 80 des Hosts
+	    gemappt wurde, was wir mit einem Webbrowser &uuml;berpr&uuml;fen k&ouml;nnen.
+	  </p>
+	  <code>root@docker:~&gt; <strong>docker ps</strong>
+CONTAINER ID        IMAGE               COMMAND                 CREATED             STATUS              PORTS                NAMES
+510eb6d060a7        wordpress:latest    "/entrypoint.sh apac"   18 seconds ago      Up 14 seconds       0.0.0.0:80->80/tcp   wordpress
+f1e932996ce5        mysql:latest        "/entrypoint.sh mysq"   55 seconds ago      Up 52 seconds       3306/tcp             mysqlwp
+</code>
+
+
+	<h3>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h3>
+	<p>
+	  Um ein Backup der im Container laufenden MySQL Datenbank zu bewerkstelligen bedienenen wir uns 
+	  zweier Konzepte. Zum einen mounten wir ein Filesystem des Docker Hosts in den Container, zum anderen
+	  stossen wir mit dem "docker exec" Kommando einen "mysqldump" an.
+	</p>
+	<code>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
+	                               -e MYSQL_DATABASE=wordpress \
+	                               -e MYSQL_USER=wordpress \
+	                               -e MYSQL_PASSWORD=wordpresspwd \
+	                               -v /home/docker/mysql:/var/lib/mysql \
+	                               -d mysql</strong></code>
+	<p>
+	  Mit dem -v Schalter mounten wir das Verzeichnis host:/home/docker/mysql unter /var/lib/mysql des 
+	  Containers.
+	  Um anschliessend den mysql Dump anzustossen:
+	</p>
+	<code>root@docker:~&gt; <strong>docker exec mysqlwp mysqldump --all-databases --password=wordpressdocker &gt; wordpress.backup</strong></code>
+
+
+	<h3>Mehrere Anwendungen in einem Container mit Hilfe von Supervisor</h3>
+	<p>
+	  Um mehrere Anwendungen in einem Container laufen zu lassen m&uuml;ssen wir uns zuallererst einen
+	  eigenen Container bauen. Hierzu erstellen wir uns ein Dockerfile &auml;hnlich einem Makefile.
+	</p>
+	<code>FROM ubuntu:14.04
+
+RUN apt-get update && apt-get -y install \
+    apache2 \
+    php5 \
+    php5-mysql \
+    supervisor \
+    wget
+
+RUN echo 'mysql-server mysql-server/root_password password root' | debconf-set-selections && \
+    echo 'mysql-server mysql-server/root_password_again password root' | debconf-set-selections
+
+RUN apt-get install -qqy mysql-server
+
+RUN wget http://wordpress.org/latest.tar.gz && \
+    tar xvzf latest.tar.gz && \
+    cp -R ./wordpress/* /var/www/html && \
+    rm /var/www/html/index.html
+
+RUN (/usr/bin/mysqld_safe &); sleep 5; mysqladmin -u root -p root create wordpress
+
+COPY wp-config.php /var/www/html/wp-config.php
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+EXPOSE 80
+
+CMD ["/usr/bin/supervisord"]
+</code>
+	<p>
+	  Der supervisor daemon ist wie &auml;hnlich wie der init oder xinetd ein Jobstarter, in dem wir nun
+	  folgend MySQL und den Apache Webserver in der Datei "supervisord.conf" konfigurieren:
+	</p>
+	<code>[supervisord]
+nodaemon=true
+
+[program:mysqld]
+command=/usr/bin/mysqld_safe
+autostart=true
+autorestart=true
+user=root
+
+[program:httpd]
+command=/bin/bash -c "rm -rf /run/httpd/* && /usr/sbin/apachectl -D FOREGROUND"
+</code>
+
+
+	</div> <!-- Docker -->
+	  
+      </div> <!-- maincontents -->
+
+      <div id="footer">
+	&copy; 2013, Michael Leimenmeier
+	<br>
+	All Rights reserved.
+      </div> <!-- footer -->
+
+    </div> <!-- contents -->
+  </body>
+</html>
