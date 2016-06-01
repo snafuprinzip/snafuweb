@@ -30,64 +30,193 @@
 	<!--	<div class="page-break"></div> -->
 	<h1>OpenShift</h1>
 	<div id="OpenShift">
-	  <h2>Monitoring</h2>
-	  <h3>simple snmp v3 Setup</h3>
-	  <table class="serviceinfo">
-	    <caption>net-snmp Service Information</caption>
-	    <tr>
-	      <th>Pakete:</th>		
-	      <td>
-		net-snmp <br>
-		net-snmp-utils
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Services:</th>		
-	      <td>
-		snmpd
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Konfigurationswerkzeuge:</th>		
-	      <td>
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Konfigurationsdateien:</th>		
-	      <td>
-		/etc/sysconfig/snmpd <br>
-		/etc/snmp/snmpd.conf  <br>
-		/var/lib/net-snmp/snmpd.conf
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Logdateien / -verzeichnis:</th>		
-	      <td>
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Notwendige Ports:</th>		
-	      <td>
-		udp:161
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>SELinux Booleans:</th>		
-	      <td>
-	      </td>
-	    </tr>
-	    <tr>
-	      <th>Wichtige Kommandos:</th>		
-	      <td>
-		snmpwalk  <br>
-		snmpget
-	      </td>
-	    </tr>
+	  <p>Diese Anleitung soll dabei helfen die gaengigsten Arbeitsschritte eines Entwicklers fuer die Implementation seines Microservices in einen Docker Container innerhalb des OpenShift Clusters zu erlaeutern.</p>
+	  <h2>Anmelden am OpenShift Cluster</h2>
+	  <ol>
+	    <li>Die Anmeldung erfolgt entweder ueber einen Webbrowser oder mit dem "<code>oc login</code>"-Kommando (<a href="https://github.com/openshift/origin/releases/latest">https://github.com/openshift/origin/releases/latest</a>).</li>
+	    <li>Die noetige URL ist entweder <a href="https://dalek.gfi.ihk.de">https://dalek.gfi.ihk.de:8443</a> fuer die Testumgebung oder <a href="https://iason.gfi.ihk.de:8443">https://iason.gfi.ihk.de:8443</a>
+	    </li>
+	    <li>Jedes Projekt hat einen Projektbenutzer unter dem vom Projektverantwortlichen das eigentliche Projekt angelegt und Zugriffsrechte fuer personalisierte Benutzeraccounts verwaltet werden.</li>
+	    <li>Jeder Benutzer sollte ueber einen persoenlichen Account (z.B. mleimenmeier fuer Michael Leimenmeier) verfuegen, mit dem er sich wie in Punkt 5 dargestellt anmelden kann.</li>
+	    <li>
+	      <code>oc login <span class="confluence-link">[-u username</span>] <code>
+		  <span class="confluence-link">[-p password</span>] <a href="https://iason.gfi.ihk.de:8443">https://iason.gfi.ihk.de:8443</a>
+		</code>
+	      </code>
+	    </li>
+	  </ol>
+	  <table style="width: 80.0%;">
+	    <tbody>
+	      <tr>
+		<th>
+		  <p> </p>
+		  <ac:structured-macro ac:macro-id="0b2a124c-a490-4d85-904b-9eb544b530b8" ac:name="code" ac:schema-version="1">
+		    <ac:plain-text-body><![CDATA[07:57:10 leimm@189tuxlem001:workbench> oc login -u spielwiese https://iason.gfi.ihk.de:8443
+Authentication required for https://iason.gfi.ihk.de:8443 (openshift)
+Username: spielwiese
+Password:
+Login successful.
+
+You don't have any projects. You can try to create a new project, by running
+
+    $ oc new-project <projectname></code>
+		  <p> </p>
+		</th>
+		<th>
+		  <p>
+		    <ac:image ac:height="250">
+		      <ri:attachment ri:filename="GUI_Welcome.png"/>
+		    </ac:image>
+		  </p>
+		</th>
+	      </tr>
+	    </tbody>
 	  </table>
-	  <h3>Benutzer anlegen</h3>
-	  <p><code>root@tester1:~&gt; <strong>net-snmp-create-v3-user -ro -A snmpv3authPass -a SHA -X snmpv3encPass -x AES snmpv3user</strong></code></p>
-	  </div> <!-- OpenShift -->
-	    
+	  <h2>Projekt erstellen</h2>
+	  <p>Ist man noch keinem Projekt zugeteilt sollte man sich zuerst ein Projekt erstellen, da dies gleichzeitig auch den aktuellen Arbeitsbereich darstellt:</p>
+	  <ol>
+	    <li>
+	      <code>oc new-project &lt;Projektkennung&gt; [--display-name="Bezeichnung"] [–description="Ausfuehrliche Beschreibung"]</code>
+	    </li>
+	  </ol>
+	  <table style="width: 80.0%;">
+	    <tbody>
+	      <tr>
+		<td>
+		  <code>[09:23:57 leimm@189tuxlem001:~> oc new-project mongodbdemo --display-name="MongoDB Demo App" --description="Eine kleines Songarchiv um die Funktion einer Mongo Datenbank mit persistentem Storage innerhalb des OpenShift Clusters zu demonstrieren."
+Now using project "mongodbdemo" on server "https://iason.gfi.ihk.de:8443".
+
+You can add applications to this project with the 'new-app' command. For example, try:
+
+    $ oc new-app centos/ruby-22-centos7~https://github.com/openshift/ruby-hello-world.git
+
+to build a new hello-world application in Ruby.</code>
+		</td>
+		<td>
+		  <img class="main" src="images/GUI_NewProject.png" alt="Neues Projekt mit der WebGUI anlegen">
+		</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	  <h2>Applikation erstellen</h2>
+	  <p>Innerhalb eines Projektes kann es mehre Applikationen geben. Eine Applikation besteht wiederum mindestens aus einer DeploymentConfig und einem ImageStream fuer das fertige Docker Image; zumeist aber auch einer BuildConfig und einem weiteren ImageStream fuer das Docker Image, welches als Basisimage angegeben wurde.</p>
+	  <ol>
+	    <li>Zu allererst muessen die eigenen Quellcodes bzw. bei einem Docker Build das entsprechende Dockerfile in einem vom OpenShift erreichbaren git Repository abgelegt sein.</li>
+	    <li>Ist das Repository zum klonen nicht oeffentlich zugaenglich muss eine Authentifizierung via ssh key eingerichtet werden (siehe HowTo: Repository Authentifizierung einrichten)</li>
+	    <li>Zur Erstellung einer Applikation gibt es im OpenShift drei verschiedene Moeglichkeiten:<ol>
+		<li>
+		  <strong>Source2Image (S2I)</strong>: Hierbei nutze ich ein meist von RedHat bereitgestelltes BuilderImage welches dahingehend optimiert wurde, dass man nur noch die url des Quellcode Repositories angeben muss, evtl. Modulabhaengigkeiten in einer entsprechenden Datei (bei Python z.B. die requirements.txt) hinterlegt und bei Bedarf noch weitere Konfigurationsparameter angeben kann. Bei der Einrichtung der MongoDB unten handelt es sich zum Beispiel um die Anwendung des S2I Verfahrens.</li>
+		<li>
+		  <strong>Docker Build</strong>: Bei dieser Strategie legt man ein <em>Dockerfile</em> mit den fuer den Build notwendigen Informationen, sowie gegebenenfalls noetigen weiteren Dateien (Konfigurationsdateien, Daten usw.) und evtl. vorhandenen Quellcodes in einem git repository ab und gibt dies bei der Erstellung der App mit an. Alle notwendigen Konfigurationsparameter stehen im <em>Dockerfile</em> oder werden als Environment Variablen entweder bei der Erstellung auf der Kommandozeile oder auch nachtraeglich durch hinzufuegen in der DeploymentConfig gesetzt. Ein erstellen der App mit dieser Build Strategie ist ausschliesslich ueber die Kommandozeile moeglich. Ein Beispiel findet man unten fuer die "songbase" Webapplikation.</li>
+		<li>
+		  <strong>Custom Build</strong>: Benoetigt man ueber diese beiden Verfahren hinaus noch weitere Moeglichkeiten den Buildprozess zu steuern gibt es auch noch die Moeglichkeit eigene Templates zu definieren oder z.B. den integrierten Jenkins CI Server zu nutzen. Eine Vorstellung all dieser Moeglichkeiten wuerde aber den Rahmen dieses HowTos sprengen und wird daher an anderer Stelle behandelt.</li>
+	      </ol>
+	    </li>
+	  </ol>
+	  <h3>Installation einer MongoDB via Template (S2I Builder Image analog)</h3>
+	  <table style="width: 80.0%;">
+	    <tbody>
+	      <tr>
+		<th colspan="1">
+		  <h4>Schauen welche Ressourcen via "Add to Project..." erhaeltlich sind</h4>
+		</th>
+		<th colspan="1"> </th>
+	      </tr>
+	      <tr>
+		<td>
+		  <code>[10:08:20 leimm@189tuxlem001:~> oc new-app --search mongodb
+Templates (oc new-app --template=<template>)
+-----
+mongodb-ephemeral
+  Project: openshift
+  MongoDB database service, without persistent storage. WARNING: Any data stored will be lost upon pod destruction. Only use this template for testing
+mongodb-persistent
+  Project: openshift
+  MongoDB database service, with persistent storage. Scaling to more than one replica is not supported
+nodejs-mongodb-example
+  Project: openshift
+  An example Node.js application with a MongoDB database
+Image streams (oc new-app --image-stream=<image-stream> [--code=<source>])
+-----
+mongodb
+  Project: openshift
+  Tags:    2.4, 2.6, latest</code>
+		</td>
+		<td>
+		  <img class="main" src="images/GUI_AddToProject.png" alt="Eine Ressource oder Applikation zum Projekt hinzuf&uuml;gen">
+		</td>
+	      </tr>
+	      <tr>
+		<th colspan="1">
+		  <h4>Mongo Datenbank mit 512MB grossem persistentem Storage hinzufuegen</h4>
+		</th>
+		<th colspan="1"> </th>
+	      </tr>
+	      <tr>
+		<td>
+		  <code>[10:42:03 leimm@189tuxlem001:~> oc new-app --param MONGODB_DATABASE=songdb,MONGODB_USER=river,MONGODB_PASSWORD=song,MONGODB_ADMIN_PASSWORD=tardis --name=songdb --template=mongodb-persistent
+--> Deploying template "mongodb-persistent" in project "openshift" for "mongodb-persistent"
+     With parameters:
+      DATABASE_SERVICE_NAME=mongodb
+      MONGODB_USER=river
+      MONGODB_PASSWORD=song
+      MONGODB_DATABASE=songdb
+      MONGODB_ADMIN_PASSWORD=tardis
+      VOLUME_CAPACITY=512Mi
+--> Creating resources with label app=songdb ...
+    service "mongodb" created
+    persistentvolumeclaim "mongodb" created
+    deploymentconfig "mongodb" created
+--> Success
+    Run 'oc status' to view your app.</code>
+		</td>
+		<td>
+		  <img class="main" src="images/GUI_AddMongoDB.png" alt="Eine Mongo Datenbank zum Projekt hinzuf&uuml;gen.">
+		</td>
+	      </tr>
+	      <tr>
+		<th colspan="1">
+		  <h4>Ubersicht ueber das aktuelle Projekt anzeigen</h4>
+		</th>
+		<th colspan="1"> </th>
+	      </tr>
+	      <tr>
+		<td>
+		  <code>[10:42:18 leimm@189tuxlem001:~> oc status -v
+In project MongoDB Demo App (mongodbdemo) on server https://iason.gfi.ihk.de:8443
+
+svc/mongodb - 172.30.8.138:27017
+  dc/mongodb deploys openshift/mongodb:latest
+    deployment #1 running for about a minute - 1 pod
+
+Warnings:
+  * dc/mongodb has no readiness probe to verify pods are ready to accept traffic or ensure deployment is successful.
+    try: oc set probe dc/mongodb --readiness ...
+
+View details with 'oc describe <resource>/<name>' or list everything with 'oc get all'.</code>
+		</td>
+		<td>
+		  <img class="main" src="images/GUI_MongoDB_Overview.png" alt="&Uuml;bersicht &uuml;ber das Projekt mit einer MongoDB Instanz.">
+		</td>
+	      </tr>
+	      <tr>
+		<th colspan="1">
+		  <h4>Wie im Warning gewuenscht eine "Readiness"-Probe fuer den Dienst hinzugefuegt</h4>
+		</th>
+		<th colspan="1"> </th>
+	      </tr>
+	      <tr>
+		<td colspan="1">
+		  <code>[10:17:44 leimm@189tuxlem001:~> oc set probe dc/mongodb --readiness --open-tcp=27017
+deploymentconfig "mongodb" updated</code>
+		</td>
+		<td colspan="1"> </td>
+	      </tr>
+	    </tbody>
+	  </table>
+	  
+	</div> <!-- OpenShift -->
+	
 	  
       </div> <!-- maincontents -->
 
