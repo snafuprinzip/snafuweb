@@ -20,7 +20,9 @@
 #header {
   background-color: #675c47;
   margin:           10px;
-  height:           169px;
+  height:           166px;
+  width:            1216px;
+  text-align:       center;
 }
 
 #maincontents {
@@ -28,16 +30,17 @@
   font-size:        105%;
   padding:          15px;
   margin:           0px 10px 10px 10px;
-  width:	    786px;
+  width:            1186px;
+/*  width:	    786px; */
 }
 
-#sidebar {
-  background:       #efe5d0 url(/images/background.png) bottom right;
-  font-size:        105%;
-  padding:          15px;
-  margin:           0px 10px 10px 10px;
-  float:            left;
-  width:            150px;
+#contents {
+  width:            1236px;
+  padding-top:      5px;
+  padding-bottom:   5px;
+  background-color: DarkOliveGreen;
+  margin-left:      auto;
+  margin-right:     auto;
 }
 
 #footer {
@@ -48,6 +51,7 @@
   margin:           10px;
   font-size:        90%;
   clear:            left;
+  width:            1186px;
 }
 
 
@@ -104,20 +108,9 @@ h6 {
 code {
    display:		block;
    background-color:	#dfdbc3;
+   font-size:           110%;
    white-space:		pre-wrap;
 }
-
-textarea {
-   background-color:	#dfdbc3;
-   width:               590px;
-   height:		100%;
-   border:		none;
-   resize:		none;		/* hide user resize */
-   overflow:		auto;		/* hide scrollbars */
-   font-family:		monospace;
-}
-
-.slogan { color: #954b4b; }
 
 .note {
       font-size:    75%;
@@ -136,19 +129,16 @@ a:visited {
   border-bottom:    thin dotted #675c47;
 }
 
-#contents {
-  width:            836px;
-  padding-top:      5px;
-  padding-bottom:   5px;
-  background-color: DarkOliveGreen;
-  margin-left:      auto;
-  margin-right:     auto;
-}
-
 img.main {
-    width:	745px;
+    width:	  945px;
 }
 
+img.table {
+    width:        905px;
+    text-align:   center;
+    display:      block;
+    margin-left:  auto;
+    margin-right: auto;}
 
 table
 {
@@ -157,7 +147,7 @@ table
         border:                 thin solid black;
         caption-side:           bottom;
         border-collapse:        collapse;
-	width:			745px;
+	width:			1145px;
 	font-size:		80%;
 }
 
@@ -191,7 +181,14 @@ th
         background-color:       DarkOliveGreen;
 }
 
-tr:nth-child(odd)
+th h4 {
+        color:            white;
+	text-align:       left;
+	font-size:	  130%; 
+	font-family:      'Muli', sans-serif;
+}
+
+table.serviceinfo tr:nth-child(odd)
 {
         background-color:       DarkKhaki;
 }
@@ -206,7 +203,7 @@ table table th, table table td
 }
 
 #inhalt {
-  width:            800px;
+  width:            1200px;
   padding-top:      5px;
   padding-bottom:   5px;
   background-color: #675c47;
