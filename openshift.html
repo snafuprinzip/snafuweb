@@ -379,6 +379,28 @@ MONGODB_ADMIN_PASSWORD=8PIUf7YE8WvQE7Mh</code>
 	  <p>
 	    <img class="table" src="images/GUI_Environment.png" alt="Environment Variablen der MongoDB"/>
 	  </p>
+	  <p>
+	    Im eigentlichen Programmcode (oder bei fertigen Applikationen in den Konfigurationsdateien) greift man dann auf diese Variablen zu um sich mit der Datenbank zu verbinden:
+	    <code>[...]
+# read environment variables to collect information about the mongodb
+mongohost = os.getenv("MONGODEMODB_SERVICE_HOST", "localhost")
+mongoport = os.getenv("MONGODEMODB_SERVICE_PORT", 27017)
+username  = os.getenv("MONGODB_USER")
+password  = os.getenv("MONGODB_PASSWORD")
+dbname    = os.getenv("MONGODB_DATABASE")
+adminpwd  = os.getenv("MONGODB_ADMIN_PASSWORD")
+
+### URI format: mongodb://[dbuser:dbpassword@]host:port/dbname
+MONGODB_URI = 'mongodb://%s:%s@%s:%d/%s' % (username, password,
+                                            mongohost, int(mongoport),
+                                            dbname)
+print ("Connecting to mongodb: %s ..." % MONGODB_URI)
+
+client = pymongo.MongoClient(MONGODB_URI)
+db     = client.get_default_database()
+
+songs = db['songs']
+[...]</code>
 
 	  <h4>Die fertige Applikation</h4>
 	  <p>
@@ -386,13 +408,6 @@ MONGODB_ADMIN_PASSWORD=8PIUf7YE8WvQE7Mh</code>
 	  </p>
 
 
-	  <h4></h4>
-	  <p>
-	    <code></code>
-	  </p>
-	  <p>
-	    <img class="table" src="images/" alt=""/>
-	  </p>
 
 
 
@@ -755,6 +770,144 @@ status:
 --- snap ---</code>
 	  </p>
 
+
+	  <h2>Webhooks</h2>
+	  <h3>Webhooks setzen um automatisierte Builds bei &Auml;nderungen am Quellcode zu erm&ouml;glichen</h3>
+	  <h4>Webhook aus Buildconfig ermitteln</h4>
+	  <p>
+	    <code>10:41:38 leimm@189tuxlem001:mongodemo> oc get bc
+NAME       TYPE      FROM          LATEST
+songbase   Source    Git@release   7
+
+10:46:43 leimm@189tuxlem001:mongodemo> oc describe bc/songbase
+Name:                   songbase
+Created:                11 weeks ago
+Labels:                 app=songbase
+Annotations:            openshift.io/generated-by=OpenShiftNewApp
+Latest Version:         7
+Strategy:               Source
+URL:                    ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
+Ref:                    release
+Source Secret:          sshsecret
+From Image:             ImageStreamTag openshift/python:2.7
+Output to:              ImageStreamTag songbase:latest
+Triggered by:           Config, ImageChange
+Webhook GitHub:         https://iason.gfi.ihk.de:8443/oapi/v1/namespaces/mongodemo/buildconfigs/songbase/webhooks/IReaRK75rWbI6oWtED5u/github
+<font color="green">Webhook Generic:        https://iason.gfi.ihk.de:8443/oapi/v1/namespaces/mongodemo/buildconfigs/songbase/webhooks/xiOpJzUf8oLK5QzgUOMO/generic</font>
+
+Build           Status          Duration        Creation Time
+songbase-7      complete        11s             2016-06-07 10:12:12 +0200 CEST
+songbase-6      complete        25s             2016-06-01 15:10:44 +0200 CEST
+songbase-5      complete        13s             2016-06-01 15:09:39 +0200 CEST
+songbase-4      complete        11s             2016-03-24 08:18:32 +0100 CET
+songbase-3      complete        12s             2016-03-23 10:06:27 +0100 CET
+songbase-2      complete        34s             2016-03-23 09:50:24 +0100 CET
+songbase-1      failed          3s              2016-03-23 09:48:05 +0100 CET
+</code>
+	  </p>
+
+	  <h4>Webhook in den Projekteinstellungen im git Repository hinterlegen</h4>
+	  <p>
+	    <img class="table" src="images/Bitbucket_Webhook.png" alt="Webhook im Bitbucket hinterlegen"/>
+	  </p>
+	  <p class="note">
+	    In den Repository Einstellungen w&auml;hlen wir Workflow->Hooks aus und dort das "Http Request Post Receive Hook" Plugin in dem wir unsere Webhook aus der
+	    OpenShift BuildConfig mit der POST Methode einf&uuml;gen und die Benachrichtigungen zum rebuild nach bestimmten Kriterien via Regular Expression beschr&auml;nken. 
+	    Im obigen Beispiel wird also bei jeder &Auml;nderung die im release Zweig des git Repositories eingecheckt wird eine Nachricht an den OpenShift Cluster geschickt
+	    und dieser aufgefordert einen neuen Build anzustossen (s.u.).
+	  </p>
+
+
+	  <h4>Kontrollieren ob der Webhook funktioniert</h4>
+	  <p>
+	    <code>
+10:46:53 leimm@189tuxlem001:mongodemo> git checkout release
+Switched to branch 'release'
+Your branch is up-to-date with 'origin/release'.
+
+11:02:32 leimm@189tuxlem001:mongodemo> git merge master
+Updating c09b957..2a9b779
+Fast-forward
+ app.py | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+11:02:43 leimm@189tuxlem001:mongodemo> git commit -m "neurotic fish released"
+On branch release
+Your branch is ahead of 'origin/release' by 1 commit.
+  (use "git push" to publish your local commits)
+nothing to commit, working directory clean
+
+11:04:36 leimm@189tuxlem001:mongodemo> oc get builds --watch &
+[1] 7196
+
+NAME         TYPE      FROM          STATUS     STARTED        DURATION
+songbase-1   Source    Git@release   Failed     11 weeks ago   3s
+songbase-2   Source    Git@dac2f74   Complete   11 weeks ago   34s
+songbase-3   Source    Git@c09b957   Complete   11 weeks ago   12s
+songbase-4   Source    Git@c09b957   Complete   11 weeks ago   11s
+songbase-5   Source    Git@c09b957   Complete   8 days ago     13s
+songbase-6   Source    Git@c09b957   Complete   8 days ago     25s
+songbase-7   Source    Git@c09b957   Complete   3 days ago     11s
+
+
+11:04:39 leimm@189tuxlem001:mongodemo> git push
+Total 0 (delta 0), reused 0 (delta 0)
+remote:
+remote: Pull Request erstellen für release:
+remote:   https://bitbucket.gfi.ihk.de/projects/SNAFU/repos/mongodemo/compare/commits?sourceBranch=refs/heads/release
+remote:
+To ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
+   c09b957..2a9b779  release -> release
+
+11:04:44 leimm@189tuxlem001:mongodemo> 
+NAME         TYPE      FROM          STATUS    STARTED   DURATION
+songbase-8   Source    Git@release   New
+songbase-8   Source    Git@release   Pending
+songbase-8   Source    Git@release   Running   Less than a second ago
+songbase-8   Source    Git@2a9b779   Running   1 seconds ago   1s
+songbase-8   Source    Git@2a9b779   Complete   11 seconds ago   11s
+
+11:06:45 leimm@189tuxlem001:mongodemo> oc describe build songbase-8
+Name:                   songbase-8
+Created:                2 minutes ago
+Labels:                 app=songbase,buildconfig=songbase,openshift.io/build-config.name=songbase
+Annotations:            openshift.io/build.number=8
+                        openshift.io/build.pod-name=songbase-8-build
+Build Config:           songbase
+Started:                2016-06-10 11:04:46 +0200 CEST
+Finished:               2016-06-10 11:04:57 +0200 CEST
+Duration:               11s
+Build Pod:              songbase-8-build
+Strategy:               Source
+URL:                    ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
+Ref:                    release
+Source Secret:          sshsecret
+Commit:                 2a9b77903d2c52de06b556dd82379a2501306e43
+Author:                 Michael Leimenmeier
+Committer:              Michael Leimenmeier
+Message:                Neurotic Fish added to default database
+From Image:             DockerImage docker.io/centos/python-27-centos7@sha256:1ad8f282fd20d83c393004f76af39d2b6e8daff9034810e78e4c48219f10085a
+Output to:              ImageStreamTag songbase:latest
+Push Secret:            builder-dockercfg-shvzk
+Git Commit:             2a9b77903d2c52de06b556dd82379a2501306e43
+Revision Author:        Michael Leimenmeier <michael.leimenmeier@gfi.ihk.de>
+Revision Committer:     Michael Leimenmeier <michael.leimenmeier@gfi.ihk.de>
+Revision Message:       Neurotic Fish added to default database
+Status:                 Complete
+Events:
+  FirstSeen     LastSeen        Count   From                                    SubobjectPath                   Type            Reason          Message
+  ---------     --------        -----   ----                                    -------------                   --------        ------          -------
+  2m            2m              1       {default-scheduler }                                                    Normal          Scheduled       Successfully assigned songbase-8-build to 189tuxosn301.gfi.ihk.de
+  2m            2m              1       {kubelet 189tuxosn301.gfi.ihk.de}       spec.containers{sti-build}      Normal          Pulled          Container image "openshift/origin-sti-builder:v1.2.0" already present on machine
+  2m            2m              1       {kubelet 189tuxosn301.gfi.ihk.de}       spec.containers{sti-build}      Normal          Created         Created container with docker id e57e53cc0a80
+  2m            2m              1       {kubelet 189tuxosn301.gfi.ihk.de}       spec.containers{sti-build}      Normal          Started         Started container with docker id e57e53cc0a80 </code>
+	  </p>
+	  <p>
+	    <img class="table" src="images/songbase_neurotic_screenshot.png" alt="Unsere neue Version der Applikation"/>
+	  </p>
+
+
+
 	  
          </div> <!-- OpenShift -->
 	
@@ -770,3 +923,14 @@ status:
     </div> <!-- contents -->
   </body>
 </html>
+
+
+<!--
+	  <h4></h4>
+	  <p>
+	    <code></code>
+	  </p>
+	  <p>
+	    <img class="table" src="images/" alt=""/>
+	  </p>
+-->
