@@ -105,6 +105,20 @@ h6 {
    color:           #954b4b;
 }
 
+h7 {
+    font-size:        110%;
+    color:            #b76666;
+    text-decoration:  none;
+    border-bottom:    none;
+}
+
+h8 {
+    font-size:        110%;
+    color:            #954b4b;
+    text-decoration:  none;
+    border-bottom:    none;
+}
+
 code {
    display:		block;
    background-color:	#dfdbc3;

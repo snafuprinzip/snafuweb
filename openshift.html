@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!--- regex replacemant for command prompt:
+[0-9][0-9]:.*mleimenmeier.*+:[A-Za-z~]*+> -> <strong>\&</strong>
+[0-9][0-9]:.*leimm.*+:[A-Za-z~]*+> -> <strong>\&</strong>
+--->
+
 <html>
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
@@ -27,12 +32,28 @@
       </nav>
 
       <div id="maincontents">
+	<a name="top">
 	<h1>OpenShift</h1>
 	<div id="OpenShift">
 	  <p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte eines Entwicklers f&uuml;r die Implementation seines Microservices in einen Docker Container innerhalb des OpenShift Clusters zu erl&auml;utern.</p>
 
 
+	  <ol>
+	    <li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
+	    <li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
+	    <li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
+	    <ol>
+	      <li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
+	      <li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
+	      <li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
+	    </ol>
+	    <li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
+	    <li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
+	  </ol>
 
+
+
+	  <a name="login">
 	  <h2>Anmelden am OpenShift Cluster</h2>
 	  <ol>
 	    <li>Die Anmeldung erfolgt entweder &uuml;ber einen Webbrowser oder mit dem <code>oc login</code> Kommando (<a href="https://github.com/openshift/origin/releases/latest">https://github.com/openshift/origin/releases/latest</a>).</li>
@@ -45,7 +66,7 @@
 	    </li>
 	  </ol>
 	  <p>
-	    <code>07:57:10 leimm@189tuxlem001:workbench> oc login -u spielwiese https://iason.gfi.ihk.de:8443
+	    <code><strong>07:57:10 leimm@189tuxlem001:workbench></strong> oc login -u spielwiese https://iason.gfi.ihk.de:8443
 Authentication required for https://iason.gfi.ihk.de:8443 (openshift)
 Username: spielwiese
 Password:
@@ -60,9 +81,11 @@ You don't have any projects. You can try to create a new project, by running
 	  </p>
 
 
+	  <p><a href="#top">Back to top</a></p>
 	  <div class="page-break"></div>
 
 
+	  <a name="new-project">
 	  <h2>Projekt erstellen</h2>
 	  <p>Ist man noch keinem Projekt zugeteilt sollte man sich zuerst ein Projekt erstellen, da dies gleichzeitig auch den aktuellen Arbeitsbereich darstellt:</p>
 	  <ol>
@@ -71,7 +94,7 @@ You don't have any projects. You can try to create a new project, by running
 	    </li>
 	  </ol>
 	  <p>
-	    <code>09:23:57 leimm@189tuxlem001:~> oc new-project mongodbdemo --display-name="MongoDB Demo App" --description="Eine kleines Songarchiv um die Funktion einer Mongo Datenbank mit persistentem Storage innerhalb des OpenShift Clusters zu demonstrieren."
+	    <code><strong>09:23:57 leimm@189tuxlem001:~></strong> oc new-project mongodbdemo --display-name="MongoDB Demo App" --description="Eine kleines Songarchiv um die Funktion einer Mongo Datenbank mit persistentem Storage innerhalb des OpenShift Clusters zu demonstrieren."
 Now using project "mongodbdemo" on server "https://iason.gfi.ihk.de:8443".
 
 You can add applications to this project with the 'new-app' command. For example, try:
@@ -85,9 +108,11 @@ to build a new hello-world application in Ruby.</code>
 	  </p>
 
 
+	  <p><a href="#top">Back to top</a></p>
 	  <div class="page-break"></div>
 
 
+	  <a name="new-app">
 	  <h2>Applikation erstellen</h2>
 	  <p>Innerhalb eines Projektes kann es mehre Applikationen geben. Eine Applikation besteht wiederum mindestens aus einer DeploymentConfig und einem ImageStream f&uuml;r das fertige Docker Image; zumeist aber auch einer BuildConfig und einem weiteren ImageStream f&uuml;r das Docker Image, welches als Basisimage angegeben wurde.</p>
 	  <ol>
@@ -106,11 +131,11 @@ to build a new hello-world application in Ruby.</code>
 	  
 
 
-
+	  <a name="new-app-template">
 	  <h3>Installation einer MongoDB via Template (S2I Builder Image analog)</h3>
 	  <h4>Schauen welche Ressourcen via "Add to Project..." erh&auml;ltlich sind</h4>
 	  <p>
-	    <code>10:08:20 leimm@189tuxlem001:~> oc new-app --search mongodb
+	    <code><strong>10:08:20 leimm@189tuxlem001:~></strong> oc new-app --search mongodb
 Templates (oc new-app --template=&lt;template&gt;)
 -----
 mongodb-ephemeral
@@ -134,7 +159,7 @@ mongodb
 	  
 	  <h4>Mongo Datenbank mit 512MB grossem persistentem Storage hinzuf&uuml;gen</h4>
 	  <p>
-	    <code>10:42:03 leimm@189tuxlem001:~> oc new-app --param MONGODB_DATABASE=songdb,MONGODB_USER=river,MONGODB_PASSWORD=song,MONGODB_ADMIN_PASSWORD=tardis --name=songdb --template=mongodb-persistent
+	    <code><strong>10:42:03 leimm@189tuxlem001:~></strong> oc new-app --param MONGODB_DATABASE=songdb,MONGODB_USER=river,MONGODB_PASSWORD=song,MONGODB_ADMIN_PASSWORD=tardis --name=songdb --template=mongodb-persistent
 --> Deploying template "mongodb-persistent" in project "openshift" for "mongodb-persistent"
      With parameters:
       DATABASE_SERVICE_NAME=mongodb
@@ -156,7 +181,7 @@ mongodb
 	  <h4>&Uuml;bersicht &uuml;ber das aktuelle Projekt anzeigen</h4>
 	  
 	  <p>
-	    <code>10:42:18 leimm@189tuxlem001:~> oc status -v
+	    <code><strong>10:42:18 leimm@189tuxlem001:~></strong> oc status -v
 In project MongoDB Demo App (mongodbdemo) on server https://iason.gfi.ihk.de:8443
 
 svc/mongodb - 172.30.8.138:27017
@@ -175,17 +200,17 @@ View details with 'oc describe &lt;resource&gt;/&lt;name&gt;' or list everything
 	  <h4>Wie im Warning oben gew&uuml;nscht eine "Readiness"-Probe f&uuml;r den Dienst hinzuf&uuml;gen</h4>
 	  
 	  <p>
-	    <code>10:17:44 leimm@189tuxlem001:~> oc set probe dc/mongodb --readiness --open-tcp=27017
+	    <code><strong>10:17:44 leimm@189tuxlem001:~></strong> oc set probe dc/mongodb --readiness --open-tcp=27017
 	      deploymentconfig "mongodb" updated</code>
 	  </p>
 
 
 	  
-
+	  <a name="new-app-s2i">
 	  <h3>Installation einer Python Applikation via S2I Builder Image</h3>
 	  <h4>Schauen welche Ressourcen via "Add to Project..." erh&auml;ltlich sind</h4>
 	  <p>
-	    <code>10:08:20 leimm@189tuxlem001:~> oc new-app --search python
+	    <code><strong>10:08:20 leimm@189tuxlem001:~></strong> oc new-app --search python
 Image streams (oc new-app --image-stream=<image-stream> [--code=<source>])
 -----
 python
@@ -205,7 +230,7 @@ python
 
 	  <h4>Python 2.7 Applikation mit Hilfe der &lt;image&gt;:&lt;version&gt;~&lt;gitrepo&gt; Syntax erzeugen</h4>
 	  <p>
-	    <code>14:48:17 leimm@189tuxlem001:~> oc new-app --name=songbase openshift/python:2.7~ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
+	    <code><strong>14:48:17 leimm@189tuxlem001:~></strong> oc new-app --name=songbase openshift/python:2.7~ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
 --> Found image 1ad8f28 (4 months old) in image stream "python" in project "openshift" under tag "2.7" for "openshift/python:2.7"
 
     Python 2.7
@@ -237,10 +262,10 @@ python
 	  <h4>Build Vorgang starten und beobachten</h4>
 	  <p>
 	    entweder mit
-	    <code>15:03:35 leimm@189tuxlem001:~> oc start-build bc/songbase
+	    <code><strong>15:03:35 leimm@189tuxlem001:~></strong> oc start-build bc/songbase
 songbase-4
 
-15:03:58 leimm@189tuxlem001:~> oc logs bc/songbase
+<strong>15:03:58 leimm@189tuxlem001:~></strong> oc logs bc/songbase
 I0601 13:43:13.562766       1 builder.go:57] Master version "v1.1.3", Builder versions "v1.1.3"
 I0601 13:43:13.578552       1 builder.go:145] Running build with cgroup limits: api.CGroupLimits{MemoryLimitBytes:9223372036854775807, CPUShares:2, CPUPeriod:100000, CPUQuota:-1, MemorySwap:9223372036854775807}
 I0601 13:43:13.581236       1 sti.go:190] The value of ALLOWED_UIDS is [1-]
@@ -306,7 +331,7 @@ I0601 13:43:24.563258       1 sti.go:266] Successfully pushed 172.30.25.80:5000/
 	  </p>
           <p>
 	    oder direkt in einem Abwasch:
-	    <code>15:04:24 leimm@189tuxlem001:~> oc start-build bc/songbase --follow
+	    <code><strong>15:04:24 leimm@189tuxlem001:~></strong> oc start-build bc/songbase --follow
 songbase-5
 I0601 13:45:37.369040       1 builder.go:57] Master version "v1.1.3", Builder versions "v1.1.3"
 I0601 13:45:37.384766       1 builder.go:145] Running build with cgroup limits: api.CGroupLimits{MemoryLimitBytes:9223372036854775807, CPUShares:2, CPUPeriod:100000, CPUQuota:-1, MemorySwap:9223372036854775807}
@@ -332,13 +357,13 @@ I0601 13:45:37.395641       1 sti.go:212] Creating a new S2I builder with build 
 
 	  <h4>Route erzeugen um die Applikation nach aussen zur Verf&uuml;gung zu stellen</h4>
 	  <p>
-	    <code>15:35:21 leimm@189tuxlem001:~> oc expose svc/songbase --hostname=songbase.argo.gfi.ihk.de
+	    <code><strong>15:35:21 leimm@189tuxlem001:~></strong> oc expose svc/songbase --hostname=songbase.argo.gfi.ihk.de
 route "songbase" exposed</code>
 	  </p>
 
 	  <h4>Anzahl der Pods von 1 auf 5 hochskalieren</h4>
 	  <p>
-	    <code>15:37:10 leimm@189tuxlem001:~> oc scale dc/songbase --replicas=5
+	    <code><strong>15:37:10 leimm@189tuxlem001:~></strong> oc scale dc/songbase --replicas=5
 deploymentconfig "songbase" scaled</code>
 	  </p>
 	  <p>
@@ -351,7 +376,7 @@ deploymentconfig "songbase" scaled</code>
 	  <h4>Environment Variablen der MongoDB Instanz auslesen und der Applikation mitteilen</h4>
 	  <p>
 	    Environment aus der DeploymentConfig der MongoDB auslesen:
-	    <code>15:43:30 leimm@189tuxlem001:~> oc env dc/mongodemodb --list
+	    <code><strong>15:43:30 leimm@189tuxlem001:~></strong> oc env dc/mongodemodb --list
 # deploymentconfigs mongodemodb, container mongodb
 MONGODB_USER=user13L
 MONGODB_PASSWORD=4odluk5m77SDVSjN
@@ -360,7 +385,7 @@ MONGODB_ADMIN_PASSWORD=8PIUf7YE8WvQE7Mh</code>
 	  </p>
 	  <p>
 	    Variablen in die DeploymentConfig der Applikation injezieren:
-	    <code>15:44:49 leimm@189tuxlem001:~> for var in $(oc env dc/mongodemodb --list | grep -v ^#); do oc env dc/songbase $var; done
+	    <code><strong>15:44:49 leimm@189tuxlem001:~></strong> for var in $(oc env dc/mongodemodb --list | grep -v ^#); do oc env dc/songbase $var; done
 deploymentconfig "songbase" updated
 deploymentconfig "songbase" updated
 deploymentconfig "songbase" updated
@@ -368,7 +393,7 @@ deploymentconfig "songbase" updated</code>
 	  </p>
           <p>
 	    Und noch einmal kontrollieren:
-	    <code>15:45:54 leimm@189tuxlem001:~> oc env dc/songbase --list
+	    <code><strong>15:45:54 leimm@189tuxlem001:~></strong> oc env dc/songbase --list
 # deploymentconfigs songbase, container songbase
 MONGODB_DATABASE=sampledb
 MONGODB_PASSWORD=4odluk5m77SDVSjN
@@ -411,6 +436,7 @@ songs = db['songs']
 
 
 
+	  <a name="new-app-dockerfile">
 	  <h3>Installation einer Applikation via Docker Build Strategie</h3>
           <p>
 	    Bei dieser Methode legt man seine Quellen zusammen mit einem Dockerfile einfach in ein git Repository ab und erzeugt mit dem oc Kommando eine neue app.
@@ -420,7 +446,7 @@ songs = db['songs']
 	  
 	  <h4>&Uuml;bersicht &uuml;ber das git Repository</h4>
 	  <p>
-	    <code>08:35:51 leimm@189tuxlem001:podenv> ls -R1
+	    <code><strong>08:35:51 leimm@189tuxlem001:podenv></strong> ls -R1
 .:
 Dockerfile
 README.md
@@ -455,7 +481,7 @@ CMD ["app"]</code>
 	  
 	  <h4>Applikation erstellen</h4>
 	  <p>
-	    <code>10:34:22 leimm@189tuxlem001:podenv> oc new-app ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/podenv.git --strategy=docker
+	    <code><strong>10:34:22 leimm@189tuxlem001:podenv></strong> oc new-app ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/podenv.git --strategy=docker
 The authenticity of host '[bitbucket.backend.gfi.ihk.de]:7999 ([10.189.91.62]:7999)' can't be established.
 RSA key fingerprint is 85:2b:a6:e3:94:2c:c9:79:9b:6f:46:19:6c:89:e0:92.
 Are you sure you want to continue connecting (yes/no)? yes
@@ -485,7 +511,7 @@ Are you sure you want to continue connecting (yes/no)? yes
 
           <h4>Build Vorgang anschauen</h4>
           <p>
-            <code>10:36:44 leimm@189tuxlem001:podenv> oc logs bc/podenv --follow
+            <code><strong>10:36:44 leimm@189tuxlem001:podenv></strong> oc logs bc/podenv --follow
 podenv-1
 I0607 08:39:39.945906       1 builder.go:57] Master version "v1.2.0", Builder version "v1.2.0"
 I0607 08:39:39.963958       1 builder.go:145] Running build with cgroup limits: api.CGroupLimits{MemoryLimitBytes:92233720368547, CPUShares:2, CPUPeriod:100000, CPUQuota:-1, MemorySwap:92233720368547}
@@ -607,12 +633,12 @@ Removing intermediate container 33c60d1ac517
 Successfully built c7bc4ea9674e
 I0607 08:40:44.352348       1 docker.go:118] Pushing image 172.30.25.80:5000/podenv/podenv:latest ...
 I0607 08:42:13.628008       1 docker.go:122] Push successful</code>
-            Die Zeilen in denen der Docker Daemon das image herunterl&auml;dt und extrahiert sind gek&uuml;rzt um die Lesbarkeit zu erh&ouml;hen. 
+            Die Zeilen in denen der Docker Daemon das image herunterl&auml;dt und extrahiert wurden gek&uuml;rzt um die Lesbarkeit zu erh&ouml;hen. 
 	  </p>
 
 	  <h4>Route erzeugen um die Applikation nach aussen zur Verf&uuml;gung zu stellen</h4>
 	  <p>
-	    <code>15:35:21 leimm@189tuxlem001:~> oc expose svc/podenv --hostname=podenv.argo.gfi.ihk.de
+	    <code><strong>15:35:21 leimm@189tuxlem001:~></strong> oc expose svc/podenv --hostname=podenv.argo.gfi.ihk.de
 route "podenv" exposed</code>
 	  </p>
 	  <p>
@@ -635,10 +661,11 @@ route "podenv" exposed</code>
 	    <img class="table" src="images/podenv_screenshot.png" alt="Unsere Webapplikation"/>
 	  </p>
 
-
+	  <p><a href="#top">Back to top</a></p>
 	  <div class="page-break"></div>
 
 
+	  <a name="ssh-keys">
 	  <h2>ssh Schl&uuml;ssel hinterlegen</h2>
 	  <p>Ist das Repository aus dem man seine Applikation bezieht nicht &ouml;ffentlich empfiehlt es sich einen ssh Schl&uuml;ssel zu erzeugen und diesen dann sowohl in
 	    den Benutzereinstellungen in der Repository-Verwaltung (bitbucket, github, gitlab, o.&auml;.) einzuf&uuml;gen als auch in der BuildConfig des OpenShift Projektes
@@ -654,7 +681,7 @@ route "podenv" exposed</code>
 	  
 	  <h4>SSH Schl&uuml;ssel generieren</h4>
 	  <p>
-	    <code>10:46:54 mleimenmeier@h2366850:sshkey> ssh-keygen -f git
+	    <code><b>10:46:54 mleimenmeier@h2366850:sshkey></b> ssh-keygen -f git
 Generating public/private rsa key pair.
 Enter passphrase (empty for no passphrase):
 Enter same passphrase again:
@@ -675,16 +702,16 @@ The key's randomart image is:
 |        . o      |
 +-----------------+
 
-10:47:18 mleimenmeier@h2366850:sshkey> ls -l
+<strong>10:47:18 mleimenmeier@h2366850:sshkey></strong> ls -l
 total 8
 -rw-------. 1 mleimenmeier mleimenmeier 1679 Jun  1 10:47 git
 -rw-r--r--. 1 mleimenmeier mleimenmeier  420 Jun  1 10:47 git.pub
 
-10:47:30 mleimenmeier@h2366850:sshkey> file *
+<strong>10:47:30 mleimenmeier@h2366850:sshkey></strong> file *
 git:     PEM RSA private key
 git.pub: OpenSSH RSA public key
 
-10:47:49 mleimenmeier@h2366850:sshkey> cat git.pub
+<strong>10:47:49 mleimenmeier@h2366850:sshkey></strong> cat git.pub
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJcTtfw6e+6LzXGqwtQ71xJoOHuHpAh3IIoiwNxbsCPaDf26LtT9l3j16Iu+8ItiiF2E6jXNQqiiVONnV44v/OhydqNCXOsXY9IbLVB+A3bsoZp6rvphIIDiFQif6tGA/xaEeDmN9HyAZnCX4OEDnMz0MQxukwNEgJy4+IM1nkSEKKD1fB6+/5HiauiXLjS513MMS3PYLKkeEP7MtzM5YAB0xvPA/E/FbG/A8KYTOeLA/fRAitipAHeKzir11xA5iquRbTNdV+USsBp5hqWP4HyerHPMjamtEjIdfI36c4rmNzy7zdSaYJx5U744xjev8mB9QTUxnJNBThfjJWl22n mleimenmeier@h2366850.snafuprinzip.de</code>
 	  </p>
 	  
@@ -697,22 +724,22 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJcTtfw6e+6LzXGqwtQ71xJoOHuHpAh3IIoiwNxbsC
 
 	  <h4>OpenShift secret aus dem private key erstellen</h4>
 	  <p>
-	    <code>10:55:19 mleimenmeier@h2366850:sshkey> oc secrets new-sshauth sshsecret --ssh-privatekey=git
+	    <code><strong>10:55:19 mleimenmeier@h2366850:sshkey></strong> oc secrets new-sshauth sshsecret --ssh-privatekey=git
 secret/sshsecret</code>
 	  </p>
 
 
 	  <h4>Dem Builder Systemaccount Zugriff auf das secret gew&auml;hren</h4>
           <p>
-	    <code>10:55:21 mleimenmeier@h2366850:sshkey> oc secrets add serviceaccount/builder secrets/sshsecret</code>
+	    <code><strong>10:55:21 mleimenmeier@h2366850:sshkey></strong> oc secrets add serviceaccount/builder secrets/sshsecret</code>
 	  </p>	  
 
 
 	  <h4>Das secret in der BuildConfig hinterlegen (die beiden gr&uuml;n markierten Zeilen einf&uuml;gen)</h4>
 	  <p>
-	    <code>10:55:44 mleimenmeier@h2366850:sshkey> oc edit bc/songbase 
+	    <code><strong>10:55:44 mleimenmeier@h2366850:sshkey></strong> oc edit bc/songbase 
 
---- snip ---
+File Edit Options Buffers Tools Help
 
 # Please edit the object below. Lines beginning with a '#' will be ignored,
 # and an empty file will abort the edit. If an error occurs while saving this file will be
@@ -771,15 +798,19 @@ status:
 	  </p>
 
 
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+	  <a name="webhooks">
 	  <h2>Webhooks</h2>
 	  <h3>Webhooks setzen um automatisierte Builds bei &Auml;nderungen am Quellcode zu erm&ouml;glichen</h3>
 	  <h4>Webhook aus Buildconfig ermitteln</h4>
 	  <p>
-	    <code>10:41:38 leimm@189tuxlem001:mongodemo> oc get bc
+	    <code><strong>10:41:38 leimm@189tuxlem001:mongodemo></strong> oc get bc
 NAME       TYPE      FROM          LATEST
 songbase   Source    Git@release   7
 
-10:46:43 leimm@189tuxlem001:mongodemo> oc describe bc/songbase
+<strong>10:46:43 leimm@189tuxlem001:mongodemo></strong> oc describe bc/songbase
 Name:                   songbase
 Created:                11 weeks ago
 Labels:                 app=songbase
@@ -821,23 +852,23 @@ songbase-1      failed          3s              2016-03-23 09:48:05 +0100 CET
 	  <h4>Kontrollieren ob der Webhook funktioniert</h4>
 	  <p>
 	    <code>
-10:46:53 leimm@189tuxlem001:mongodemo> git checkout release
+<strong>10:46:53 leimm@189tuxlem001:mongodemo></strong> git checkout release
 Switched to branch 'release'
 Your branch is up-to-date with 'origin/release'.
 
-11:02:32 leimm@189tuxlem001:mongodemo> git merge master
+<strong>11:02:32 leimm@189tuxlem001:mongodemo></strong> git merge master
 Updating c09b957..2a9b779
 Fast-forward
  app.py | 11 ++++++++---
  1 file changed, 8 insertions(+), 3 deletions(-)
 
-11:02:43 leimm@189tuxlem001:mongodemo> git commit -m "neurotic fish released"
+<strong>11:02:43 leimm@189tuxlem001:mongodemo></strong> git commit -m "neurotic fish released"
 On branch release
 Your branch is ahead of 'origin/release' by 1 commit.
   (use "git push" to publish your local commits)
 nothing to commit, working directory clean
 
-11:04:36 leimm@189tuxlem001:mongodemo> oc get builds --watch &
+<strong>11:04:36 leimm@189tuxlem001:mongodemo></strong> oc get builds --watch &
 [1] 7196
 
 NAME         TYPE      FROM          STATUS     STARTED        DURATION
@@ -850,7 +881,7 @@ songbase-6   Source    Git@c09b957   Complete   8 days ago     25s
 songbase-7   Source    Git@c09b957   Complete   3 days ago     11s
 
 
-11:04:39 leimm@189tuxlem001:mongodemo> git push
+<strong>11:04:39 leimm@189tuxlem001:mongodemo></strong> git push
 Total 0 (delta 0), reused 0 (delta 0)
 remote:
 remote: Pull Request erstellen für release:
@@ -859,7 +890,7 @@ remote:
 To ssh://git@bitbucket.backend.gfi.ihk.de:7999/snafu/mongodemo.git
    c09b957..2a9b779  release -> release
 
-11:04:44 leimm@189tuxlem001:mongodemo> 
+<strong>11:04:44 leimm@189tuxlem001:mongodemo></strong> 
 NAME         TYPE      FROM          STATUS    STARTED   DURATION
 songbase-8   Source    Git@release   New
 songbase-8   Source    Git@release   Pending
@@ -867,7 +898,7 @@ songbase-8   Source    Git@release   Running   Less than a second ago
 songbase-8   Source    Git@2a9b779   Running   1 seconds ago   1s
 songbase-8   Source    Git@2a9b779   Complete   11 seconds ago   11s
 
-11:06:45 leimm@189tuxlem001:mongodemo> oc describe build songbase-8
+<strong>11:06:45 leimm@189tuxlem001:mongodemo></strong> oc describe build songbase-8
 Name:                   songbase-8
 Created:                2 minutes ago
 Labels:                 app=songbase,buildconfig=songbase,openshift.io/build-config.name=songbase
@@ -906,6 +937,9 @@ Events:
 	    <img class="table" src="images/songbase_neurotic_screenshot.png" alt="Unsere neue Version der Applikation"/>
 	  </p>
 
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
 
 
 	  

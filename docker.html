@@ -28,16 +28,42 @@
 
       <div id="maincontents">
 	<!--	<div class="page-break"></div> -->
+	<a name="top">
 	<h1>Docker</h1>
-
 	<div id="Docker">
-	  <h2>Docker</h2>
+	  <p>Diese kurze &Uuml;bersicht dient dazu die wichtigsten Aufgaben und Best Practices
+	    im Zusammenspiel von Docker und RedHat Enterprise Linux 7 oder vergleichbare Derivate
+	    wie CentOS oder ScientificLinux zu beleuchten und zeigt auch Best Practices im Umgang
+	    mit OpenShift auf.
+	  </p>
+
+	  <ol>
+	    <li><a href="#installation"><h7>Installation unter RHEL7/CentOS7</h7></a></li>
+	    <li><a href="#container"><h7>Umgang mit Containern</h7></a></li>
+	    <li><a href="#images"><h7>Umgang mit Images</h7></a></li>
+	    <li><a href="#dockerfile"><h7>Aufbau eines Dockerfiles</h7></a></li>
+	    <li><a href="#bestpractice"><h7>Best practices</h7></a></li>
+	    <ol>
+	      <li><a href="#containerbau"><h8>Was gibt es bei einem Dockerfile allgemein zu beachten?</h8></a></li>
+	      <li><a href="#openshift"><h8>Was gibt es bei einem Dockercontainer im Openshift zu bedenken?</h8></a></li>
+	      <li><a href="#source2image"><h8>Source2Image Builder Images erstellen</h8></a></li>
+	    </ol>
+	    <li><a href="#misc"><h7>Verschiedenes</h7>
+	    <ol>
+	      <li><a href="#linkedcontainer"><h8>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h8></a></li>
+	      <li><a href="#mysqlbackup"><h8>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h8></a></li>
+	      <li><a href="#supervisord"><h8>Mehrere Anwendungen in einem Container mit Hilfe des Supervisord</h8></a></li>
+	    </ol>
+	  </ol>
+
+
+	  <h2>Docker Service Information</h2>
 	  <table class="serviceinfo">
 	    <caption>Docker Service Information</caption>
 	    <tr>
 	      <th>Pakete:</th>		
 	      <td>
-		docker-io (epel-release)
+		docker
 	      </td>
 	    </tr>
 	    <tr>
@@ -49,16 +75,22 @@
 	    <tr>
 	      <th>Konfigurationswerkzeuge:</th>		
 	      <td>
+		docker-storage-setup
 	      </td>
 	    </tr>
 	    <tr>
 	      <th>Konfigurationsdateien:</th>		
 	      <td>
+		/etc/sysconfig/docker</br>
+		/etc/sysconfig/docker-network</br>
+		/etc/sysconfig/docker-storage</br>
+		/etc/sysconfig/docker-storage-setup
 	      </td>
 	    </tr>
 	    <tr>
 	      <th>Logdateien / -verzeichnis:</th>		
 	      <td>
+		/var/log/messages
 	      </td>
 	    </tr>
 	    <tr>
@@ -69,6 +101,15 @@
 	    <tr>
 	      <th>SELinux Booleans:</th>		
 	      <td>
+		docker_connect_any             (off  ,  off)  Allow docker to connect any</br>
+		openshift_use_nfs              (off  ,  off)  Allow openshift to access nfs file systems without labels</br>
+		virt_sandbox_use_sys_admin     (off  ,  off)  Allow sandbox containers to use sys_admin system calls, for example mount</br>
+		virt_sandbox_use_mknod         (off  ,  off)  Allow sandbox containers to use mknod system calls</br>
+		virt_sandbox_use_audit         (on   ,   on)  Allow sandbox containers to send audit messages</br>
+		virt_sandbox_use_samba         (off  ,  off)  Allow sandbox containers to manage samba/cifs files</br>
+		virt_sandbox_use_nfs           (off  ,  off)  Allow sandbox containers to manage nfs files</br>
+		virt_sandbox_use_netlink       (off  ,  off)  Allow sandbox containers to use netlink system calls</br>
+		virt_sandbox_use_all_caps      (on   ,   on)  Allow sandbox containers to use all capabilities
 	      </td>
 	    </tr>
 	    <tr>
@@ -79,11 +120,91 @@
 	    </tr>
 	  </table>
 
-	  <h3>Installation</h3>
-	  <p><code>root@docker:~&gt; <strong>yum -y install epel-release</strong>
-root@docker:~&gt; <strong>yum -y install docker-io</strong></code></p>
-	  
-	  <h3>Container</h3>
+
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+	  <a name="installation">
+	  <h2>Installation</h2>
+
+	  <h3>Paket installieren</h3>
+	  <p>
+	    <code>root@docker:~&gt; <strong>yum -y install docker</strong></code>
+	  </p>
+
+	  <h3>Storage konfigurieren</h3>
+	  <p>
+	    Bevor der Docker Daemon das erste mal gestartet wird m&uuml;ssen wir den storage f&uuml;r die Docker Container konfigurieren.</br>
+	    Wie ben&ouml;tigen Speicherplatz im <em>/var/lib/docker</em> Verzeichnis um die gedownloadeten Images abzuspeichern
+	    aber auch Speicher f&uuml;r die laufenden Container.</br>
+	    F&uuml;r Letzteren m&uuml;ssen wir eine Partition/LUN z&uuml;r Verf&uuml;gung stellen und diese
+	    Disk in die <em>/etc/sysconfig/docker-storage-setup</em> Datei zusammen mit einem Namen f&uuml;r die LVM Volumegruppe eintragen
+	    und anschliessend das <code>docker-storage-setup</code> Kommando ausf&uuml;hren.
+	  </p>
+
+	  <h4>Device s&auml;ubern falls n&ouml;tig.</h4>
+	  <p>
+	    <code>
+	    </code>
+	  </p>
+
+	  <h4>/etc/sysconfig/docker-storage-setup editieren</h4>
+	  <p>
+	    <code># Edit this file to override any configuration options specified in
+# /usr/lib/docker-storage-setup/docker-storage-setup.
+#
+# For more details refer to "man docker-storage-setup"
+
+DEVS="/dev/vdb"
+VG="dockervg"</code>
+	  </p>
+
+	  <h4>docker-storage-setup ausf&uuml;hren</h4>
+	  <p>
+	    <code>
+	    </code>
+	  </p>
+
+	  <h3>Daemon aktivieren und starten</h3>
+	  <p>
+	    <code>root@docker:~&gt; <strong>systemctl enable docker</strong>
+Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</code>
+	    <code>root@docker:~&gt; <strong>systemctl start docker</strong></code>
+	    <code>root@docker:~&gt; <strong>systemctl status docker</strong>
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: active (running) since Mon 2016-06-13 10:25:23 CEST; 4s ago
+     Docs: http://docs.docker.com
+ Main PID: 22120 (sh)
+   CGroup: /system.slice/docker.service
+           ├─22120 /bin/sh -c /usr/bin/docker-current daemon $OPTIONS            $DOCKER_STORAGE_OPTIONS            $DOCKER_NETWORK_OPTIONS            $ADD_REGISTRY            $BLOCK...
+           ├─22123 /usr/bin/docker-current daemon --selinux-enabled --add-registry registry.access.redhat.com
+           └─22124 /usr/bin/forward-journald -tag docker
+
+Jun 13 10:25:22 docker forward-journal[22124]: time="2016-06-13T10:25:22.856866355+02:00" level=info msg="[graphdriver] using prior storage driver \"devicemapper\""
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.418915225+02:00" level=info msg="Firewalld running: false"
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.489964168+02:00" level=info msg="Default bridge (docker0) is assigned with an IP address 172...IP address"
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.554518188+02:00" level=info msg="Loading containers: start."
+Jun 13 10:25:23 docker forward-journal[22124]: ....
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.571002778+02:00" level=info msg="Loading containers: done."
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.571541955+02:00" level=info msg="Daemon has completed initialization"
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.571565439+02:00" level=info msg="Docker daemon" commit="ab77bde/1.9.1" execdriver=native-0.2...rsion=1.9.1
+Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.579068123+02:00" level=info msg="API listen on /var/run/docker.sock"
+Jun 13 10:25:23 docker systemd[1]: Started Docker Application Container Engine.
+Hint: Some lines were ellipsized, use -l to show in full.</code>
+	  </p>
+
+
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+
+	  <a name="container">
+	  <h2>Umgang mit Containern</h2>
 
 	  <h4>Container anzeigen</h4>
 	    <code>root@docker:~&gt; <strong>docker ps [-a|-l]</strong>
@@ -267,7 +388,14 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 85bd081a5e14</code>
 
 
-	  <h3>Images</h3>
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+
+	  <a name="images">
+	  <h2>Umgang mit Images</h2>
 	  <h4>Images anzeigen </h4>
 	  <code>root@docker:~&gt; <strong>docker images</strong>
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
@@ -284,8 +412,286 @@ Deleted: 4986bf8c15363d1c5d15512d5266f8777bfba4974ac56e3270e7760f6f0a8125
 Deleted: ea13149945cb6b1e746bf28032f02e9b5a793523481a0a18645fc77ad53c4ea2
 Deleted: df7546f9f060a2268024c8a230d8639878585defcc1bc6f79d2728a13957871b</code>
 
-	  <h3>Best Practices</h3>
-	  <h4>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h4>
+
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+	  <a name="dockerfile">
+	  <h2>Aufbau eines Dockerfiles</h2>
+	  <p>
+	    Ein sogenanntes <em>Dockerfile</em> ist eine Art Bauanleitung f&uuml;r ein Image aus welchem sp&auml;ter einmal ein laufender Container entstehen soll.</br>
+	    Der gr&ouml;sste Teil eines Dockerfiles bezieht sich auf den eigentlichen Bauvorgang des Images, ein kleiner Teil aber auch auf die Laufzeit.
+	    Wir zeigen unten ein typisches, einfach gehaltenes Dockerfile und gehen darunter auf weitere m&ouml;gliche Direktiven kurz ein.
+	  </p>
+	  <p>
+	    <code>FROM golang:latest
+
+COPY src/gowebenv/. /go/src/app
+WORKDIR /go/src/app
+
+RUN go build -v
+RUN go install -v
+
+EXPOSE 8000
+
+CMD ["app"]</code>
+	  </p>
+	  <p>
+	    In diesem Beispiel wird zuerst mit COPY ein Verzeichnis auf meiner Workstation in den Container kopiert und anschliessend in dieses Zielverzeichnis gewechselt.
+	    Dann werden nacheinander zwei Kommandos ausgef&uuml;hrt und zu guter Letzt geben wir Docker noch bekannt auf welchem Port unsere Applikation lauschen wird
+	    und mit welchem Kommando er den Container starten soll.
+	  </p>
+
+
+
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+
+	  <a name="bestpractice">
+	  <h2>Best Practices</h2>
+
+	  <a name="containerbau">
+	  <h3>Was gibt es bei einem Dockerfile allgemein zu beachten?</h3>
+	  <ul>
+	    <li>Container sollten so fl&uuml;chtig wie eben m&ouml;glich designt werden</li>
+	    <li>Eine <em>.dockerignore</em> Datei sollte genutzt werden um Dateien, die nicht kopiert werden m&uuml;ssen auszuschliessen</li>
+	    <li>Im Container sollten sich keine ungenutzten Pakete befinden</li>
+	    <li>Nur ein Prozess pro Container</li>
+	    <li>So wenig Layer wie m&ouml;glich</li>
+	    <li>Zur besseren &Uuml;bersichtlichkeit sollten Argumente, die &uuml;ber mehrere Zeilen gehen alphanumerisch sortiert werden</li>
+	    <li>Updates des Caches werden f&uuml;r einen Dockerbuild erst gel&ouml;scht, wenn sich folgendes &auml;ndert:</li>
+	    <ul>
+	      <li>RUN Statements werden als String miteinander auf Unterschiede verglichen</li>
+	      <li>ADD und COPY Direktiven werden anhand einer checksum &uuml;ber die Daten verglichen</li>
+	    </ul>
+	    <li>Paketinstallationen via <em>yum install</em> und anschliessendem <em>yum clean cache</em> sollten in einem einzigen RUN Statement
+	      zusammengefasst werden, da sonst nach der Installation ein Filesystemlayer abgeschlossen wird und Dateien nicht mehr nachtr&auml;glich 
+	      gel&ouml;scht werden k&ouml;nnen.</li>
+	    <li>alle von der Applikation genutzten Ports sollten bereits im Dockerfile EXPOSEd werden</li>
+	    <li>ENVironment Variablen zur Konfiguration der Applikation / des Services nutzen</li>
+	    <li>CMD Statements sollten im ["executable", "arg1", "arg2"] Stil angegeben werden</li>
+	    <li>VOLUMEs f&uuml;r persistenten Storage nutzen</li>
+	    <li>WORKDIR immer mit absolutem Pfad angeben</li>
+	    <li>Direktiven nach M&ouml;glichkeit in Reihenfolge anlegen, wobei die am h&auml;ufigsten genutzten Direktiven oben stehen</li>
+	    <li>USER mit <code>RUN groupadd -r &lt;gruppe&gt; && useradd -r -g &lt;gruppe&gr; &lt;user&gt;</code> anlegen und falls <em>sudo</em> n&ouml;tig ist
+	      stattdessen besser <em>gosu</em> verwenden, z.B. in folgendem <em>wrapper.sh</em> Wrapper-Skript:
+	      <code>#! /bin/bash
+set -e
+if [ "$1" = 'postgres' ]; then
+   chown -R postgres ${PGDATA}
+   if [ -z $(ls -A ${PGDATA}) ]; then
+      gosu postgres initdb
+   fi
+
+   exec gosu postgres "$@"
+fi
+
+exec "$@"</code>
+	       und den dazugeh&ouml;rigen Dockerfile Direktiven:
+	      <code>COPY ./wrapper.sh /
+ENTRYPOINT ["wrapper.sh"]
+CMD ["default parameter 1", "default parameter 2"]</code>
+	    </li>
+	  </ul>
+
+
+	  <a name="openshift">
+	  <h3>Was gibt es bei einem Dockercontainer im OpenShift besonders zu beachten?</h3>
+	  <p>
+	    Applikationen in einem OpenShift Container laufen immer mit einer zuf&auml;llig generierten UserID;
+	    der Buildprozess allerdings l&auml;uft wie der default Docker Container unter dem root User.</br>
+	    Dies f&uuml;hrt bei der Migration von Standardimages in den OpenShift immer wieder zu Problemen, 
+	    da I/O Operationen im Container immer wieder an den Standard Unix Rechten scheitern. Aus diesem Grund
+	    sollten Konfigurationsdateien am besten f&uuml;r alle Benutzer lesbar sein und wenn Schreibzugriffe
+	    ben&ouml;tigt diese &uuml;ber persistente Volumes zu realisieren, da letztere von OpenShift automatisch
+	    auf die korrekte UID gemappt werden.</br>
+	    Manche Applikationen ben&ouml;tigen aber auch Eintr&auml;ge f&uuml;r den aktuellen Benutzer in der 
+	    <em>/etc/passwd</em> Datei um korrekt zu funktionieren. Um dieses Problem zu beheben bedienen wir uns
+	    der nss_wrapper Software, eines Wrapper Skriptes und einer passwd Template Datei:
+	  </p>
+
+	  <p>
+	    <code>yum -y install nss_wrapper gettext && \
+    yum clean all</code>
+	  </p>
+
+	  <p>
+	    wrapper.sh
+	    <code>export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
+
+envsubst < ${HOME}/passwd.template > /tmp/passwd
+
+export LD_PRELOAD=libnsswrapper.so
+export NSS_WRAPPER_PASSWD=/tmp/passwd
+export NSS_WRAPPER_GROUP=/etc/group</code>
+	  </p>
+
+	  <p>
+	    passwd.template
+	    <code>root:x:0:0:root:/root:/bin/bash
+[...]
+appuser:x:${USER_ID}:${GROUP_ID}:Application User:${HOME}:/bin/bash</code>
+	  </p>
+
+	  <p>
+	    Bei einem OpenShift Builder Image unerl&auml;sslich, aber auch f&uuml;r alle anderen Images praktisch ist das Setzen von spezifischen OpenShift Labels,
+	    die von OpenShift ausgewertet und auch in der WebGUI mit angezeigt werden.
+	    <ul>
+	      <li>Beschreibung des Images
+		<code>LABEL io.k8s.description OpenShift Builder Image f. in GO geschriebene Applikationen</code>
+	      </li>
+	      <li>Tags
+		<code>LABEL io.openshift.tags mongodb,mongodb24,nosql</code>
+	      </li>
+	      <li>Anhand von Tags darlegen welche Images ben&ouml;tigt werden
+		<code>LABEL io.openshift.wants mongodb,redis</code>
+	      </li>
+	      <li>Liste der EXPOSEd Ports im PORT[/PROTO]:NAME Format
+		<code>LABEL io.openshift.expose-services 2020/udp:ftp,8080:https</code>
+	      </li>
+	      <li>Unterst&uuml;tzt das Image mehr als eine einzelne Instanz?
+		<code>LABEL io.openshift.non-scalable true</code>
+	      </li>
+	      <li>Welche Ressourcen werden mindestens f&uuml;r das Deployment einer Instanz ben&ouml;tigt?
+		<code>LABEL io.openshift.min-memory 8Gi
+LABEL io.openshift.min-cpu    4</code>
+	      </li>
+	    </ul>
+	  </p>	
+
+
+	  <a name="source2image">
+	  <h3>Source2Image Builder Images erstellen</h3>
+	  <p>
+	    Source2Image ist ein Verfahren, welches es erm&ouml;glicht Images zu erstellen, die lediglich den Quellcode der Applikation abholen ein neues Image
+	    mit dem lauff&auml;higen Code erstellt und ist vergleichbar mit den ONBUILD Instruktionen im Dockerfile (und unterst&uuml;tzt diese Direktive aktiv im Buildvorgang).</br>
+	    Hierzu ben&ouml;tigt S2I zum einen den Quellcode der Applikation, eine Handvoll von sogenannten <em>S2I-Skripten</em> sowie das eigene Builderimage als Basis.
+	    S2I schn&uuml;rt die Quellen und die S2I-Skripte zu einem tarfile zusammen und entpackt dieses nach /tmp bzw. dem unter <em>--destination</em> 
+	    bzw. dem Label <em>io.openshift.s2i.destination</em> angegebenen Pfad in den Container. Skripte liegen entweder im <em>.sti/bin</em>-Verzeichnis, der mit <em>--scripts-url</em>
+	    bzw. dem <em>io.openshift.s2i.scripts-url</em> Label angegebenen URL, die wiederum entweder auf
+	    <ul>
+	      <li>ein Verzeichnis innerhalb des Images
+		<code>image://path/to/scripts/dir</code>
+	      </li>
+	      <li>ein Verzeichnis auf dem Hostsystem
+		<code>file://path/to/scripts/dir</code>
+	      </li>
+	      <li>oder eine Verzeichnis URL verweisen:
+		<code>http(s)://path/to/scripts/dir</code>
+	      </li>
+            </ul>
+	  </p>
+	
+	  <p>
+	    F&uuml;r den Buildprozess sollten das tar Kommando und die Bourne Shell /bin/sh installiert sein.</br>
+	    Der Build Workflow gliedert sich in die folgenden Schritte:
+	    <ol>
+	      <li>Download der S2I Skripte</li>
+	      <li>Handelt es sich um einen inkrementellen Build werden Artefakte gesichert</li>
+	      <li>Download des Quellcodes</li>
+	      <li>Generieren des tarfiles</li>
+	      <li>Build Vorgang (sollte kein tar und keine Bourne Shell installiert sein muss dieser Vorgang doppelt laufen um die fehlende Software nachzuinstallieren)</li>
+	      <li>Commit des Images</li>
+	    </ol>
+	  </p>
+	  <p>
+	    Bei ONBUILD Instruktionen werden zuerst alle ONBUILDs durchgef&uuml;hrt, danach ein evtl. vorhandenes <em>assemble</em> Skript ausgef&uuml;hrt und abschliessend das
+	    <em>run</em> Skript als ENTRYPOINT gesetzt.
+	  </p>	
+
+	  <h4>S2I Skripte</h4>
+	  <p>
+	    S2I Skripte setzen sich aus einem <em>assemble</em> und einem <em>run</em> Skript, sowie einer handvoll weiterer optionaler Skripte zusammen.
+	    Dabei ist egal in welcher Sprache sie geschrieben wurden, hauptsache sie k&ouml;nnen im Image ausgef&uuml;hrt werden.
+	    Die Skripte sind in einem einfachen Beispiel exemplarisch aufgef&uuml;hrt und haben die folgenden Aufgaben:
+	  </p>
+	  <h5>assemble</h5>
+	  <ol>
+	    <li>Entpacken evtl. vorhandener Build Artefakte</li>
+	    <li>Sourcecode in entsprechendes Verzeichnis (s.o.) kopieren</li>
+	    <li>Artefakte bauen</li>
+	    <li>Artefakte in die f&uuml;r die Laufzeit notwendigen Orte kopieren</li>
+	  </ol>
+	  <code>#!/bin/bash
+
+# restore build artifacts
+if [ "$(ls /tmp/sti/artifacts/ 2>/dev/null)" ]; then
+    mv /tmp/sti/artifacts/* $HOME/.
+fi
+
+# move the application source
+mv /tmp/sti/src $HOME/src
+
+# build application artifacts
+pushd ${HOME}
+make all
+
+# install the artifacts
+make install
+popd</code>
+
+	  <h5>run</h5>
+	  <p>
+	    F&uuml;hrt die Applikation aus
+	  </p>
+	  <code>#!/bin/bash
+
+# run the application
+/opt/application/run.sh</code>
+
+
+	  <h5>usage</h5>
+	  <p>
+	    Optional: Gibt den Usage Text f&uuml;r dieses Image aus
+	  </p>
+	  <code>#!/bin/bash
+
+# inform the user how to use the image
+cat &lt;&lt;EOF
+This is a S2I sample builder image, to use it, install
+https://github.com/openshift/source-to-image
+EOF</code>
+
+	  <h5>save-artifacts</h5>
+	  <p>
+	    Optional: Streamt die Abh&auml;ngigkeiten (Ruby Gems, Java .m2 etc.) als tarfile nach stdout
+	  </p>
+	  <code>#!/bin/bash
+
+pushd ${HOME}
+if [ -d deps ]; then
+    # all deps contents to tar stream
+    tar cf - deps
+fi
+popd</code>
+
+	  <h5>test/run</h5>
+	  <p>
+	    Optional: Testlauf ob sich das Image fehlerfrei bauen l&auml;sst
+	    <ol>
+	      <li>Image bauen</li>
+	      <li>Image laufen lassen um den Usage Text ausgeben zu lassen</li>
+	      <li><em>stibuild</em> f&uuml;r Test des <em>assemble</em> Skripts laufen lassen</li>
+	      <li>erneuter <em>stibuild</em> um die Artefaktsicherung bzw. -wiederherstellung zu testen</li>
+	      <li>Image mit Testapplikation starten</li>
+	    </ol>
+	  </p>
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
+
+	  <a name="misc">
+	  <h2>Verschiedenes</h2>
+	  
+	  <a name="linkedcontainer">
+	  <h3>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h3>
 	  <p>
 	    Zu allererst laden wir unsere images aus dem Hub:
 	  </p>
@@ -328,7 +734,9 @@ f1e932996ce5        mysql:latest        "/entrypoint.sh mysq"   55 seconds ago  
 </code>
 
 
-	<h3>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h3>
+	  
+	  <a name="mysqlbackup">
+	  <h3>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h3>
 	<p>
 	  Um ein Backup der im Container laufenden MySQL Datenbank zu bewerkstelligen bedienenen wir uns 
 	  zweier Konzepte. Zum einen mounten wir ein Filesystem des Docker Hosts in den Container, zum anderen
@@ -348,6 +756,7 @@ f1e932996ce5        mysql:latest        "/entrypoint.sh mysq"   55 seconds ago  
 	<code>root@docker:~&gt; <strong>docker exec mysqlwp mysqldump --all-databases --password=wordpressdocker &gt; wordpress.backup</strong></code>
 
 
+	<a name="supervisord">
 	<h3>Mehrere Anwendungen in einem Container mit Hilfe von Supervisor</h3>
 	<p>
 	  Um mehrere Anwendungen in einem Container laufen zu lassen m&uuml;ssen wir uns zuallererst einen
@@ -397,6 +806,12 @@ user=root
 [program:httpd]
 command=/bin/bash -c "rm -rf /run/httpd/* && /usr/sbin/apachectl -D FOREGROUND"
 </code>
+
+
+
+	  <p><a href="#top">Back to top</a></p>
+	  <div class="page-break"></div>
+
 
 
 	</div> <!-- Docker -->
