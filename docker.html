@@ -24,15 +24,16 @@
           <li><a href="openshift.html">OPENSHIFT</a></li>
 	  <li><a href="notizen.html">NOTIZEN</a></li>
 	  <li><a href="impressum.html">IMPRESSUM</a></li>
+	</ul>
       </nav>
 
       <div id="maincontents">
 	<!--	<div class="page-break"></div> -->
-	<a name="top">
+	<a name="top"/>
 	<h1>Docker</h1>
 	<div id="Docker">
 	  <p>Diese kurze &Uuml;bersicht dient dazu die wichtigsten Aufgaben und Best Practices
-	    im Zusammenspiel von Docker und RedHat Enterprise Linux 7 oder vergleichbare Derivate
+	    im Zusammenspiel von Docker und RedHat Enterprise Linux 7 oder vergleichbaren Derivaten
 	    wie CentOS oder ScientificLinux zu beleuchten und zeigt auch Best Practices im Umgang
 	    mit OpenShift auf.
 	  </p>
@@ -48,7 +49,7 @@
 	      <li><a href="#openshift"><h8>Was gibt es bei einem Dockercontainer im Openshift zu bedenken?</h8></a></li>
 	      <li><a href="#source2image"><h8>Source2Image Builder Images erstellen</h8></a></li>
 	    </ol>
-	    <li><a href="#misc"><h7>Verschiedenes</h7>
+	    <li><a href="#misc"><h7>Verschiedenes</h7></a></li>
 	    <ol>
 	      <li><a href="#linkedcontainer"><h8>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h8></a></li>
 	      <li><a href="#mysqlbackup"><h8>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h8></a></li>
@@ -81,9 +82,9 @@
 	    <tr>
 	      <th>Konfigurationsdateien:</th>		
 	      <td>
-		/etc/sysconfig/docker</br>
-		/etc/sysconfig/docker-network</br>
-		/etc/sysconfig/docker-storage</br>
+		/etc/sysconfig/docker<br/>
+		/etc/sysconfig/docker-network<br/>
+		/etc/sysconfig/docker-storage<br/>
 		/etc/sysconfig/docker-storage-setup
 	      </td>
 	    </tr>
@@ -101,14 +102,14 @@
 	    <tr>
 	      <th>SELinux Booleans:</th>		
 	      <td>
-		docker_connect_any             (off  ,  off)  Allow docker to connect any</br>
-		openshift_use_nfs              (off  ,  off)  Allow openshift to access nfs file systems without labels</br>
-		virt_sandbox_use_sys_admin     (off  ,  off)  Allow sandbox containers to use sys_admin system calls, for example mount</br>
-		virt_sandbox_use_mknod         (off  ,  off)  Allow sandbox containers to use mknod system calls</br>
-		virt_sandbox_use_audit         (on   ,   on)  Allow sandbox containers to send audit messages</br>
-		virt_sandbox_use_samba         (off  ,  off)  Allow sandbox containers to manage samba/cifs files</br>
-		virt_sandbox_use_nfs           (off  ,  off)  Allow sandbox containers to manage nfs files</br>
-		virt_sandbox_use_netlink       (off  ,  off)  Allow sandbox containers to use netlink system calls</br>
+		docker_connect_any             (off  ,  off)  Allow docker to connect any<br/>
+		openshift_use_nfs              (off  ,  off)  Allow openshift to access nfs file systems without labels<br/>
+		virt_sandbox_use_sys_admin     (off  ,  off)  Allow sandbox containers to use sys_admin system calls, for example mount<br/>
+		virt_sandbox_use_mknod         (off  ,  off)  Allow sandbox containers to use mknod system calls<br/>
+		virt_sandbox_use_audit         (on   ,   on)  Allow sandbox containers to send audit messages<br/>
+		virt_sandbox_use_samba         (off  ,  off)  Allow sandbox containers to manage samba/cifs files<br/>
+		virt_sandbox_use_nfs           (off  ,  off)  Allow sandbox containers to manage nfs files<br/>
+		virt_sandbox_use_netlink       (off  ,  off)  Allow sandbox containers to use netlink system calls<br/>
 		virt_sandbox_use_all_caps      (on   ,   on)  Allow sandbox containers to use all capabilities
 	      </td>
 	    </tr>
@@ -126,53 +127,53 @@
 	  <div class="page-break"></div>
 
 
-	  <a name="installation">
+	  <a name="installation"/>
 	  <h2>Installation</h2>
 
 	  <h3>Paket installieren</h3>
 	  <p>
-	    <code>root@docker:~&gt; <strong>yum -y install docker</strong></code>
+	    <code><pre>root@docker:~&gt; <strong>yum -y install docker</strong></pre></code>
 	  </p>
 
 	  <h3>Storage konfigurieren</h3>
 	  <p>
-	    Bevor der Docker Daemon das erste mal gestartet wird m&uuml;ssen wir den storage f&uuml;r die Docker Container konfigurieren.</br>
+	    Bevor der Docker Daemon das erste mal gestartet wird m&uuml;ssen wir den storage f&uuml;r die Docker Container konfigurieren.<br/>
 	    Wie ben&ouml;tigen Speicherplatz im <em>/var/lib/docker</em> Verzeichnis um die gedownloadeten Images abzuspeichern
-	    aber auch Speicher f&uuml;r die laufenden Container.</br>
+	    aber auch Speicher f&uuml;r die laufenden Container.<br/>
 	    F&uuml;r Letzteren m&uuml;ssen wir eine Partition/LUN z&uuml;r Verf&uuml;gung stellen und diese
 	    Disk in die <em>/etc/sysconfig/docker-storage-setup</em> Datei zusammen mit einem Namen f&uuml;r die LVM Volumegruppe eintragen
-	    und anschliessend das <code>docker-storage-setup</code> Kommando ausf&uuml;hren.
+	    und anschliessend das <code><pre>docker-storage-setup</pre></code> Kommando ausf&uuml;hren.
 	  </p>
 
 	  <h4>Device s&auml;ubern falls n&ouml;tig.</h4>
 	  <p>
-	    <code>
-	    </code>
+	    <code><pre>
+	    </pre></code>
 	  </p>
 
 	  <h4>/etc/sysconfig/docker-storage-setup editieren</h4>
 	  <p>
-	    <code># Edit this file to override any configuration options specified in
+	    <code><pre># Edit this file to override any configuration options specified in
 # /usr/lib/docker-storage-setup/docker-storage-setup.
 #
 # For more details refer to "man docker-storage-setup"
 
 DEVS="/dev/vdb"
-VG="dockervg"</code>
+VG="dockervg"</pre></code>
 	  </p>
 
 	  <h4>docker-storage-setup ausf&uuml;hren</h4>
 	  <p>
-	    <code>
-	    </code>
+	    <code><pre>
+	    </pre></code>
 	  </p>
 
 	  <h3>Daemon aktivieren und starten</h3>
 	  <p>
-	    <code>root@docker:~&gt; <strong>systemctl enable docker</strong>
-Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</code>
-	    <code>root@docker:~&gt; <strong>systemctl start docker</strong></code>
-	    <code>root@docker:~&gt; <strong>systemctl status docker</strong>
+	    <code><pre>root@docker:~&gt; <strong>systemctl enable docker</strong>
+Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</pre></code>
+	    <code><pre>root@docker:~&gt; <strong>systemctl start docker</strong></pre></code>
+	    <code><pre>root@docker:~&gt; <strong>systemctl status docker</strong>
 ● docker.service - Docker Application Container Engine
    Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
    Active: active (running) since Mon 2016-06-13 10:25:23 CEST; 4s ago
@@ -193,7 +194,7 @@ Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.5715419
 Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.571565439+02:00" level=info msg="Docker daemon" commit="ab77bde/1.9.1" execdriver=native-0.2...rsion=1.9.1
 Jun 13 10:25:23 docker forward-journal[22124]: time="2016-06-13T10:25:23.579068123+02:00" level=info msg="API listen on /var/run/docker.sock"
 Jun 13 10:25:23 docker systemd[1]: Started Docker Application Container Engine.
-Hint: Some lines were ellipsized, use -l to show in full.</code>
+Hint: Some lines were ellipsized, use -l to show in full.</pre></code>
 	  </p>
 
 
@@ -203,26 +204,26 @@ Hint: Some lines were ellipsized, use -l to show in full.</code>
 
 
 
-	  <a name="container">
+	  <a name="container"/>
 	  <h2>Umgang mit Containern</h2>
 
 	  <h4>Container anzeigen</h4>
-	    <code>root@docker:~&gt; <strong>docker ps [-a|-l]</strong>
+	    <code><pre>root@docker:~&gt; <strong>docker ps [-a|-l]</strong>
 CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS                      PORTS               NAMES
 af6580ae3795        ubuntu:latest       "/bin/bash"          9 minutes ago       Up 9 minutes                                    mad_mestorf
 9d02b0838847        busybox:latest      "echo hello world"   14 minutes ago      Exited (0) 14 minutes ago                       distracted_sammet
 
 root@docker:~&gt; <strong>docker ps -l</strong>
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-af6580ae3795        ubuntu:latest       "/bin/bash"         10 minutes ago      Up 10 minutes                           mad_mestorf  </code>
+af6580ae3795        ubuntu:latest       "/bin/bash"         10 minutes ago      Up 10 minutes                           mad_mestorf  </pre></code>
 	    -a zeigt alle, auch die gestoppten, Container an
 
 
 	  <h4>Container l&ouml;schen</h4>
-	    <code>root@docker:~&gt; <strong>docker rm 9d02b0838847</strong>
-9d02b0838847</code>
+	    <code><pre>root@docker:~&gt; <strong>docker rm 9d02b0838847</strong>
+9d02b0838847</pre></code>
 	  <h4>Kommando in einem Container interaktiv ausf&uuml;hren</h4>
-	  <code>root@docker:~&gt; <strong>docker run -i -t ubuntu:latest /bin/bash</strong>
+	  <code><pre>root@docker:~&gt; <strong>docker run -i -t ubuntu:latest /bin/bash</strong>
 ubuntu:latest: The image you are pulling has been verified
 27d47432a69b: Pulling fs layer
 5f92234dcf1e: Pulling fs layer
@@ -240,17 +241,17 @@ ubuntu:latest: The image you are pulling has been verified
 Status: Downloaded newer image for ubuntu:latest
 
 root@bf35f82fcd6d:/#<strong> uname -a</strong>
-Linux bf35f82fcd6d 2.6.32-504.el6.x86_64 #1 SMP Wed Oct 15 04:27:16 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux</code>
-	  -i steht f&uuml;r den interaktiven Modus<br> 
+Linux bf35f82fcd6d 2.6.32-504.el6.x86_64 #1 SMP Wed Oct 15 04:27:16 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux</pre></code>
+	  -i steht f&uuml;r den interaktiven Modus<br/> 
 	  -t stellt ein tty zur Verf&uuml;gung
 
 	  <h4>Einen Service im Container starten (detached mode)</h4>
-	  <code>root@docker:~&gt; <strong>docker run -d -p 1234:1234 python:2.7 python -m SimpleHTTPServer 1234</strong></code>
-	  -d startet den Docker im detached Modus<br> 
+	  <code><pre>root@docker:~&gt; <strong>docker run -d -p 1234:1234 python:2.7 python -m SimpleHTTPServer 1234</strong></pre></code>
+	  -d startet den Docker im detached Modus<br/> 
 	  -p ext:int &ouml;ffnet einen externen Port ext auf den internen port int
 
 	  <h4>Container inspizieren</h4>
-	    <code>root@docker:~&gt; <strong>docker inspect c74d9d6963f2</strong>
+	    <code><pre>root@docker:~&gt; <strong>docker inspect c74d9d6963f2</strong>
 [{
     "AppArmorProfile": "",
     "Args": [
@@ -367,25 +368,25 @@ Linux bf35f82fcd6d 2.6.32-504.el6.x86_64 #1 SMP Wed Oct 15 04:27:16 UTC 2014 x86
     "Volumes": {},
     "VolumesRW": {}
 }
-] </code>
+] </pre></code>
 
 	  <h4>Container erstellen, starten, stoppen und entfernen</h4>
-	  <code>root@docker:~&gt; <strong>docker create -P --expose=1234 python:2.7 python -m SimpleHTTPServer 1234</strong>
-85bd081a5e14c8b3848055fa5c2d3f31c52d6dc994fcf3f56873462446514f5d</code><br>
-	  <code>root@docker:~&gt; <strong>docker ps -a</strong>
+	  <code><pre>root@docker:~&gt; <strong>docker create -P --expose=1234 python:2.7 python -m SimpleHTTPServer 1234</strong>
+85bd081a5e14c8b3848055fa5c2d3f31c52d6dc994fcf3f56873462446514f5d</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker ps -a</strong>
 CONTAINER ID        IMAGE               COMMAND                CREATED              STATUS                        PORTS                    NAMES
-85bd081a5e14        python:2.7          "python -m SimpleHT"   About a minute ago                                                          clever_turing</code><br>
-	  <code>root@docker:~&gt; <strong>docker start 85bd081a5e14</strong>
-85bd081a5e14</code><br>
-	  <code>root@docker:~&gt; <strong>docker ps</strong>
+85bd081a5e14        python:2.7          "python -m SimpleHT"   About a minute ago                                                          clever_turing</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker start 85bd081a5e14</strong>
+85bd081a5e14</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker ps</strong>
 CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                     NAMES
-85bd081a5e14        python:2.7          "python -m SimpleHT"   3 minutes ago       Up 42 seconds       0.0.0.0:49153->1234/tcp   clever_turing</code><br>
-	  <code>root@docker:~&gt; <strong>docker restart 85bd081a5e14</strong>
-85bd081a5e14</code><br>
-	  <code>root@docker:~&gt; <strong>docker kill 85bd081a5e14</strong>
-85bd081a5e14</code><br>
-	  <code>root@docker:~&gt; <strong>docker rm 85bd081a5e14</strong>
-85bd081a5e14</code>
+85bd081a5e14        python:2.7          "python -m SimpleHT"   3 minutes ago       Up 42 seconds       0.0.0.0:49153->1234/tcp   clever_turing</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker restart 85bd081a5e14</strong>
+85bd081a5e14</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker kill 85bd081a5e14</strong>
+85bd081a5e14</pre></code><br/>
+	  <code><pre>root@docker:~&gt; <strong>docker rm 85bd081a5e14</strong>
+85bd081a5e14</pre></code>
 
 
 
@@ -394,23 +395,23 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 
 
 
-	  <a name="images">
+	  <a name="images"/>
 	  <h2>Umgang mit Images</h2>
 	  <h4>Images anzeigen </h4>
-	  <code>root@docker:~&gt; <strong>docker images</strong>
+	  <code><pre>root@docker:~&gt; <strong>docker images</strong>
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 ubuntu              latest              5ba9dab47459        2 weeks ago         192.7 MB
-busybox             latest              4986bf8c1536        6 weeks ago         2.433 MB</code>
+busybox             latest              4986bf8c1536        6 weeks ago         2.433 MB</pre></code>
 
 	  <h4>Images (von https://registry.hub.docker.com) laden</h4>
-	  <code>root@docker:~&gt; <strong>docker pull &lt;service&gt;:&lt;version&gt;</strong></code>
+	  <code><pre>root@docker:~&gt; <strong>docker pull &lt;service&gt;:&lt;version&gt;</strong></pre></code>
 
 	  <h4>Images l&ouml;schen</h4>
-	    <code>root@docker:~&gt; <strong>docker rmi 4986bf8c1536</strong>
+	    <code><pre>root@docker:~&gt; <strong>docker rmi 4986bf8c1536</strong>
 Untagged: busybox:latest
 Deleted: 4986bf8c15363d1c5d15512d5266f8777bfba4974ac56e3270e7760f6f0a8125
 Deleted: ea13149945cb6b1e746bf28032f02e9b5a793523481a0a18645fc77ad53c4ea2
-Deleted: df7546f9f060a2268024c8a230d8639878585defcc1bc6f79d2728a13957871b</code>
+Deleted: df7546f9f060a2268024c8a230d8639878585defcc1bc6f79d2728a13957871b</pre></code>
 
 
 
@@ -418,15 +419,15 @@ Deleted: df7546f9f060a2268024c8a230d8639878585defcc1bc6f79d2728a13957871b</code>
 	  <div class="page-break"></div>
 
 
-	  <a name="dockerfile">
+	  <a name="dockerfile"/>
 	  <h2>Aufbau eines Dockerfiles</h2>
 	  <p>
-	    Ein sogenanntes <em>Dockerfile</em> ist eine Art Bauanleitung f&uuml;r ein Image aus welchem sp&auml;ter einmal ein laufender Container entstehen soll.</br>
+	    Ein sogenanntes <em>Dockerfile</em> ist eine Art Bauanleitung f&uuml;r ein Image aus welchem sp&auml;ter einmal ein laufender Container entstehen soll.<br/>
 	    Der gr&ouml;sste Teil eines Dockerfiles bezieht sich auf den eigentlichen Bauvorgang des Images, ein kleiner Teil aber auch auf die Laufzeit.
 	    Wir zeigen unten ein typisches, einfach gehaltenes Dockerfile und gehen darunter auf weitere m&ouml;gliche Direktiven kurz ein.
 	  </p>
 	  <p>
-	    <code>FROM golang:latest
+	    <code><pre>FROM golang:latest
 
 COPY src/gowebenv/. /go/src/app
 WORKDIR /go/src/app
@@ -436,7 +437,7 @@ RUN go install -v
 
 EXPOSE 8000
 
-CMD ["app"]</code>
+CMD ["app"]</pre></code>
 	  </p>
 	  <p>
 	    In diesem Beispiel wird zuerst mit COPY ein Verzeichnis auf meiner Workstation in den Container kopiert und anschliessend in dieses Zielverzeichnis gewechselt.
@@ -452,10 +453,10 @@ CMD ["app"]</code>
 
 
 
-	  <a name="bestpractice">
+	  <a name="bestpractice"/>
 	  <h2>Best Practices</h2>
 
-	  <a name="containerbau">
+	  <a name="containerbau"/>
 	  <h3>Was gibt es bei einem Dockerfile allgemein zu beachten?</h3>
 	  <ul>
 	    <li>Container sollten so fl&uuml;chtig wie eben m&ouml;glich designt werden</li>
@@ -466,8 +467,8 @@ CMD ["app"]</code>
 	    <li>Zur besseren &Uuml;bersichtlichkeit sollten Argumente, die &uuml;ber mehrere Zeilen gehen alphanumerisch sortiert werden</li>
 	    <li>Updates des Caches werden f&uuml;r einen Dockerbuild erst gel&ouml;scht, wenn sich folgendes &auml;ndert:</li>
 	    <ul>
-	      <li>RUN Statements werden als String miteinander auf Unterschiede verglichen</li>
-	      <li>ADD und COPY Direktiven werden anhand einer checksum &uuml;ber die Daten verglichen</li>
+	      <li>bei RUN Statements wird lediglich ein Stringvergleich durchgef&uuml;hrt</li>
+	      <li>ADD und COPY Direktiven werden anhand einer checksumme &uuml;ber die Daten verglichen</li>
 	    </ul>
 	    <li>Paketinstallationen via <em>yum install</em> und anschliessendem <em>yum clean cache</em> sollten in einem einzigen RUN Statement
 	      zusammengefasst werden, da sonst nach der Installation ein Filesystemlayer abgeschlossen wird und Dateien nicht mehr nachtr&auml;glich 
@@ -478,9 +479,9 @@ CMD ["app"]</code>
 	    <li>VOLUMEs f&uuml;r persistenten Storage nutzen</li>
 	    <li>WORKDIR immer mit absolutem Pfad angeben</li>
 	    <li>Direktiven nach M&ouml;glichkeit in Reihenfolge anlegen, wobei die am h&auml;ufigsten genutzten Direktiven oben stehen</li>
-	    <li>USER mit <code>RUN groupadd -r &lt;gruppe&gt; && useradd -r -g &lt;gruppe&gr; &lt;user&gt;</code> anlegen und falls <em>sudo</em> n&ouml;tig ist
+	    <li>USER mit <code><pre>RUN groupadd -r &lt;gruppe&gt; &amp;&amp; useradd -r -g &lt;gruppe&gt; &lt;user&gt;</pre></code> anlegen und falls <em>sudo</em> n&ouml;tig ist
 	      stattdessen besser <em>gosu</em> verwenden, z.B. in folgendem <em>wrapper.sh</em> Wrapper-Skript:
-	      <code>#! /bin/bash
+	      <code><pre>#! /bin/bash
 set -e
 if [ "$1" = 'postgres' ]; then
    chown -R postgres ${PGDATA}
@@ -491,52 +492,52 @@ if [ "$1" = 'postgres' ]; then
    exec gosu postgres "$@"
 fi
 
-exec "$@"</code>
+exec "$@"</pre></code>
 	       und den dazugeh&ouml;rigen Dockerfile Direktiven:
-	      <code>COPY ./wrapper.sh /
+	      <code><pre>COPY ./wrapper.sh /
 ENTRYPOINT ["wrapper.sh"]
-CMD ["default parameter 1", "default parameter 2"]</code>
+CMD ["default parameter 1", "default parameter 2"]</pre></code>
 	    </li>
 	  </ul>
 
 
-	  <a name="openshift">
+	  <a name="openshift"/>
 	  <h3>Was gibt es bei einem Dockercontainer im OpenShift besonders zu beachten?</h3>
 	  <p>
 	    Applikationen in einem OpenShift Container laufen immer mit einer zuf&auml;llig generierten UserID;
-	    der Buildprozess allerdings l&auml;uft wie der default Docker Container unter dem root User.</br>
+	    der Buildprozess allerdings l&auml;uft wie der default Docker Container unter dem root User.<br/>
 	    Dies f&uuml;hrt bei der Migration von Standardimages in den OpenShift immer wieder zu Problemen, 
 	    da I/O Operationen im Container immer wieder an den Standard Unix Rechten scheitern. Aus diesem Grund
 	    sollten Konfigurationsdateien am besten f&uuml;r alle Benutzer lesbar sein und wenn Schreibzugriffe
 	    ben&ouml;tigt diese &uuml;ber persistente Volumes zu realisieren, da letztere von OpenShift automatisch
-	    auf die korrekte UID gemappt werden.</br>
+	    auf die korrekte UID gemappt werden.<br/>
 	    Manche Applikationen ben&ouml;tigen aber auch Eintr&auml;ge f&uuml;r den aktuellen Benutzer in der 
 	    <em>/etc/passwd</em> Datei um korrekt zu funktionieren. Um dieses Problem zu beheben bedienen wir uns
 	    der nss_wrapper Software, eines Wrapper Skriptes und einer passwd Template Datei:
 	  </p>
 
 	  <p>
-	    <code>yum -y install nss_wrapper gettext && \
-    yum clean all</code>
+	    <code><pre>yum -y install nss_wrapper gettext &amp;&amp; \
+    yum clean all</pre></code>
 	  </p>
 
 	  <p>
 	    wrapper.sh
-	    <code>export USER_ID=$(id -u)
+	    <code><pre>export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 
-envsubst < ${HOME}/passwd.template > /tmp/passwd
+envsubst &lt; ${HOME}/passwd.template &gt; /tmp/passwd
 
 export LD_PRELOAD=libnsswrapper.so
 export NSS_WRAPPER_PASSWD=/tmp/passwd
-export NSS_WRAPPER_GROUP=/etc/group</code>
+export NSS_WRAPPER_GROUP=/etc/group</pre></code>
 	  </p>
 
 	  <p>
 	    passwd.template
-	    <code>root:x:0:0:root:/root:/bin/bash
+	    <code><pre>root:x:0:0:root:/root:/bin/bash
 [...]
-appuser:x:${USER_ID}:${GROUP_ID}:Application User:${HOME}:/bin/bash</code>
+appuser:x:${USER_ID}:${GROUP_ID}:Application User:${HOME}:/bin/bash</pre></code>
 	  </p>
 
 	  <p>
@@ -544,52 +545,52 @@ appuser:x:${USER_ID}:${GROUP_ID}:Application User:${HOME}:/bin/bash</code>
 	    die von OpenShift ausgewertet und auch in der WebGUI mit angezeigt werden.
 	    <ul>
 	      <li>Beschreibung des Images
-		<code>LABEL io.k8s.description OpenShift Builder Image f. in GO geschriebene Applikationen</code>
+		<code><pre>LABEL io.k8s.description OpenShift Builder Image f. in GO geschriebene Applikationen</pre></code>
 	      </li>
 	      <li>Tags
-		<code>LABEL io.openshift.tags mongodb,mongodb24,nosql</code>
+		<code><pre>LABEL io.openshift.tags mongodb,mongodb24,nosql</pre></code>
 	      </li>
 	      <li>Anhand von Tags darlegen welche Images ben&ouml;tigt werden
-		<code>LABEL io.openshift.wants mongodb,redis</code>
+		<code><pre>LABEL io.openshift.wants mongodb,redis</pre></code>
 	      </li>
 	      <li>Liste der EXPOSEd Ports im PORT[/PROTO]:NAME Format
-		<code>LABEL io.openshift.expose-services 2020/udp:ftp,8080:https</code>
+		<code><pre>LABEL io.openshift.expose-services 2020/udp:ftp,8080:https</pre></code>
 	      </li>
 	      <li>Unterst&uuml;tzt das Image mehr als eine einzelne Instanz?
-		<code>LABEL io.openshift.non-scalable true</code>
+		<code><pre>LABEL io.openshift.non-scalable true</pre></code>
 	      </li>
 	      <li>Welche Ressourcen werden mindestens f&uuml;r das Deployment einer Instanz ben&ouml;tigt?
-		<code>LABEL io.openshift.min-memory 8Gi
-LABEL io.openshift.min-cpu    4</code>
+		<code><pre>LABEL io.openshift.min-memory 8Gi
+LABEL io.openshift.min-cpu    4</pre></code>
 	      </li>
 	    </ul>
 	  </p>	
 
 
-	  <a name="source2image">
+	  <a name="source2image"/>
 	  <h3>Source2Image Builder Images erstellen</h3>
 	  <p>
 	    Source2Image ist ein Verfahren, welches es erm&ouml;glicht Images zu erstellen, die lediglich den Quellcode der Applikation abholen ein neues Image
-	    mit dem lauff&auml;higen Code erstellt und ist vergleichbar mit den ONBUILD Instruktionen im Dockerfile (und unterst&uuml;tzt diese Direktive aktiv im Buildvorgang).</br>
+	    mit dem lauff&auml;higen Code erstellt und ist vergleichbar mit den ONBUILD Instruktionen im Dockerfile (und unterst&uuml;tzt diese Direktive aktiv im Buildvorgang).<br/>
 	    Hierzu ben&ouml;tigt S2I zum einen den Quellcode der Applikation, eine Handvoll von sogenannten <em>S2I-Skripten</em> sowie das eigene Builderimage als Basis.
 	    S2I schn&uuml;rt die Quellen und die S2I-Skripte zu einem tarfile zusammen und entpackt dieses nach /tmp bzw. dem unter <em>--destination</em> 
 	    bzw. dem Label <em>io.openshift.s2i.destination</em> angegebenen Pfad in den Container. Skripte liegen entweder im <em>.sti/bin</em>-Verzeichnis, der mit <em>--scripts-url</em>
 	    bzw. dem <em>io.openshift.s2i.scripts-url</em> Label angegebenen URL, die wiederum entweder auf
 	    <ul>
 	      <li>ein Verzeichnis innerhalb des Images
-		<code>image://path/to/scripts/dir</code>
+		<code><pre>image://path/to/scripts/dir</pre></code>
 	      </li>
 	      <li>ein Verzeichnis auf dem Hostsystem
-		<code>file://path/to/scripts/dir</code>
+		<code><pre>file://path/to/scripts/dir</pre></code>
 	      </li>
 	      <li>oder eine Verzeichnis URL verweisen:
-		<code>http(s)://path/to/scripts/dir</code>
+		<code><pre>http(s)://path/to/scripts/dir</pre></code>
 	      </li>
             </ul>
 	  </p>
 	
 	  <p>
-	    F&uuml;r den Buildprozess sollten das tar Kommando und die Bourne Shell /bin/sh installiert sein.</br>
+	    F&uuml;r den Buildprozess sollten das tar Kommando und die Bourne Shell /bin/sh installiert sein.<br/>
 	    Der Build Workflow gliedert sich in die folgenden Schritte:
 	    <ol>
 	      <li>Download der S2I Skripte</li>
@@ -618,7 +619,7 @@ LABEL io.openshift.min-cpu    4</code>
 	    <li>Artefakte bauen</li>
 	    <li>Artefakte in die f&uuml;r die Laufzeit notwendigen Orte kopieren</li>
 	  </ol>
-	  <code>#!/bin/bash
+	  <code><pre>#!/bin/bash
 
 # restore build artifacts
 if [ "$(ls /tmp/sti/artifacts/ 2>/dev/null)" ]; then
@@ -634,42 +635,42 @@ make all
 
 # install the artifacts
 make install
-popd</code>
+popd</pre></code>
 
 	  <h5>run</h5>
 	  <p>
 	    F&uuml;hrt die Applikation aus
 	  </p>
-	  <code>#!/bin/bash
+	  <code><pre>#!/bin/bash
 
 # run the application
-/opt/application/run.sh</code>
+/opt/application/run.sh</pre></code>
 
 
 	  <h5>usage</h5>
 	  <p>
 	    Optional: Gibt den Usage Text f&uuml;r dieses Image aus
 	  </p>
-	  <code>#!/bin/bash
+	  <code><pre>#!/bin/bash
 
 # inform the user how to use the image
 cat &lt;&lt;EOF
 This is a S2I sample builder image, to use it, install
 https://github.com/openshift/source-to-image
-EOF</code>
+EOF</pre></code>
 
 	  <h5>save-artifacts</h5>
 	  <p>
 	    Optional: Streamt die Abh&auml;ngigkeiten (Ruby Gems, Java .m2 etc.) als tarfile nach stdout
 	  </p>
-	  <code>#!/bin/bash
+	  <code><pre>#!/bin/bash
 
 pushd ${HOME}
 if [ -d deps ]; then
     # all deps contents to tar stream
     tar cf - deps
 fi
-popd</code>
+popd</pre></code>
 
 	  <h5>test/run</h5>
 	  <p>
@@ -687,101 +688,101 @@ popd</code>
 	  <div class="page-break"></div>
 
 
-	  <a name="misc">
+	  <a name="misc"/>
 	  <h2>Verschiedenes</h2>
 	  
-	  <a name="linkedcontainer">
+	  <a name="linkedcontainer"/>
 	  <h3>Applikationen in verlinkten Container (am Beispiel Wordpress mit MySQL DB)</h3>
 	  <p>
 	    Zu allererst laden wir unsere images aus dem Hub:
 	  </p>
-	  <code>root@docker:~&gt; <strong>docker pull wordpress:latest</strong></code>
-	  <code>root@docker:~&gt; <strong>docker pull mysql:latest</strong></code>
-	  <code>root@docker:~&gt; <strong>docker images</strong>
+	  <code><pre>root@docker:~&gt; <strong>docker pull wordpress:latest</strong></pre></code>
+	  <code><pre>root@docker:~&gt; <strong>docker pull mysql:latest</strong></pre></code>
+	  <code><pre>root@docker:~&gt; <strong>docker images</strong>
 REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
 wordpress           latest              9ddd01387f02        4 days ago          470.2 MB
-mysql               latest              0beee7f478c8        10 days ago         283.1 MB</code>
+mysql               latest              0beee7f478c8        10 days ago         283.1 MB</pre></code>
 	  
 	  <p>
 	    Als n&auml;chstes starten wir den MySQL Container und setzen den hostnamen &uuml;ber die 
 	    Kommandozeile und das MySQL root Passwort &uuml;ber eine Environment Variable:
 	  </p>
-	  <code>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
+	  <code><pre>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
 	                                 -e MYSQL_DATABASE=wordpress \
 	                                 -e MYSQL_USER=wordpress \
 	                                 -e MYSQL_PASSWORD=wordpresspwd \
-	                                 -d mysql</strong></code>
+	                                 -d mysql</strong></pre></code>
 
 	  <p>
 	    Den WordPress Container starten wir mit dem MySQL Container verlinkt; Docker konfiguriert dabei
 	    das Netzwerk so dass die von dem MySQL Container offerierten Ports vom WordPress Container aus
 	    erreichbar sind.
 	  </p>
-	  <code>root@docker:~&gt; <strong>docker run --name wordpress --link mysqlwp:mysql -p 80:80 \
+	  <code><pre>root@docker:~&gt; <strong>docker run --name wordpress --link mysqlwp:mysql -p 80:80 \
 	                   -e WORDPRESS_DB_NAME=wordpress \
 	                   -e WORDPRESS_DB_USER=wordpress \
 	                   -e WORDPRESS_DB_PASSWORD=wordpressdbpwd \
-	                   -d wordpress</strong></code>
+	                   -d wordpress</strong></pre></code>
 
 	  <p>
 	    Nun laufen beide Container im Hintergrund, wobei Port 80 des Wordpress Containers auf Port 80 des Hosts
 	    gemappt wurde, was wir mit einem Webbrowser &uuml;berpr&uuml;fen k&ouml;nnen.
 	  </p>
-	  <code>root@docker:~&gt; <strong>docker ps</strong>
+	  <code><pre>root@docker:~&gt; <strong>docker ps</strong>
 CONTAINER ID        IMAGE               COMMAND                 CREATED             STATUS              PORTS                NAMES
 510eb6d060a7        wordpress:latest    "/entrypoint.sh apac"   18 seconds ago      Up 14 seconds       0.0.0.0:80->80/tcp   wordpress
 f1e932996ce5        mysql:latest        "/entrypoint.sh mysq"   55 seconds ago      Up 52 seconds       3306/tcp             mysqlwp
-</code>
+</pre></code>
 
 
 	  
-	  <a name="mysqlbackup">
+	  <a name="mysqlbackup"/>
 	  <h3>Backup einer innerhalb eines Containers laufenden MySQL Datenbank</h3>
 	<p>
 	  Um ein Backup der im Container laufenden MySQL Datenbank zu bewerkstelligen bedienenen wir uns 
 	  zweier Konzepte. Zum einen mounten wir ein Filesystem des Docker Hosts in den Container, zum anderen
 	  stossen wir mit dem "docker exec" Kommando einen "mysqldump" an.
 	</p>
-	<code>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
+	<code><pre>root@docker:~&gt; <strong>docker run --name mysqlwp -e MYSQL_ROOT_PASSWORD=wordpressdocker \
 	                               -e MYSQL_DATABASE=wordpress \
 	                               -e MYSQL_USER=wordpress \
 	                               -e MYSQL_PASSWORD=wordpresspwd \
 	                               -v /home/docker/mysql:/var/lib/mysql \
-	                               -d mysql</strong></code>
+	                               -d mysql</strong></pre></code>
 	<p>
 	  Mit dem -v Schalter mounten wir das Verzeichnis host:/home/docker/mysql unter /var/lib/mysql des 
 	  Containers.
 	  Um anschliessend den mysql Dump anzustossen:
 	</p>
-	<code>root@docker:~&gt; <strong>docker exec mysqlwp mysqldump --all-databases --password=wordpressdocker &gt; wordpress.backup</strong></code>
+	<code><pre>root@docker:~&gt; <strong>docker exec mysqlwp mysqldump --all-databases --password=wordpressdocker &gt; wordpress.backup</strong></pre></code>
 
 
-	<a name="supervisord">
+	<a name="supervisord"/>
 	<h3>Mehrere Anwendungen in einem Container mit Hilfe von Supervisor</h3>
 	<p>
 	  Um mehrere Anwendungen in einem Container laufen zu lassen m&uuml;ssen wir uns zuallererst einen
 	  eigenen Container bauen. Hierzu erstellen wir uns ein Dockerfile &auml;hnlich einem Makefile.
 	</p>
-	<code>FROM ubuntu:14.04
+	<code><pre>FROM ubuntu:14.04
 
-RUN apt-get update && apt-get -y install \
+RUN apt-get update &amp;&amp; apt-get -y install \
     apache2 \
     php5 \
     php5-mysql \
     supervisor \
     wget
 
-RUN echo 'mysql-server mysql-server/root_password password root' | debconf-set-selections && \
+RUN echo 'mysql-server mysql-server/root_password password root' | debconf-set-selections &amp;&amp; \
     echo 'mysql-server mysql-server/root_password_again password root' | debconf-set-selections
 
 RUN apt-get install -qqy mysql-server
 
-RUN wget http://wordpress.org/latest.tar.gz && \
-    tar xvzf latest.tar.gz && \
-    cp -R ./wordpress/* /var/www/html && \
+RUN wget http://wordpress.org/latest.tar.gz &amp;&amp; \
+    tar xvzf latest.tar.gz &amp;&amp; \
+    cp -R ./wordpress/* /var/www/html &amp;&amp; \
     rm /var/www/html/index.html
 
-RUN (/usr/bin/mysqld_safe &); sleep 5; mysqladmin -u root -p root create wordpress
+RUN (/usr/bin/mysqld_safe &amp;); sleep 5; mysqladmin -u root -p root create wordpress
 
 COPY wp-config.php /var/www/html/wp-config.php
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -789,12 +790,12 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 EXPOSE 80
 
 CMD ["/usr/bin/supervisord"]
-</code>
+</pre></code>
 	<p>
 	  Der supervisor daemon ist wie &auml;hnlich wie der init oder xinetd ein Jobstarter, in dem wir nun
 	  folgend MySQL und den Apache Webserver in der Datei "supervisord.conf" konfigurieren:
 	</p>
-	<code>[supervisord]
+	<code><pre>[supervisord]
 nodaemon=true
 
 [program:mysqld]
@@ -804,8 +805,8 @@ autorestart=true
 user=root
 
 [program:httpd]
-command=/bin/bash -c "rm -rf /run/httpd/* && /usr/sbin/apachectl -D FOREGROUND"
-</code>
+command=/bin/bash -c "rm -rf /run/httpd/* &amp;&amp; /usr/sbin/apachectl -D FOREGROUND"
+</pre></code>
 
 
 
@@ -820,7 +821,7 @@ command=/bin/bash -c "rm -rf /run/httpd/* && /usr/sbin/apachectl -D FOREGROUND"
 
       <div id="footer">
 	&copy; 2013, Michael Leimenmeier
-	<br>
+	<br/>
 	All Rights reserved.
       </div> <!-- footer -->
 
