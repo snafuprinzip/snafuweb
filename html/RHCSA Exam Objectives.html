@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>RHCSA Exam Objectives</title>
+    <link rel="stylesheet" type="text/css" href="standard.css">
+    <link rel="stylesheet" type="text/css" href="druck.css" media="print">
+    <meta name="google-translate-customization" content="f2f52d23790f216e-e14bb519d115ee50-g1c5848ab8654a98e-20"></meta>  
+  </head>
+  
+  <body>
+    <div id="contents">
+      
+      
+      <div id="header"> 
+	<img src="images/header.png" alt="Site Header"> 
+      </div>
+
+      
+      <nav>
+	<ul>
+	  <li><a href="index.html">HOME</a></li>
+	  <li class="selected"><a href="RHCSA Exam Objectives.html">RHCSA</a></li>
+	  <li><a href="RHCE Exam Objectives.html">RHCE</a></li>
+	  <li><a href="RHEL7.html">RHEL7</a></li>
+	  <li><a href="kurse.html">KURSE</a></li>
+	  <li><a href="puppet.html">PUPPET</a></li>
+          <li><a href="docker.html">DOCKER</a></li>
+          <li><a href="openshift.html">OPENSHIFT</a></li>
+	  <li><a href="notizen.html">NOTIZEN</a></li>
+	  <li><a href="impressum.html">IMPRESSUM</a></li>
+	</ul>
+      </nav>
+      
+      
+      <div id="maincontents">
+        <h1>RHCSA Exam objectives</h1>
+        <p>RHCSA exam candidates should be able to accomplish the tasks below
+          without assistance. These have been grouped into several categories.</p>
+
+	
+	
+        <h2>Understand and use essential tools</h2>
+        <p class="note">Note: Red Hat may use applications during the exam that
+          are not included in Red Hat Enterprise Linux for the purpose of
+          evaluating candidate's abilities to meet this objective.</p>
+	
+	
+        <h3>Access a shell prompt and issue commands with correct syntax.</h3>
+	
+	
+        <h3>Use input-output redirection (&gt;, &gt;&gt;, |, 2&gt;, etc.).</h3>
+	<table>
+	  <caption>Umlenken der Ein-/Ausgabe Kanäle</caption>
+	  
+	  <tr>
+	    <th>Operator</th>
+	    <th>Beschreibung</th>
+	  </tr>
+	  <tr>
+	    <td>&gt;</td>
+	    <td>stdout (Ausgabekanal) in Datei umlenken</td>
+	  </tr>
+	  <tr>
+	    <td>2&gt;</td>
+	    <td>stderr (Fehlerausgabekanal) in Datei umlenken</td>
+	  </tr>
+	  <tr>
+	    <td>&amp;&gt;</td>
+	    <td>Beide Ausgabekanäle in Datei umlenken</td>
+	  </tr>
+	  <tr>
+	    <td>2&gt;&amp;1</td>
+	    <td>Beide Ausgabekanäle in Pipe umlenken</td>
+	  </tr>
+	  <tr>
+	    <td>&gt;&gt;</td>
+	    <td>Umlenken in Datei um den Inahlt dort anzuhängen</td>
+	  </tr>
+	</table>
+	
+	
+        <h3>Use grep and regular expressions to analyze text.</h3>
+	
+	
+        <h3>Access remote systems using ssh and VNC.</h3>
+	
+	<h5>SSH</h5>
+	
+	<h5>VNC</h5>
+        <p>Um einen VNC Server einzurichten muss man die
+          /etc/sysconfig/vncservers bearbeiten und dort den bis zu 9
+          verschiedenen displays Usern zuteilen. Zur Kommunikation muss der Port
+          5900 und der passende Port für das Display (entsprechend bis 5909)
+          geöffnet und für jeden User ein vnc Passwort gesetzt werden.</p>
+        <h6>Pakete installieren</h6>
+	<code>root@firefly:~&gt; <strong> yum install tigervnc tigervnc-server</strong></code>
+        <h6>/etc/sysconfig/vncservers anpassen</h6>
+	<code># The VNCSERVERS variable is a list of display:user pairs.
+#
+# Uncomment the lines below to start a VNC server on display :2
+# as my 'myusername' (adjust this to your own).&nbsp; You will also
+# need to set a VNC password; run 'man vncpasswd' to see how
+# to do that.&nbsp; 
+#
+# DO NOT RUN THIS SERVICE if your local area network is
+# untrusted!&nbsp; For a secure way of using VNC, see this URL:
+# http://kbase.redhat.com/faq/docs/DOC-7028
+
+# Use "-nolisten tcp" to prevent X connections to your VNC server via TCP.
+
+# Use "-localhost" to prevent remote VNC clients connecting except when
+# doing so through a secure tunnel.&nbsp; See the "-via" option in the
+# `man vncviewer' manual page.
+
+# VNCSERVERS="2:myusername"
+              # VNCSERVERARGS[2]="-geometry 800x600 -nolisten tcp -localhost"
+
+<strong>VNCSERVERS="1:mleimenm"
+VNCSERVERARGS[1]="-geometry 1920x1200"</strong></code>
+
+        <h6>Service starten</h6>
+	<code>root@firefly:~&gt; <strong> chkconfig --list | grep vnc</strong>
+vncserver      0:Aus 1:Aus 2:Aus 3:Aus 4:Aus 5:Aus 6:Aus</code>
+
+	<p><code>root@firefly:~&gt; <strong> chkconfig vncserver on</strong></code></p>
+
+	<p><code>root@firefly:~&gt; <strong> service vncserver start</strong>
+VNC-Server starten: 1:mleimenm
+              
+New 'firefly.thyatis.mystara:1 (mleimenm)' desktop is firefly.thyatis.mystara:1
+
+Starting applications specified in /home/mleimenm/.vnc/xstartup
+Log file is /home/mleimenm/.vnc/firefly.thyatis.mystara:1.log
+
+                                            [  OK  ]</code></p>
+
+        <h6>vnc Passwort setzen</h6>
+	<code>mleimenm@firefly:~&gt; <strong> vncpasswd</strong></code>
+
+	<h6>Firewall für :1 bzw. port 5901 öffnen</h6>
+	<code>root@firefly:~&gt; <strong> iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 5901 -j ACCEPT</strong></code>
+
+	<h6>vnc Verbindung herstellen</h6>
+	<code>mleimenm@serenity:~&gt; <strong> vncviewer firefly:1</strong>
+
+TigerVNC Viewer 64-bit v1.3.0 (20130924)
+Built on Sep 24 2013 at 16:32:56
+Copyright (C) 1999-2011 TigerVNC Team and many others (see README.txt)
+See http://www.tigervnc.org for information on TigerVNC.
+
+Sun Nov 17 22:01:32 2013
+ CConn:       connected to host firefly port 5901
+ CConnection: Server supports RFB protocol version 3.8
+ CConnection: Using RFB protocol version 3.8</code>
+
+        <h3>Log in and switch users in multiuser runlevels.</h3>
+	<p>
+	  <code>root@serenity:~&gt <strong>su - [user]</strong></code>
+	</p>
+	<p>
+	  <code>root@serenity:~&gt <strong>sg - &lt;gruppe&gt;</strong></code>
+	</p>
+
+	<h3>Archive, compress, unpack, and uncompress files using tar, star, gzip, and bzip2.</h3>
+
+	<h5>Installation</h5>
+	<code>root@serenity:~&gt; <strong>yum install tar star bzip2 gzip xz</strong></code>
+
+	<h5>tar</h5>
+	<p>
+	  Das Standard Archivierungswerkzeug ist leider nicht in der Lage den SELinux Dateikontext zu sichern.
+	</p>
+        <h6>Tar-Archiv von allen .bash*-Dateien erstellen</h6>
+	<code>root@serenity:~&gt; <strong>tar cvf  /tmp/archiv.tar     .bash*</strong>
+                    <strong>tar cvzf /tmp/archiv.tar.gz  .bash*</strong>
+                    <strong>tar cvjf /tmp/archiv.tar.bz2 .bash*</strong>
+                    <strong>tar cvJf /tmp/archiv.tar.xz  .bash*</strong>
+.bash_aliases
+.bash_history
+.bash_logout
+.bash_profile
+.bashrc</code>
+
+        <h6>Inhalt eines Tar-Archivs ausgeben</h6>
+	<code>root@serenity:~&gt; <strong>tar tvf  /tmp/archiv.tar</strong>
+                 <strong>tar tvzf /tmp/archiv.tar.gz</strong>
+                 <strong>tar tvjf /tmp/archiv.tar.bz2</strong>
+                 <strong>tar tvJf /tmp/archiv.tar.xz</strong>
+-rw-r--r-- root/root      1883 2013-11-17 09:52 .bash_aliases
+-rw------- root/root     22970 2013-11-18 08:30 .bash_history
+-rw-r--r-- root/root        18 2009-05-20 12:45 .bash_logout
+-rw-r--r-- root/root       962 2013-11-17 09:52 .bash_profile
+-rw-r--r-- root/root       596 2013-11-17 09:52 .bashrc        </code>
+
+        <h6>Tar-Archiv entpacken</h6>
+	<code>root@serenity:~&gt; <strong>tar xvf  /tmp/archiv.tar </strong>
+                 <strong>tar xvzf /tmp/archiv.tar.gz </strong>
+                 <strong>tar xvjf /tmp/archiv.tar.bz2 </strong>
+                 <strong>tar xvJf /tmp/archiv.tar.xz </strong>
+.bash_aliases
+.bash_history
+.bash_logout
+.bash_profile
+.bashrc </code>
+
+	<h5>star</h5>
+	<p>
+	  star ist ein sehr schneller "tape archiver", der neben vielen erweitern Funktionen auch in der Lage ist SELinux Dateikontexte zu sichern.
+	</p>
+        <h6>Star-Archiv von allen .bash* Dateien erstellen (inkl. SELinux Kontext)</h6>
+	<code>root@serenity:~&gt;<strong> star -xattr -H=exustar -c -f=/tmp/bash_profile.star .bash*</strong>
+star: 4 blocks + 0 bytes (total of 40960 bytes = 40.00k).</code>
+
+        <h6>Star-Archiv entpacken</h6>
+	<code>root@serenity:~&gt; <strong> star -x -f=/tmp/bash_profile.star</strong>
+star: 4 blocks + 0 bytes (total of 40960 bytes = 40.00k).</code>
+
+	<h5>bzip2</h5>
+        <h6>bzip2 Dateien (ent-)packen</h6>
+        <p>
+	  <code>root@serenity:tmp&gt;<strong> bzip2 archiv.tar </strong>
+root@serenity:tmp&gt;<strong> bunzip2 archiv.tar.bz2 </strong>          </code>
+	</p>
+
+	<h5>gzip</h5>
+        <h6>gzip Dateien (ent-)packen</h6>
+        <p>
+	  <code>root@serenity:tmp&gt; <strong>gzip archiv.tar</strong>
+root@serenity:tmp&gt; <strong>gunzip archiv.tar.gz</strong> 	  </code>
+	</p>
+
+
+        <h3>Create and edit text files.</h3>
+
+        <h3>Create, delete, copy, and move files and directories.</h3>
+
+        <h3>Create hard and soft links.</h3>
+
+
+        <h3>List, set, and change standard ugo/rwx permissions.</h3>
+	<p>
+	  ugo/rwx sind die Standard Unix Dateirechte read (r), write (w) und execute (x) jeweils für den Eigentümer, die Eigentümergruppe und alle anderen Nutzer plus die Möglichkeit 
+	  ein sogenanntes setuid-, setgid- oder sticky-bit zu setzen. Insgesamt haben wir also 12 bits pro Datei, die auch in Zahlen von 0 bis 7 entsprechend er Position des jeweiligen Bits dargestellt werden können.
+	  Eine Dateimaske von -rwxr-sr-- wäre also binärer Schreibweise 010 111 101 100 oder kurzerhand 2754 in oktaler Darstellung, welche auch von den nachfolgenden Kommandos präferiert wird.
+	</p>
+
+	<h5>ugo/rwx</h5>
+
+	<h6>Dateirechte anzeigen lassen</h6>
+	<p>
+	  <code>root@firefly:~&gt; <strong>ls -l /tmp/gurke</strong>
+-rw-r--r--. 1 root root 0 18. Nov 14:59 /tmp/gurke</code>
+	</p>
+	<p>
+	  <code>root@firefly:~&gt; <strong>stat /tmp/gurke</strong>
+  File: „/tmp/gurke“
+  Size: 0           Blocks: 0        IO Block: 4096   reguläre leere Datei
+Device: fd03h/64771d Inode: 32          Links: 1
+Access: (0644/-rw-r--r--)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2013-11-18 14:59:45.314212465 +0100
+Modify: 2013-11-18 14:59:45.314212465 +0100
+Change: 2013-11-18 14:59:45.314212465 +0100</code>
+	</p>
+
+	<h6>Eigentümer der Datei ändern</h6>
+	<code>root@firefly:~&gt; <strong>chown [-R] user[:group] &lt;file&gt;</strong>
+root@firefly:~&gt; <strong>chgrp [-R] group        &lt;file&gt;</strong></code>
+
+	<h6>Dateirechte ändern</h6>
+	<code>root@firefly:~&gt; <strong>chmod [-R] [ugo]&pm;[rwx] &lt;file&gt;</strong>
+root@firefly:~&gt; <strong>chmod [-R] 2754        &lt;file&gt;</strong></code>
+
+	<h6>umask</h6>
+	<p>
+	  Die umask ist eine normalerweise in den startup Skripten der shell verwendete Vorgabemaske für die Erstellung neuer Dateien.
+	  Es handelt sich dabei um eine bitinvertierte Maske, bei der allerdings das executable bit, sowie die Vorgaben für setuid, setgid und sticky bit ignoriert werden. 
+	  Sprich eine umask von 0454 (oder 000 100 101 100) würde rein rechnireisch zu einer Datei mit den Rechten 0323 (oder 000 011 010 011), wird aber stattdessen zu
+	  0222 (oder 000 010 010 010).<br>
+	  Beispiele:
+	  <code>root@server1:~&gt; <strong>umask 022; touch testfile; ls -l testfile; rm -f testfile</strong>
+-rw-r--r--. 1 root root 0 Nov 19 16:31 testfile
+
+root@server1:~&gt; <strong>umask 0454; touch testfile; ls -l testfile; rm -f testfile</strong>
+--w--w--w-. 1 root root 0 Nov 19 16:31 testfile
+
+root@server1:~&gt; <strong>umask 0545; touch testfile; ls -l testfile; rm -f testfile</strong>
+--w--w--w-. 1 root root 0 Nov 19 16:31 testfile
+
+root@server1:~&gt; <strong>umask 0000; touch testfile; ls -l testfile; rm -f testfile</strong>
+-rw-rw-rw-. 1 root root 0 Nov 19 16:32 testfile
+
+root@server1:~&gt; <strong>umask 7000; touch testfile; ls -l testfile; rm -f testfile</strong>
+-bash: umask: 7000: octal number out of range
+-rw-rw-rw-. 1 root root 0 Nov 19 16:32 testfile</code>
+
+	<h5>xattr</h5>
+
+	<h6>Erweiterte Dateiattribute (xattr) anzeigen und ändern</h6>
+	<code>root@firefly:~&gt; <strong>lsattr &lt;file&gt;</strong>
+root@firefly:~&gt; <strong>chattr &pm;[AacdEehIijSsTtuXZ] &lt;file&gt;</strong></code>
+
+	<p>
+	  <table>
+	    <caption>Auswahl wichtiger xattr Dateiattribute</caption>
+	    <tr>
+	      <th>xattr</th>
+	      <th>Beschreibung</th>
+	    </tr>
+	    <tr>
+	      <td>a</td>
+	      <td><em>append only:</em> An diese Datei dürfen Informationen nur angefügt, aber nicht überschrieben werden.</td>
+	    </tr>
+	    <tr>
+	      <td>d</td>
+	      <td><em>no dump:</em> Diese Datei darf nicht via dump gesichert werden.</td>
+	    </tr>
+	    <tr>
+	      <td>e</td>
+	      <td><em>extents (ro):</em> Filesystem (z.B. ext4) wird in extents verwaltet.</td>
+	    </tr>
+	    <tr>
+	      <td>i</td>
+	      <td><em>immuteable:</em> Datei darf nicht verändert oder gelöscht werden.</td>
+	    </tr>
+	    <tr>
+	    <td>I</td>
+	    <td><em>indexed (ro):</em> Verzeichnis ist mit Hash-Bäumen indiziert.</td>
+	    </tr>
+	  </table>
+	</p>
+
+
+        <h3>Locate, read, and use system documentation including man, info, and files in /usr/share/doc.</h3>
+	<ul>
+	  <li>/usr/share/doc/&lt;Package&gt; Verzeichnis</li>
+	  <li>Kommandoschalter (-h, --help, --usage etc.)</li>
+	  <li>Info Pages
+	    <p><code>info &lt;Kommando&gt;</code></p>
+	  </li>
+	  <li>Manpages
+	    <p><code>man [-s sektion] &lt;Kommando&gt;
+man -k &lt;Stichwort&gt;<br></code></p>
+	  </li>
+	  <li>Servicedokumentation
+	    <p><code>elinks /var/www/manual</code></p>
+	  </li>
+	  <li>Whatis Datenbank<br>
+	      <em>Manuell aktualisieren:</em> <p><code>makewhatis</code></p>
+	      <em>Titel durchsuchen:</em> <p><code>whatis &lt;Stichwort&gt;</code></p>
+	      <em>Beschreibung durchsuchen:</em> <p><code>apropos &lt;Stichwort&gt;</code></p>
+	  </li>
+	</ul>
+
+
+
+	<div class="page-break"></div>
+        <h2>Operate running systems</h2>
+
+        <h3>Boot, reboot, and shut down a system normally.</h3>
+	<p>
+	  <code>root@server1:~&gt; <strong>reboot</strong>
+
+Broadcast message from root@server1.example.org
+	    (/dev/pts/0) at 17:29 ...
+
+The system is going down for reboot NOW!</code>
+	</p>
+
+        <p>
+	  <code>root@server1:~&gt; <strong>poweroff</strong>
+
+Broadcast message from root@server1.example.org
+	  (/dev/ttyS0) at 17:32 ...
+
+The system is going down for power off NOW!</code>
+	</p>
+
+
+        <h3>Boot systems into different runlevels manually.</h3>
+	<p>
+	  Abwarten bis beim booten das grub Menü erscheint und editieren des zu bootenden Eintrages. 
+	  Dazu muss evtl. erst ein Grub Kennwort eingegeben werden, bevor man durch das hinten anfügen eines runlevels oder eines init Programms an die kernel Zeile
+	  das System in den angegebenen Zustand bootet. 
+	</p>
+	<p>
+	  Mögliche Parameter sind:
+	  <ul>
+	    <li><strong>1-5</strong><br>
+	      bootet in den angegebenen Runlevel</li>
+	    <li><strong>single</strong><br>
+	      bootet in den runlevel 1, allerdings ohne die init Skripte in /etc/rc1.d auszuführen</li>
+	    <li><strong>init=/bin/sh</strong><br>
+	      führt keinerlei init Skripte aus, sondern mountet lediglich das root FS und startet eine root shell</li>
+	  </ul>
+	</p>
+
+
+
+        <h3>Use single-user mode to gain access to a system.</h3>
+	<p>
+	  Fährt man das System via grub in den Single-User Mode, so erfordert dieser kein Passwort um direkten root-Zugang zu bekommen.
+	  Aus diesem Grund ist es enorm wichtig ein Passwort für das grub-Menü zu setzen, damit nicht jeder unbefugt in den single user mode booten darf.
+	</p>
+
+
+
+        <h3>Identify CPU/memory intensive processes, adjust process priority with renice, and kill processes.</h3>
+	<p>
+	  <ul>
+	    <li>ps</li>
+	    <li>top</li>
+	    <li>sar</li>
+	    <li>iostat</li>
+	    <li>nice bzw. renice</li>
+	    <li>kill bzw. killall</li>
+	  </ul>
+	    
+
+        <h3>Locate and interpret system log files.</h3>
+	<h5>rsyslogd</h5>
+	<h6>/etc/rsyslog.conf und /etc/rsyslog.d</h6>
+
+	<h5>logrotate</h5>
+	<h6>/etc/logrotate.conf und /etc/logrotate.d</h6>
+
+
+
+        <h3>Access a virtual machine's console.</h3>
+	<p>
+	  <code>root@serenity:~&gt; <strong>virsh list --all</strong>
+ Id    Name                           State
+----------------------------------------------------
+ 5     tester1.example.com            running
+ 9     server1.example.com            running
+ 10    outsider1.example.org          running</code>
+	</p>
+	<p>
+	  <code>root@serenity:~&gt; <strong>virsh console tester1.example.com</strong>
+Connected to domain tester1.example.com
+Escape character is ^]
+
+CentOS release 6.4 (Final)
+Kernel 2.6.32-358.el6.x86_64 on an x86_64
+
+tester1.example.com login: </code>
+	</p>
+
+
+        <h3>Start and stop virtual machines.</h3>
+	<h6>start</h6>
+	<code>root@serenity:~&gt; <strong>virsh start tester1.example.com</strong>
+Domain tester1.example.com started</code>
+
+	<h6>reboot</h6>
+	<code>root@serenity:~&gt; <strong>virsh reboot tester1.example.com</strong>
+Domain tester1.example.com is being rebooted</code>
+
+	<h6>shutdown</h6>
+	<code>root@serenity:~&gt; <strong>virsh shutdown tester1.example.com</strong>
+Domain tester1.example.com is being shutdown</code>
+
+	<h6>"hardware" poweroff</h6>
+	<code>root@serenity:~&gt; <strong>virsh destroy tester1.example.com</strong>
+Domain tester1.example.com destroyed</code>
+
+
+        <h3>Start, stop, and check the status of network services.</h3>
+	<h5>network Service</h5>
+	<p>
+	  <code>[root@server1 ~]# <strong>service network status</strong>
+Configured devices:
+lo eth0
+Currently active devices:
+lo eth0</code>
+	</p>
+	<p>
+	  <code>[root@server1 ~]# <strong>service network stop</strong>
+Shutting down interface eth0:  [  OK  ]
+Shutting down loopback interface:  [  OK  ]</code>
+	</p>
+	<p>
+	  <code>[root@server1 ~]# <strong>service network start</strong>
+Bringing up loopback interface:  lo: Disabled Privacy Extensions
+[  OK  ]
+Bringing up interface eth0:  [  OK  ]</code>
+	</p>
+	<p>
+	  <code>[root@server1 ~]# <strong>service network restart</strong>
+Shutting down interface eth0:  [  OK  ]
+Shutting down loopback interface:  [  OK  ]
+Bringing up loopback interface:  lo: Disabled Privacy Extensions
+[  OK  ]
+Bringing up interface eth0:  [  OK  ]</code>
+	</p>
+
+	<h5>Kommandos</h5>
+	<h6>Interface gemäß Konfigurationsdateien (de-)aktivieren</h6>
+	<code>root@firefly:~&gt; <strong>ifup eth0</strong></code>
+	<code>root@firefly:~&gt; <strong>ifdown eth0</strong></code>
+
+
+	<h6>Hardware Konfiguration des Interfaces</h6>
+	<code>root@firefly:~&gt; <strong>ethtool eth0</strong>
+Settings for eth0:
+	    Supported ports: [ TP MII ]
+	    Supported link modes:   10baseT/Half 10baseT/Full 
+	                            100baseT/Half 100baseT/Full 
+	                            1000baseT/Half 1000baseT/Full 
+	    Supported pause frame use: No
+	    Supports auto-negotiation: Yes
+	    Advertised link modes:  10baseT/Half 10baseT/Full 
+	                            100baseT/Half 100baseT/Full 
+	                            1000baseT/Half 1000baseT/Full 
+	    Advertised pause frame use: Symmetric Receive-only
+	    Advertised auto-negotiation: Yes
+	    Link partner advertised link modes:  10baseT/Half 10baseT/Full 
+	                                         100baseT/Half 100baseT/Full 
+	                                         1000baseT/Full 
+	    Link partner advertised pause frame use: Symmetric
+	    Link partner advertised auto-negotiation: Yes
+	    Speed: 1000Mb/s
+	    Duplex: Full
+	    Port: MII
+	    PHYAD: 0
+	    Transceiver: internal
+	    Auto-negotiation: on
+	    Supports Wake-on: pumbg
+	    Wake-on: g
+	    Current message level: 0x00000033 (51)
+	           drv probe ifdown ifup
+	    Link detected: yes</code>
+
+	<h6>Link Konfiguration anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ip link show</strong>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 50:46:5d:76:70:ac brd ff:ff:ff:ff:ff:ff</code>
+
+	<h6>IP Adresskonfiguration anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ip addr show</strong>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 50:46:5d:76:70:ac brd ff:ff:ff:ff:ff:ff
+    inet 192.168.197.158/27 brd 192.168.197.159 scope global eth0
+    inet6 fe80::5246:5dff:fe76:70ac/64 scope link 
+       valid_lft forever preferred_lft forever</code>
+
+	<h6>Routingtabelle anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ip route show</strong>
+192.168.197.128/27 dev eth0  proto kernel  scope link  src 192.168.197.158 
+169.254.0.0/16 dev eth0  scope link  metric 1002 
+default via 192.168.197.129 dev eth0 </code>
+
+	<h6>ARP Cache bzw. Nachbarn anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ip neighbour show</strong>
+192.168.197.136 dev eth0 lladdr 00:21:80:64:df:ad STALE
+192.168.197.145 dev eth0 lladdr f0:cb:a1:01:68:e3 STALE
+192.168.197.129 dev eth0 lladdr 00:24:fe:58:f7:6f STALE
+192.168.197.156 dev eth0 lladdr 00:25:4b:ac:86:8a REACHABLE
+192.168.197.155 dev eth0 lladdr 10:dd:b1:cb:23:d1 REACHABLE
+192.168.197.142 dev eth0 lladdr 00:80:3f:36:0d:a2 STALE</code>
+
+	<h6>Interface Statistiken anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ip -s -s link</strong>
+1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 16436 qdisc noqueue state UNKNOWN 
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    4981632    4062     0       0       0       0      
+    RX errors: length  crc     frame   fifo    missed
+               0        0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    4981632    4062     0       0       0       0      
+    TX errors: aborted fifo    window  heartbeat
+               0        0       0       0      
+2: eth0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 50:46:5d:76:70:ac brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    6837153    51069    0       0       0       0      
+    RX errors: length  crc     frame   fifo    missed
+               0        0       0       0       0      
+    TX: bytes  packets  errors  dropped carrier collsns 
+    8033255    24180    0       0       0       0      
+    TX errors: aborted fifo    window  heartbeat
+               0        0       0       0      </code>
+
+	<h6>Interface (de-)aktivieren</h6>
+	<code>root@firefly:~&gt; <strong>ip link set eth0 up</strong></code>
+	<code>root@firefly:~&gt; <strong>ip link set eth0 down</strong></code>
+	
+	<h6>Interface manuell konfigurieren</h6>
+	<code>root@firefly:~&gt; <strong>ip addr add 192.168.50.5 dev eth0 </strong></code>
+	<code>root@firefly:~&gt; <strong>ip addr del 192.168.50.5/24 dev eth0</strong></code>
+
+	<h6>Routen manuell setzen bzw. löschen</h6>
+	<code>root@firefly:~&gt; <strong>ip route add default via 192.168.197.129 dev eth0 </strong></code>
+	<code>root@firefly:~&gt; <strong>ip route add 85.214.68.104/32 via 192.168.197.155 dev eth0 </strong></code>
+	<code>root@firefly:~&gt; <strong>ip route del 85.214.68.104/32 via 192.168.197.155 dev eth0</strong></code>
+
+	<h6>Das ip Kommando im Detail</h6>
+        <p>Das ip Kommando kann nicht nur Netzwerkinformationen anzeigen, sondern ist vielmehr das Schweizer Messer des TCP/IP-Stacks, vereinheitlich die Konfiguration von ipv4 und ipv6 
+	  und löst bestehende Tools wie ifconfig, ethtool, netstat, route, arp vollständig ab.
+	  Die Allgemeine Syntax ist:
+	</p>
+	<code><strong>ip [ OPTIONS ] OBJECT { COMMAND | help }</strong></code>
+        <p>
+	  wobei wir die Punkte OBJECT und COMMAND in den beiden folgenden Tabellen näher betrachten möchten.
+	  <table>
+	    <caption>Auswahl an möglichen ip Kommandoparametern</caption>
+	    <tr>
+	      <th>OBJECT</th>
+	      <th>COMMAND</th>
+	      <th>Beschreibung</th>
+	    </tr>
+	    <tr>
+	      <td>link</td>
+	      <td>
+		show<br>
+		set
+	      </td>
+	      <td>Interface Information auf Link-Level</td>
+	    </tr>
+	    <tr>
+	      <td>addr</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  del<br>
+		  flush
+	      </td>
+	      <td>Protokolladresse auf dem Interface (IPv4 &amp; IPv6)</td>
+	    </tr>
+	    <tr>
+	      <td>addrlabel</td>
+	      <td>
+		  list<br>
+		  add<br>
+		  del<br>
+		  flush
+	      </td>
+	      <td>Label für Protokoll Adress Selektion</td>
+	    </tr>
+	    <tr>
+	      <td>route</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  del<br>
+		  change<br>
+		  append<br>
+		  replace<br>
+		  get<br>
+		  monitor<br>
+		  flush
+	      </td>
+	      <td>Eintrag in der Routingtabelle</td>
+	    </tr>
+	    <tr>
+	      <td>rule</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  del<br>
+		  flush
+	      </td>
+	      <td>Regel in der Routing Policy Datenbank</td>
+	    </tr>
+	    <tr>
+	      <td>neigh</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  del<br>
+		  change<br>
+		  replace<br>
+		  flush
+	      </td>
+	      <td>ARP (IPv4) bzw. NDISC (IPv6) Cache Eintrag</td>
+	    </tr>
+	    <tr>
+	      <td>tunnel</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  change<br>
+		  del<br>
+		  prl
+	      </td>
+	      <td>Tunnel over IP</td>
+	    </tr>
+	    <tr>
+	      <td>maddr</td>
+	      <td>
+		  show<br>
+		  add<br>
+		  delete
+	      </td>
+	      <td>Multicast Adresse</td>
+	    </tr>
+	    <tr>
+	      <td>mroute</td>
+	      <td>
+		  show
+	      </td>
+	      <td>Multicast Routing Cache Eintrag</td>
+	    </tr>
+	    <tr>
+	      <td>xfrm</td>
+	      <td>
+	      </td>
+	      <td>IPSec Framework</td>
+	    </tr>
+	    <tr>
+	      <td>monitor</td>
+	      <td>
+		  all
+	      </td>
+	      <td>Kommando kehrt nicht zurück, sondern hakt sich an ein oder mehrere Interfaces und meldet kontinuierlich Veränderungen an selbigen.</td>
+	    </tr>
+	  </table>
+
+	<h5>Aktive Verbindungen</h5>
+	<h6>Aktive Clientverbindungen</h6>
+	  <code>root@server1:~&gt; <strong>netstat -puten</strong></code>
+	  <code>Active Internet connections (w/o servers)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State       User       Inode      PID/Program name   
+tcp        0      0 192.168.122.51:22           192.168.122.1:47855         ESTABLISHED 0          77511      15956/sshd          </code>
+	<h6>Aktive Serververbindungen</h6>
+	<code>root@server1:~&gt; <strong>netstat -tulpen</strong></code>
+	<code>Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State       User       Inode      PID/Program name   
+tcp        0      0 0.0.0.0:875                 0.0.0.0:*                   LISTEN      0          13459      1642/rpc.rquotad    
+tcp        0      0 0.0.0.0:5901                0.0.0.0:*                   LISTEN      0          14696      1865/Xvnc           
+tcp        0      0 0.0.0.0:111                 0.0.0.0:*                   LISTEN      0          12232      1398/rpcbind        
+tcp        0      0 0.0.0.0:22                  0.0.0.0:*                   LISTEN      0          13755      1720/sshd           
+tcp        0      0 127.0.0.1:631               0.0.0.0:*                   LISTEN      0          12823      1507/cupsd          
+tcp        0      0 127.0.0.1:25                0.0.0.0:*                   LISTEN      0          13945      1796/master         
+tcp        0      0 0.0.0.0:53305               0.0.0.0:*                   LISTEN      29         12496      1424/rpc.statd      
+tcp        0      0 0.0.0.0:892                 0.0.0.0:*                   LISTEN      0          13488      1646/rpc.mountd     
+tcp        0      0 0.0.0.0:2049                0.0.0.0:*                   LISTEN      0          13702      -                   
+tcp        0      0 0.0.0.0:32803               0.0.0.0:*                   LISTEN      0          13717      -                   
+tcp        0      0 :::111                      :::*                        LISTEN      0          12237      1398/rpcbind        
+tcp        0      0 :::80                       :::*                        LISTEN      0          20045      2588/httpd          
+tcp        0      0 :::22                       :::*                        LISTEN      0          13759      1720/sshd           
+tcp        0      0 :::23                       :::*                        LISTEN      0          21560      2819/xinetd         
+tcp        0      0 ::1:631                     :::*                        LISTEN      0          12822      1507/cupsd          
+tcp        0      0 :::59832                    :::*                        LISTEN      29         12504      1424/rpc.statd      
+tcp        0      0 ::1:25                      :::*                        LISTEN      0          13947      1796/master         
+tcp        0      0 :::443                      :::*                        LISTEN      0          20049      2588/httpd          
+tcp        0      0 :::892                      :::*                        LISTEN      0          13496      1646/rpc.mountd     
+tcp        0      0 :::2049                     :::*                        LISTEN      0          13707      -                   
+tcp        0      0 :::32803                    :::*                        LISTEN      0          13719      -                   
+udp        0      0 0.0.0.0:875                 0.0.0.0:*                               0          13452      1642/rpc.rquotad    
+udp        0      0 0.0.0.0:111                 0.0.0.0:*                               0          12227      1398/rpcbind        
+udp        0      0 0.0.0.0:752                 0.0.0.0:*                               0          12486      1424/rpc.statd      
+udp        0      0 0.0.0.0:631                 0.0.0.0:*                               0          12826      1507/cupsd          
+udp        0      0 0.0.0.0:892                 0.0.0.0:*                               0          13484      1646/rpc.mountd     
+udp        0      0 0.0.0.0:32769               0.0.0.0:*                               0          13716      -                   
+udp        0      0 0.0.0.0:2049                0.0.0.0:*                               0          13705      -                   
+udp        0      0 0.0.0.0:53381               0.0.0.0:*                               29         12492      1424/rpc.statd      
+udp        0      0 0.0.0.0:725                 0.0.0.0:*                               0          12231      1398/rpcbind        
+udp        0      0 :::111                      :::*                                    0          12234      1398/rpcbind        
+udp        0      0 :::892                      :::*                                    0          13492      1646/rpc.mountd     
+udp        0      0 :::32769                    :::*                                    0          13718      -                   
+udp        0      0 :::2049                     :::*                                    0          13708      -                   
+udp        0      0 :::42186                    :::*                                    29         12500      1424/rpc.statd      
+udp        0      0 :::725                      :::*                                    0          12236      1398/rpcbind        	</code>
+
+
+
+	<div class="page-break"></div>
+        <h2>Configure local storage</h2>
+
+        <h3>List, create, delete, and set partition type for primary, extended, and logical partitions.</h3>
+	<h5>GNU parted</h5>
+
+	<h6>parted Kommandos</h6>
+	<code>align-check TYPE N                       check partition N for TYPE(min|opt) alignment
+check NUMBER                             do a simple check on the file system
+cp [FROM-DEVICE] FROM-NUMBER TO-NUMBER   copy file system to another partition  
+help [COMMAND]                           print general help, or help on COMMAND
+mklabel,mktable LABEL-TYPE               create a new disklabel (partition table)
+mkfs NUMBER FS-TYPE                      make a FS-TYPE file system on partition NUMBER
+mkpart PART-TYPE [FS-TYPE] START END     make a partition
+mkpartfs PART-TYPE FS-TYPE START END     make a partition with a file system
+move NUMBER START END                    move partition NUMBER
+name NUMBER NAME                         name partition NUMBER as NAME
+print [devices|free|list,all|NUMBER]     display the partition table, available devices, free space, all found partitions, or a particular partition
+quit                                     exit program
+rescue START END                         rescue a lost partition near START and END
+resize NUMBER START END                  resize partition NUMBER and its file system
+rm NUMBER                                delete partition NUMBER
+select DEVICE                            choose the device to edit
+set NUMBER FLAG STATE                    change the FLAG on partition NUMBER
+toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition NUMBER 
+unit UNIT                                set the default unit to UNIT
+version                                  display the version number and copyright information of GNU Parted</code>
+
+	<h6>Partitionen anzeigen</h6>
+	<code>[root@tester1 ~]# <strong>parted -l</strong>
+Model: ATA QEMU HARDDISK (scsi)
+Disk /dev/sda: 16.1GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  538MB   537MB   primary  ext2         boot
+ 2      538MB   16.1GB  15.6GB  primary               lvm
+
+
+Model: Linux device-mapper (linear) (dm)
+Disk /dev/mapper/vg0-rootvol: 10.7GB
+Sector size (logical/physical): 512B/512B
+Partition Table: loop
+
+Number  Start  End     Size    File system  Flags
+ 1      0.00B  10.7GB  10.7GB  ext4
+
+
+Model: Linux device-mapper (linear) (dm)
+Disk /dev/mapper/vg0-swapvol: 2147MB
+Sector size (logical/physical): 512B/512B
+Partition Table: loop
+
+Number  Start  End     Size    File system     Flags
+ 1      0.00B  2147MB  2147MB  linux-swap(v1)
+
+
+Model: Virtio Block Device (virtblk)
+Disk /dev/vda: 5120MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+
+Number  Start   End     Size    File system  Name     Flags
+ 1      1049kB  5119MB  5118MB               primary  lvm</code>
+
+	<h6>parted im interaktiven shell-Modus aufrufen</h6>
+	<code>[root@tester1 ~]# <strong>parted /dev/vda</strong>
+GNU Parted 2.1
+Using /dev/vda
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) </code>
+
+	<h6>Label erstellen</h6>
+	<code>(parted) <strong>mklabel gpt</strong></code>
+	
+	<h6>Partition erstellen</h6>
+	<code>(parted) <strong>mkpart primary 1 -1</strong></code>
+
+	<h6>Partitionstyp auf LVM setzen</h6>
+	<code>(parted) <strong>set 1 lvm on</strong></code>
+
+	<h6>Partitionstabelle anzeigen</h6>
+	<code>(parted) <strong>p</strong>                                                                
+Model: Virtio Block Device (virtblk)
+Disk /dev/vda: 5120MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+
+Number  Start   End     Size    File system  Name     Flags
+ 1      1049kB  5119MB  5118MB               primary  lvm</code>
+
+	<h6>Partitionsinformationen aktualisieren</h6>
+	<code>[root@tester1 ~]# <strong>partprobe /dev/vda</strong></code>
+
+
+        <h3>Create and remove physical volumes, assign physical volumes to volume groups, and create and delete logical Volumes.</h3>
+
+	<h5>LVM</h5>
+	<p>
+	  Das Logical Volume Management hat sein Konfigurationsverzeichnis unter /etc/lvm und kann mit der interaktiven lvm shell administriert werden.
+	  Entsprechend sinnvoll ist es dort die Online Hilfe zu Rate zu ziehen.
+	  <code>root@firefly:~&gt; <strong>lvm</strong>
+lvm> <strong>help</strong>
+  Available lvm commands:
+  Use 'lvm help &lt;command&gt;' for more information
+
+  dumpconfig      Dump active configuration
+  formats         List available metadata formats
+  help            Display help for commands
+  lvchange        Change the attributes of logical volume(s)
+  lvconvert       Change logical volume layout
+  lvcreate        Create a logical volume
+  lvdisplay       Display information about a logical volume
+  lvextend        Add space to a logical volume
+  lvmchange       With the device mapper, this is obsolete and does nothing.
+  lvmdiskscan     List devices that may be used as physical volumes
+  lvmsadc         Collect activity data
+  lvmsar          Create activity report
+  lvreduce        Reduce the size of a logical volume
+  lvremove        Remove logical volume(s) from the system
+  lvrename        Rename a logical volume
+  lvresize        Resize a logical volume
+  lvs             Display information about logical volumes
+  lvscan          List all logical volumes in all volume groups
+  pvchange        Change attributes of physical volume(s)
+  pvresize        Resize physical volume(s)
+  pvck            Check the consistency of physical volume(s)
+  pvcreate        Initialize physical volume(s) for use by LVM
+  pvdata          Display the on-disk metadata for physical volume(s)
+  pvdisplay       Display various attributes of physical volume(s)
+  pvmove          Move extents from one physical volume to another
+  pvremove        Remove LVM label(s) from physical volume(s)
+  pvs             Display information about physical volumes
+  pvscan          List all physical volumes
+  segtypes        List available segment types
+  vgcfgbackup     Backup volume group configuration(s)
+  vgcfgrestore    Restore volume group configuration
+  vgchange        Change volume group attributes
+  vgck            Check the consistency of volume group(s)
+  vgconvert       Change volume group metadata format
+  vgcreate        Create a volume group
+  vgdisplay       Display volume group information
+  vgexport        Unregister volume group(s) from the system
+  vgextend        Add physical volumes to a volume group
+  vgimport        Register exported volume group with system
+  vgmerge         Merge volume groups
+  vgmknodes       Create the special files for volume group devices in /dev
+  vgreduce        Remove physical volume(s) from a volume group
+  vgremove        Remove volume group(s)
+  vgrename        Rename a volume group
+  vgs             Display information about volume groups
+  vgscan          Search for all volume groups
+  vgsplit         Move physical volumes into a new or existing volume group
+  version         Display software and driver version information
+lvm></code>
+	</p>
+
+	<h5>Physical Volumes</h5>
+	<h6>Liste der Physical Volumes anzeigen</h6>
+        <p>
+	  <code>root@server1:~&gt; <strong>pvs</strong>
+  PV         VG     Fmt  Attr PSize  PFree
+  /dev/sda2  vg0    lvm2 a--  14.47g 2.47g
+  /dev/vda1  testvg lvm2 a--   5.00g 3.00g
+  /dev/vdb1  testvg lvm2 a--   5.00g 5.00g</code>
+	</p>
+	
+	<h6>Physical Volume erstellen / zerstören</h6>
+	<p>
+	<code>root@server1:~&gt; <strong>pvcreate /dev/vda1</strong>
+  Physical volume "/dev/vda1" successfully created</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>pvremove /dev/vdb1</strong>
+  Labels on physical volume "/dev/vdb1" successfully wiped</code>
+	</p>
+
+	<h6>ausführliche Informationen (inkl. Mapping) anzeigen</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>pvdisplay --map</strong>
+  --- Physical volume ---
+  PV Name               /dev/sda2
+  VG Name               vg0
+  PV Size               14.50 GiB / not usable 31.00 MiB
+  Allocatable           yes
+  PE Size               32.00 MiB
+  Total PE              463
+  Free PE               79
+  Allocated PE          384
+  PV UUID               PFfFAs-oPnD-uv3Y-Hgf1-UWPs-2WLX-oN6PKk
+
+  --- Physical Segments ---
+  Physical extent 0 to 63:
+	    Logical volume/dev/vg0/swapvol
+	    Logical extents0 to 63
+  Physical extent 64 to 383:
+	    Logical volume/dev/vg0/rootvol
+	    Logical extents0 to 319
+  Physical extent 384 to 462:
+    FREE
+
+  --- Physical volume ---
+  PV Name               /dev/vda1
+  VG Name               testvg
+  PV Size               5.00 GiB / not usable 2.00 MiB
+  Allocatable           yes
+  PE Size               4.00 MiB
+  Total PE              1279
+  Free PE               767
+  Allocated PE          512
+  PV UUID               OWSHeJ-dDww-xb30-GfZ0-Eqey-uOoq-GpTFxH
+
+  --- Physical Segments ---
+  Physical extent 0 to 511:
+	    Logical volume/dev/testvg/testvol
+	    Logical extents0 to 511
+  Physical extent 512 to 1278:
+    FREE
+
+  --- Physical volume ---
+  PV Name               /dev/vdb1
+  VG Name               testvg
+  PV Size               5.00 GiB / not usable 2.00 MiB
+  Allocatable           yes
+  PE Size               4.00 MiB
+  Total PE              1279
+  Free PE               1279
+  Allocated PE          0
+  PV UUID               rWIsiY-9EjR-MQvd-KXjr-QjvJ-Vnw3-TIwBYF
+
+  --- Physical Segments ---
+  Physical extent 0 to 1278:
+    FREE</code>
+	</p>
+
+	<h5>Volume Groups</h5>
+	<h6>Liste der Volume Groups anzeigen</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>vgs</strong>
+  VG     #PV #LV #SN Attr   VSize  VFree
+  testvg   2   1   0 wz--n-  9.99g 7.99g
+  vg0      1   2   0 wz--n- 14.47g 2.47g</code>
+	</p>
+	
+	<h6>Volume Group erstellen / zerstören</h6>
+	<p>
+	<code>root@server1:~&gt; <strong>vgcreate testvg /dev/vda1</strong>
+  Volume group "testvg" successfully created</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>vgremove testvg</strong>
+  Volume group "testvg" successfully removed</code>
+	</p>
+
+	<h6>ausführliche Informationen anzeigen</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>vgdisplay</strong>
+  --- Volume group ---
+  VG Name               vg0
+  System ID
+  Format                lvm2
+  Metadata Areas        1
+  Metadata Sequence No  3
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                2
+  Open LV               2
+  Max PV                0
+  Cur PV                1
+  Act PV                1
+  VG Size               14.47 GiB
+  PE Size               32.00 MiB
+  Total PE              463
+  Alloc PE / Size       384 / 12.00 GiB
+  Free  PE / Size       79 / 2.47 GiB
+  VG UUID               U2GwcH-eZEw-y4To-fJQd-20Em-neUy-y1vrJ8
+
+  --- Volume group ---
+  VG Name               testvg
+  System ID
+  Format                lvm2
+  Metadata Areas        2
+  Metadata Sequence No  3
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                1
+  Open LV               0
+  Max PV                0
+  Cur PV                2
+  Act PV                2
+  VG Size               9.99 GiB
+  PE Size               4.00 MiB
+  Total PE              2558
+  Alloc PE / Size       512 / 2.00 GiB
+  Free  PE / Size       2046 / 7.99 GiB
+  VG UUID               WiZxKT-Am6R-kISs-0irV-rywB-0rMV-H1HJU8</code>
+	</p>
+
+	<h6>Volume Group um ein Physical Volume erweitern / reduzieren</h6>
+	<p>
+	<code>root@server1:~&gt; <strong>vgextend testvg /dev/vdb1</strong>
+  Volume group "testvg" successfully extended</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>vgreduce testvg /dev/vdb1</strong>
+  Removed "/dev/vdb1" from volume group "testvg"</code>
+	</p>
+
+	<h5>Logical Volumes</h5>
+	<h6>Liste der Logical Volumes anzeigen</h6>
+        <p>
+	  <code>root@server1:~&gt; <strong>lvs</strong>
+  LV      VG     Attr      LSize  Pool Origin Data%  Move Log Cpy%Sync Convert
+  testvol testvg -wi-ao---  2.00g
+  rootvol vg0    -wi-ao--- 10.00g
+  swapvol vg0    -wi-ao---  2.00g</code>
+	</p>
+	<h6>Logical Volumes erstellen / zerstören</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>lvcreate -L 2g -n testvol testvg</strong>
+  Logical volume "testvol" created</code>
+	</p>
+	<h6>ausführliche Informationen (inkl. Mapping) anzeigen</h6>
+        <p>
+	  <code>root@server1:~&gt; <strong>lvremove /dev/testvg/testvol</strong>
+Do you really want to remove active logical volume testvol? [y/n]: y
+  Logical volume "testvol" successfully removed	</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>lvdisplay --map</strong>
+  --- Logical volume ---
+  LV Path                /dev/vg0/swapvol
+  LV Name                swapvol
+  VG Name                vg0
+  LV UUID                O15FMG-supq-RUIT-eZ1z-v9Vh-mh89-aB4RVS
+  LV Write Access        read/write
+  LV Creation host, time localhost.localdomain, 2013-04-27 06:18:38 +0200
+  LV Status              available
+  # open                 1
+  LV Size                2.00 GiB
+  Current LE             64
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           253:0
+
+  --- Segments ---
+  Logical extent 0 to 63:
+	    Typelinear
+	    Physical volume/dev/sda2
+	    Physical extents0 to 63
+
+
+  --- Logical volume ---
+  LV Path                /dev/vg0/rootvol
+  LV Name                rootvol
+  VG Name                vg0
+  LV UUID                GeHKfS-hRZl-3W3w-BgaV-s3Lw-1rzZ-dWrd6I
+  LV Write Access        read/write
+  LV Creation host, time localhost.localdomain, 2013-04-27 06:18:38 +0200
+  LV Status              available
+  # open                 1
+  LV Size                10.00 GiB
+  Current LE             320
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           253:1
+
+  --- Segments ---
+  Logical extent 0 to 319:
+	    Typelinear
+	    Physical volume/dev/sda2
+	    Physical extents64 to 383
+
+
+  --- Logical volume ---
+  LV Path                /dev/testvg/testvol
+  LV Name                testvol
+  VG Name                testvg
+  LV UUID                MZ53l7-4PDB-YhGA-UBuD-g3y1-Kp7F-pDFhdS
+  LV Write Access        read/write
+  LV Creation host, time server1.example.org, 2013-11-19 09:55:37 +0100
+  LV Status              available
+  # open                 0
+  LV Size                2.00 GiB
+  Current LE             512
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     256
+  Block device           253:2
+
+  --- Segments ---
+  Logical extent 0 to 511:
+	    Typelinear
+	    Physical volume/dev/vda1
+	    Physical extents0 to 511</code>
+	</p>
+
+	<h6>Logical Volume vergrößern / verkleinern</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>lvresize -L 3g /dev/testvg/testvol</strong>
+  Extending logical volume testvol to 3.00 GiB
+  Logical volume testvol successfully resized</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>lvextend -L 4g /dev/testvg/testvol</strong>
+  Extending logical volume testvol to 4.00 GiB
+  Logical volume testvol successfully resized</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>lvreduce -L 2g /dev/testvg/testvol</strong>
+  WARNING: Reducing active logical volume to 2.00 GiB
+  THIS MAY DESTROY YOUR DATA (filesystem etc.)
+Do you really want to reduce testvol? [y/n]: y
+  Reducing logical volume testvol to 2.00 GiB
+  Logical volume testvol successfully resized</code>
+	</p>
+
+
+        <h3>Create and configure LUKS-encrypted partitions and logical volumes to prompt for password and mount a decrypted file system at boot.</h3>
+	<h6>Datei oder Partition mit Zufallsdaten füllen</h6>
+	<p>
+	  Man kann die Sicherheit der Verschlüsselung noch dadurch erhöhen, dass man das Ziel (Datei, Volume oder Partition) vorher mit Zufallsdaten füllt.
+	  Dieser Schritt ist optional und dauert eine Weile, daher ist er für die Prüfung nicht zu empfehlen.
+	</p>
+	<code>root@server1:~&gt; <strong>dd if=/dev/urandom of=/dev/testvg/cryptvol</strong>
+
+dd: writing to `/dev/testvg/cryptvol': No space left on device
+4194305+0 records in
+4194304+0 records out
+2147483648 bytes (2.1 GB) copied, 406.129 s, 5.3 MB/s</code>
+
+	<h6>LUKS Dateisystem erstellen</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>cryptsetup -v luksFormat /dev/testvg/cryptvol</strong>
+
+WARNING!
+========
+This will overwrite data on /dev/testvg/cryptvol irrevocably.
+
+Are you sure? (Type uppercase yes): YES
+Enter LUKS passphrase:
+Verify passphrase:
+Command successful.</code>
+	</p>
+
+	<h6>LUKS Dateisystem öffnen und mounten</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>cryptsetup -v luksOpen /dev/testvg/cryptvol secretsvol</strong>
+Enter passphrase for /dev/testvg/cryptvol:
+Key slot 0 unlocked.
+Command successful.</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>mkfs -t ext4 -L secretsfs /dev/mapper/secretsvol</strong>
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=secretsfs
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+131072 inodes, 523776 blocks
+26188 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=536870912
+16 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks:
+	  32768, 98304, 163840, 229376, 294912
+
+Writing inode tables: done
+Creating journal (8192 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 21 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>mount /dev/mapper/secretsvol /secrets</strong></code>
+	</p>
+
+	<h6>LUKS Mapping in die /etc/crypttab eintragen</h6>
+	<p>
+	  <code><strong>secretsvol   /dev/testvg/cryptvol   none   luks</strong></code>
+	</p>
+
+	<h6>LUKS Dateisystem in die /etc/fstab eintragen</h6>
+	<p>
+	  <code>#
+# /etc/fstab
+# Created by anaconda on Sat Apr 27 06:18:48 2013
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk'
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
+#
+/dev/mapper/vg0-rootvol /                       ext4    defaults        1 1
+UUID=0f710315-4890-4e2b-ae3c-de9929d6b393 /boot                   ext2    defaults        1 2
+/dev/mapper/vg0-swapvol swap                    swap    defaults        0 0
+tmpfs                   /dev/shm                tmpfs   defaults        0 0
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0
+sysfs                   /sys                    sysfs   defaults        0 0
+proc                    /proc                   proc    defaults        0 0
+/var/ftp                /ftp                    none    bind            0 0
+<strong>/dev/mapper/secretsvol  /secrets                ext4    defaults        0 0</strong></code>
+	</p>
+	<p>
+	  Das nächste Mal, wenn das System dann bootet wird man entsprechend nach der Passphrase gefragt, bevor das Dateisystem eingehängt und das System weiter gebootet wird.
+	  <code>...
+Setting hostname server1.example.org:  [  OK  ]
+Setting up Logical Volume Management:   2 logical volume(s) in volume group "vg0" now active
+  2 logical volume(s) in volume group "testvg" now active
+[  OK  ]
+
+/secrets is password protected:*************************
+Intel AES-NI instructions are not detected.
+padlock: VIA PadLock not detected.
+padlock: VIA PadLock Hash Engine not detected.
+modprobe: FATAL: Error inserting padlock_sha (/lib/modules/2.6.32-358.23.2.el6.x86_64/kernel/drivers/crypto/padlock-sha.ko): No such device
+
+Checking filesystems
+Checking all file systems.
+[/sbin/fsck.ext4 (1) -- /] fsck.ext4 -a /dev/mapper/vg0-rootvol
+/dev/mapper/vg0-rootvol: clean, 99700/655360 files, 1135163/2621440 blocks
+[/sbin/fsck.ext2 (1) -- /boot] fsck.ext2 -a /dev/sda1
+/dev/sda1: clean, 45/32768 files, 13554/131072 blocks
+[  OK  ]
+...</code>
+	</p>
+	
+
+        <h3>Configure systems to mount file systems at boot by Universally Unique ID (UUID) or label.</h3>
+	<h6>UUID des Filesystems herausfinden</h6>
+	<code>root@server1:~&gt; <strong>blkid | grep testfs</strong>
+/dev/mapper/testvg-testvol: LABEL="testfs" UUID="85942a01-6317-47ce-9bdc-d4cf68e2c82a" TYPE="ext4"</code>
+
+	<h6>Filesystem via UUID / LABEL in /etc/fstab eintragen</h6>
+	<code>root@server1:~&gt; <strong>printf "$(blkid | grep testfs | cut -d\  -f3)\t/testvol\text4\tdefaults\t0 0\n" &gt;&gt; /etc/fstab</strong></code>
+	<p><code>root@server1:~&gt; <strong>printf "$(blkid | grep testfs | cut -d\  -f2)\t/testvol\text4\tdefaults\t0 0\n" &gt;&gt; /etc/fstab</strong></code></p>
+
+	<h6>Einträge durch mounten prüfen</h6>
+	<code>root@server1:~&gt; <strong>mount -a</strong></code>
+
+	<p>
+	  <code>root@server1:~&gt; <strong>df -h /testvol</strong>
+Filesystem            Size  Used Avail Use% Mounted on
+/dev/mapper/testvg-testvol
+                      2.0G   67M  1.9G   4% /testvol</code>
+	</p>
+
+
+        <h3>Add new partitions and logical volumes, and swap to a system non-destructively.</h3>
+
+	<h5>swap</h5>
+	<h6>Datei für swapfile erstellen</h6>
+	    <p>
+	      Möchte man statt einer Partition oder eines eigenen logischen Volumes lieber ein swapfile benutzen, so muss dies vorher erstellt werden. 
+	    </p>
+	    <code>root@server1:~&gt; <strong>dd if=/dev/zero of=/swapfile bs=1M count=2048</strong>
+2048+0 records in
+2048+0 records out
+2147483648 bytes (2.1 GB) copied, 11.9962 s, 179 MB/s</code>
+
+	<h6>Swap erstellen</h6>
+	<code>root@server1:~&gt; <strong>mkswap -L swapfile0 /swapfile</strong>
+mkswap: /swapfile: warning: don't erase bootbits sectors
+        on whole disk. Use -f to force.
+Setting up swapspace version 1, size = 2097148 KiB
+LABEL=swapfile0, UUID=66a4ba81-f1e5-4d0d-a1c1-51b150d84cb3</code>
+
+	<h6>swap (de-)aktivieren</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>swapon /swapfile</strong></code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>swapoff /swapfile</strong></code>
+	</p>
+	      
+	<h6>swap anzeigen</h6>
+	<code>root@server1:~&gt; <strong>swapon -s</strong>
+Filename      Type      Size      Used   Priority
+/dev/dm-0     partition 2097144   0      -1
+/swapfile     file      2097144   0      -2</code>
+
+
+
+	<div class="page-break"></div>
+        <h2>Create and configure file systems</h2>
+
+        <h3>Create, mount, unmount, and use ext2, ext3, and ext4 file systems.</h3>
+
+	<h6>Filesystem erstellen</h6>
+	<code>root@server1:~&gt; <strong>mkfs -t ext4 -L testfs /dev/testvg/testvol</strong>
+                <strong>mkfs -t ext3 -L testfs /dev/testvg/testvol</strong>
+                <strong>mkfs -t ext2 -L testfs /dev/testvg/testvol</strong>
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=testfs
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+131072 inodes, 524288 blocks
+26214 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=536870912
+16 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks:
+	32768, 98304, 163840, 229376, 294912
+
+Writing inode tables: done
+Creating journal (16384 blocks): done
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 29 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.</code>
+
+	<h6>Filesystem upgraden</h6>
+	<p>
+	  Filesystem von ext2 auf ext3 upzugrade erfordert lediglich die Aktivierung des journaling. Ein Upgrade von ext3 auf ext4 erfordert die Aktivierung von mehreren Flags.
+	<p>
+	  <code>root@server1:~&gt; <strong>mkfs -t ext2 -L upgradefs /dev/testvg/upgradevol</strong>
+mke2fs 1.41.12 (17-May-2010)
+Filesystem label=upgradefs
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+65536 inodes, 262144 blocks
+13107 blocks (5.00%) reserved for the super user
+First data block=0
+Maximum filesystem blocks=268435456
+8 block groups
+32768 blocks per group, 32768 fragments per group
+8192 inodes per group
+Superblock backups stored on blocks:
+	    32768, 98304, 163840, 229376
+
+Writing inode tables: done
+Writing superblocks and filesystem accounting information: done
+
+This filesystem will be automatically checked every 34 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>dumpe2fs /dev/testvg/upgradevol | grep "Filesystem features"</strong>
+dumpe2fs 1.41.12 (17-May-2010)
+Filesystem features:      ext_attr resize_inode dir_index filetype sparse_super large_file</code>
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>tune2fs -j /dev/testvg/upgradevol</strong>
+tune2fs 1.41.12 (17-May-2010)
+Creating journal inode: done
+This filesystem will be automatically checked every 34 mounts or
+180 days, whichever comes first.  Use tune2fs -c or -i to override.</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>dumpe2fs /dev/testvg/upgradevol | grep "Filesystem features"</strong>
+dumpe2fs 1.41.12 (17-May-2010)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype sparse_super large_file</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>tune2fs -O extent,uninit_bg,dir_index /dev/testvg/upgradevol</strong>
+tune2fs 1.41.12 (17-May-2010)
+
+Please run e2fsck on the filesystem.</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>e2fsck -y /dev/testvg/upgradevol</strong>
+e2fsck 1.41.12 (17-May-2010)
+One or more block group descriptor checksums are invalid.  Fix? yes
+
+Group descriptor 0 checksum is invalid.  FIXED.
+Group descriptor 1 checksum is invalid.  FIXED.
+Group descriptor 2 checksum is invalid.  FIXED.
+Group descriptor 3 checksum is invalid.  FIXED.
+Group descriptor 4 checksum is invalid.  FIXED.
+Group descriptor 5 checksum is invalid.  FIXED.
+Group descriptor 6 checksum is invalid.  FIXED.
+Group descriptor 7 checksum is invalid.  FIXED.
+upgradefs contains a file system with errors, check forced.
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+upgradefs: 11/65536 files (0.0% non-contiguous), 12644/262144 blocks</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>tune2fs -O extent,uninit_bg,dir_index /dev/testvg/upgradevol</strong>
+tune2fs 1.41.12 (17-May-2010)</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>dumpe2fs /dev/testvg/upgradevol | grep "Filesystem features"</strong>
+dumpe2fs 1.41.12 (17-May-2010)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype extent sparse_super large_file uninit_bg</code>
+        </p>
+        <p>
+          <code>root@server1:~&gt; <strong>mount -t ext4 /dev/testvg/upgradevol /mnt</strong></code>
+	</p>
+
+        <h3>Mount, unmount, and use LUKS-encrypted file systems.</h3>
+
+        <h3>Mount and unmount CIFS and NFS network file systems.</h3>
+	<h5>NFS Eintrag in der /etc/fstab</h5>
+	<code>server1:/pub  /share  nfs  rsize=8192,wsize=8192,timeo=14,intr,udp  0 0</code>
+
+	<h5>Samba Mounts in der /etc/fstab</h5>
+	<p>
+	  <code>//server/pub  /share  cifs  rw,username=user,password=pass  0 0</code>
+        </p>
+        <p>
+	  oder wenn man das unverschlüsselte Passwort nicht in der frei zugänglichen /etc/fstab haben möchte
+        </p>
+        <p>
+	  <code>//server/pub  /share  cifs  rw,credentials=/etc/secret      0 0</code>
+        </p>
+        <p>
+	  worauf man dann die /etc/secrets nur für den root user zugänglich machen kann und dort dann die Einträge vornimmt: 
+        </p>
+        <p>
+	  <code>username=user
+password=pass</code>
+	</p>
+	
+
+        <h3>Configure systems to mount ext4, LUKS-encrypted, and network file systems automatically.</h3>
+	<h5>Automounter</h5>
+	<p>
+	  Der Automounter verfügt über eine ganze Reihe von Konfigurationsdateien, die wir uns in den nachfolgenden Sektionen genauer anschauen wollen.
+	</p>
+
+	<h6>/etc/sysconfig/autofs</h6>
+        <p>
+	  In dieser Datei werden grundlegende Einstellungen des automounters, wie z.B. LDAP oder NIS Anbindung, timeout Werte oder ob ein user nach 
+	  verfügbaren Freigaben "browsen" darf, vorgenommen.
+	</p>
+	<code>#
+# Define default options for autofs.
+#
+# MASTER_MAP_NAME - default map name for the master map.
+#
+#MASTER_MAP_NAME="auto.master"
+#
+# TIMEOUT - set the default mount timeout (default 600).
+#
+TIMEOUT=300
+#
+# NEGATIVE_TIMEOUT - set the default negative timeout for
+	  #      failed mount attempts (default 60).
+#
+#NEGATIVE_TIMEOUT=60
+#
+# MOUNT_WAIT - time to wait for a response from mount(8).
+#        Setting this timeout can cause problems when
+#        mount would otherwise wait for a server that
+#        is temporarily unavailable, such as when it's
+#        restarting. The default setting (-1) of waiting
+#        for mount(8) usually results in a wait of around
+#        3 minutes.
+#
+#MOUNT_WAIT=-1
+#
+# UMOUNT_WAIT - time to wait for a response from umount(8).
+#
+#UMOUNT_WAIT=12
+#
+# BROWSE_MODE - maps are browsable by default.
+#
+BROWSE_MODE="no"
+#
+# MOUNT_NFS_DEFAULT_PROTOCOL - specify the default protocol used by
+#        mount.nfs(8). Since we can't identify
+#        the default automatically we need to
+#        set it in our configuration.
+#
+#MOUNT_NFS_DEFAULT_PROTOCOL=3
+MOUNT_NFS_DEFAULT_PROTOCOL=4
+#
+# APPEND_OPTIONS - append to global options instead of replace.
+#
+#APPEND_OPTIONS="yes"
+#
+# LOGGING - set default log level "none", "verbose" or "debug"
+#
+#LOGGING="none"
+#
+# Define base dn for map dn lookup.
+#
+# Define server URIs
+#
+# LDAP_URI - space seperated list of server uris of the form
+#      &lt;proto&gt;://&lt;server&gt;[/] where &lt;proto&gt; can be ldap
+#      or ldaps. The option can be given multiple times.
+#      Map entries that include a server name override
+#      this option.
+#
+#     This configuration option can also be used to
+#     request autofs lookup SRV RRs for a domain of
+#     the form &lt;proto&gt;:///[%lt;domain dn&gt;]. Note that a
+#     trailing "/" is not allowed when using this form.
+#     If the domain dn is not specified the dns domain
+#     name (if any) is used to construct the domain dn
+#     for the SRV RR lookup. The server list returned
+#     from an SRV RR lookup is refreshed according to
+#     the minimum ttl found in the SRV RR records or
+#     after one hour, whichever is less.
+#
+#LDAP_URI=""
+#
+# LDAP__TIMEOUT - timeout value for the synchronous API  calls
+#  (default is LDAP library default).
+#
+#LDAP_TIMEOUT=-1
+#
+# LDAP_NETWORK_TIMEOUT - set the network response timeout (default 8).
+#
+#LDAP_NETWORK_TIMEOUT=8
+#
+# SEARCH_BASE - base dn to use for searching for map search dn.
+# Multiple entries can be given and they are checked
+# in the order they occur here.
+#
+#SEARCH_BASE=""
+#
+# Define the LDAP schema to used for lookups
+#
+# If no schema is set autofs will check each of the schemas
+# below in the order given to try and locate an appropriate
+# basdn for lookups. If you want to minimize the number of
+# queries to the server set the values here.
+#
+#MAP_OBJECT_CLASS="nisMap"
+#ENTRY_OBJECT_CLASS="nisObject"
+#MAP_ATTRIBUTE="nisMapName"
+#ENTRY_ATTRIBUTE="cn"
+#VALUE_ATTRIBUTE="nisMapEntry"
+#
+# Other common LDAP nameing
+#
+#MAP_OBJECT_CLASS="automountMap"
+#ENTRY_OBJECT_CLASS="automount"
+#MAP_ATTRIBUTE="ou"
+#ENTRY_ATTRIBUTE="cn"
+#VALUE_ATTRIBUTE="automountInformation"
+#
+#MAP_OBJECT_CLASS="automountMap"
+#ENTRY_OBJECT_CLASS="automount"
+#MAP_ATTRIBUTE="automountMapName"
+#ENTRY_ATTRIBUTE="automountKey"
+#VALUE_ATTRIBUTE="automountInformation"
+#
+# AUTH_CONF_FILE - set the default location for the SASL
+#   authentication configuration file.
+#
+#AUTH_CONF_FILE="/etc/autofs_ldap_auth.conf"
+#
+# MAP_HASH_TABLE_SIZE - set the map cache hash table size.
+# Should be a power of 2 with a ratio roughly
+# between 1:10 and 1:20 for each map.
+#
+#MAP_HASH_TABLE_SIZE=1024
+#
+# General global options
+#
+# If the kernel supports using the autofs miscellanous device
+# and you wish to use it you must set this configuration option
+# to "yes" otherwise it will not be used.
+USE_MISC_DEVICE="yes"
+#
+#OPTIONS=""
+#</code>
+
+	<h6>/etc/auto.master</h6>
+	<p>
+	  In dieser Datei werden die weiteren Map Dateien aktiviert und verlinkt.
+	</p>
+	<code>#
+# Sample auto.master file
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# For details of the format look at autofs(5).
+#
+/misc   /etc/auto.misc
+#
+# NOTE: mounts done from a hosts map will be mounted with the
+#"nosuid" and "nodev" options unless the "suid" and "dev"
+#options are explicitly given.
+#
+/net   -hosts
+#
+# Include central master map if it can be found using
+# nsswitch sources.
+#
+# Note that if there are entries for /net or /misc (as
+# above) in the included master map any keys that are the
+# same will not be seen as the first read key seen takes
+# precedence.
+#
++auto.master</code>
+
+	<h6>/etc/auto.misc</h6>
+	<p>
+	  In dieser Datei werden die verschiedenen lokalen Geräte zum einhängen vorkonfiguriert, wie z.B. CD-ROM oder Zip-Laufwerke etc.
+	</p>
+	<code>#
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# Details may be found in the autofs(5) manpage
+
+cd		-fstype=iso9660,ro,nosuid,nodev		:/dev/cdrom
+
+# the following entries are samples to pique your imagination
+#linux		-ro,soft,intrftp.example.org		:/pub/linux
+#boot		-fstype=ext2				:/dev/hda1
+#floppy		-fstype=auto				:/dev/fd0
+#floppy		-fstype=ext2				:/dev/fd0
+#e2floppy	-fstype=ext2				:/dev/fd0
+#jaz		-fstype=ext2				:/dev/sdc1
+#removable	-fstype=ext2				:/dev/hdd</code>
+
+	<h6>/etc/auto.net</h6>
+	<p>
+	  Bei dieser Datei handelt es sich eigentlich um ein ausführbares Skript, welches NFS Shares, die im Netz erreichbar sind für Nutzer
+	  unter /net/&lt;servername&gt;/&lt;sharename&gt; sichtbar macht. 
+	</p>
+
+	<h6>/etc/auto.smb</h6>
+	<p>
+	  Auch hier handelt es sich wieder um ein Shell Skript, das SMB/CIFS Shares, die nicht durch ein Passwort geschützt sind, unter /smb sichtbar macht.<br>
+	  Das Skript kann man auch nutzen, um sich die Samba Shares eines Servers anzeigen zu lassen:
+	</p>
+	<code>root@serenity:~&gt; <strong>/etc/auto.smb firefly</strong>
+-fstype=cifs \
+	   "/sharefs" "://firefly/sharefs"</code>
+
+	<h6>/etc/auto.home</h6>
+	<p>
+	  Es ist möglich von einem zentralen Server die Homeverzeichnisse zu beziehen, allerdings nur, wenn der Server an NIS oder LDAP angebunden ist.
+	  Da die LDAP Client Anbindung Bestandteil des RHCSA ist kann man davon ausgehen, dass auch NFS Homeverzeichnisse konfiguriert werden müssen.<br>
+	  Dazu müssen in der /etc/sysconfig/autofs zuerst einmal die LDAP Maps aktiviert werden:
+	</p>
+	<p>
+	  <code>DEFAULT_MAP_OBJECT_CLASS="automountMap"
+DEFAULT_ENTRY_OBJECT_CLASS="automount"
+DEFAULT_MAP_ATTRIBUTE="automountMapName"
+DEFAULT_ENTRY_ATTRIBUTE="automountKey"
+DEFAULT_VALUE_ATTRIBUTE="automountInformation"</code>
+	</p>
+	<p>
+	  Und anschliessend noch in der /etc/auto.home ein entsprechender share ähnlich dem folgenden konfiguriert werden:
+	</p>
+        <p>
+	  <code>* -rw,soft,intr server1.example.com:/home/&</code>
+	</p>
+
+
+        <h3>Extend existing unencrypted ext4-formatted logical volumes.</h3>
+	<p>
+	  Volume wie in "Create and remove physical volumes, assign physical volumes to volume groups, and create and delete logical Volumes." beschrieben erweitern 
+	  und anschliessend das Filesystem entsprechend anpassen.<br>
+
+	  Bei Vergrößerungen kann das Filesystem gemountet sein, bei Verkleinerungen muss es jedoch vorher umountet und mit fsck auf eventuelle Inkonsistenzen geprüft werden.
+	</p>
+	<p>
+	  <code>root@server1:~&gt; <strong>resize2fs /dev/testvg/testvol</strong>
+resize2fs 1.41.12 (17-May-2010)
+Resizing the filesystem on /dev/testvg/testvol to 1048576 (4k) blocks.
+The filesystem on /dev/testvg/testvol is now 1048576 blocks long.</code>
+	</p>
+
+
+        <h3>Create and configure set-GID directories for collaboration.</h3>
+	<p>
+	  <ol>
+	    <li>User einer gemeinsamen Gruppe hinzufügen</li>
+	    <li>Verzeichnis dem root User und der gemeinsamen Gruppe vermachen</li>
+	    <li>rwxrws--- (2770) Rechte auf das Verzeichnis setzen</li>
+	  </ol>
+	</p>
+
+
+        <h3>Create and manage Access Control Lists (ACLs).</h3>
+	<h5>ACL</h5>
+	<p>
+	  Damit ACL's greifen, muss das Dateisystem mit der Option "acl" gemountet werden und die Verzeichnisse müssen für den jeweiligen User das x-bit gesetzt haben.
+	  Die Maske die als Vorgabe für alle spezifischen ACL's, in welchem Rahmen diese Rechte einräumen dürfen.<br>
+	  Eine Maske von r-- und einer Erlaubnis für einen User von rwx würde diesem User doch letztlich nur r-- effektiv gestatten.
+	</p>
+	<h6>Access Control Listen (ACL) anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>getfacl &lt;file&gt;</strong>
+# file: var/crash/acltest
+# owner: root
+# group: root
+user::rw-
+user:mleimenm:rwx
+group::r--
+mask::rwx
+other::r--	</code>
+
+	<h6>Access Control Liste bearbeiten</h6>
+	<code>root@firefly:~&gt; <strong>setfacl [-R] -m [d:][ugmo]:[user|group]:[rwx] &lt;file&gt;</strong></code>
+
+	<h6>Access Control Liste löschen</h6>
+	<code>root@firefly:~&gt; <strong>setfacl [-R] -b &lt;file&gt;</strong></code>
+
+
+        <h3>Diagnose and correct file permission problems.</h3>
+
+
+
+	<div class="page-break"></div>
+        <h2>Deploy, configure, and maintain systems</h2>
+        <h3>Configure networking and hostname resolution statically or dynamically.</h3>
+	
+	<h5>Konfigurationsdateien</h5>
+	<h6>/etc/sysonfig/network</h6>
+	<code>NETWORKING=yes
+HOSTNAME=firefly.thyatis.mystara
+GATEWAY=192.168.197.129</code>
+
+	<h6>Persistente Devicenamen in /etc/udev/rules.d/70-persistent-net.rules</h6>
+	<code># This file was automatically generated by the /lib/udev/write_net_rules
+# program, run by the persistent-net-generator.rules rules file.
+#
+# You can modify it, as long as you keep each rule on a single
+# line, and change only the value of the NAME= key.
+
+# PCI device 0x10ec:0x8168 (r8169)
+SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="50:46:5d:76:70:ac", ATTR{type}=="1", KERNEL=="eth*", NAME="eth0"</code>
+
+	<h6>Statische Interface Konfiguration in /etc/sysconfig/network-scripts/ifcfg-&lt;interface&gt;</h6>
+	<code>DEVICE=eth0
+TYPE=Ethernet
+UUID=c91efe0a-3fce-421d-b263-b09f0e349449
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=static
+IPADDR=192.168.197.158
+NETMASK=255.255.255.224
+GATEWAY=192.168.197.129
+IPV4_FAILURE_FATAL=yes
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=yes</code>
+
+	<h6>Interface Konfiguration via DHCP in /etc/sysconfig/network-scripts/ifcfg-&lt;interface&gt;</h6>
+	<code>NAME="eno1"
+ONBOOT="yes"
+TYPE="Ethernet"
+HWADDR="74:d0:2b:27:41:ea"
+NETWORKMANAGER="no"
+BOOTPROTO="dhcp"
+IPV6INIT="yes" </code>
+
+	<h6>Statische Routen via /etc/sysconfig/network-scripts/route-eth0</h6>
+	<code>default 192.168.197.129 dev eth0
+10.10.10.0/24 via 192.168.197.129 dev eth0
+172.16.1.0/24 via 192.168.197.129 dev eth0</code>
+
+
+	<h6>DNS Namensauflösung via /etc/resolv.conf</h6>
+	<code>nameserver 127.0.0.1
+nameserver 192.168.197.129
+domain thyatis.mystara
+search mystara thyatis.mystara</code>
+
+
+        <h3>Schedule tasks using cron.</h3>
+
+	<h5>Zyklische Aufgaben planen mit cron</h5>
+	<h6>Anatomie einer crontab Datei</h6>
+	<code>SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+HOME=/
+
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name command to be executed</code>
+
+	<h5>Einmalige Aufgaben terminieren mit at und batch</h5>
+	<h6>Geplante Aufgaben anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>atq</strong>
+1     2013-11-19 23:30 a root</code>
+	<p>
+	  <code>root@firefly:~&gt; <strong>cat /tmp/wachmann</strong>
+Anscheinend ist gerade nichts zu tun, Zeit für einen Donut
+Di 19. Nov 23:23:04 CET 2013
+Es ist Di 19. Nov 23:30:00 CET 2013 Uhr und alles ist ruhig</code>
+	</p>
+
+	<h6>Aufgaben zu einem festen Zeitpunkt ausführen</h6>
+	<code>root@firefly:~&gt; <strong>at now +10 minutes</strong>
+at> echo "Es ist $(date) Uhr und alles ist ruhig" >> /tmp/wachmann
+at> &lt;Ctrl-D&gt;
+job 1 at 2013-11-19 23:30</code>
+
+	<h6>Aufgaben dann ausführen, wenn das System gerade nichts zu tun hat</h6>
+	<code>root@firefly:~&gt; <strong>batch</strong>
+at> echo "Anscheinend ist gerade nichts zu tun, Zeit für einen Donut" >> /tmp/wachmann
+at> date >> /tmp/wachmann
+at> &lt;Ctrl-D&gt;
+job 2 at 2013-11-19 23:22</code>
+
+        <h3>Configure systems to boot into a specific runlevel automatically.</h3>
+	<h6>Default Runlevel in /etc/inittab ändern</h6>
+	<code># inittab is only used by upstart for the default runlevel.
+#
+# ADDING OTHER CONFIGURATION HERE WILL HAVE NO EFFECT ON YOUR SYSTEM.
+#
+# System initialization is started by /etc/init/rcS.conf
+#
+# Individual runlevels are started by /etc/init/rc.conf
+#
+# Ctrl-Alt-Delete is handled by /etc/init/control-alt-delete.conf
+#
+# Terminal gettys are handled by /etc/init/tty.conf and /etc/init/serial.conf,
+# with configuration in /etc/sysconfig/init.
+#
+# For information on how to write upstart event handlers, or how
+# upstart works, see init(5), init(8), and initctl(8).
+#
+# Default runlevel. The runlevels used are:
+#   0 - halt (Do NOT set initdefault to this)
+#   1 - Single user mode
+#   2 - Multiuser, without NFS (The same as 3, if you do not have networking)
+#   3 - Full multiuser mode
+#   4 - unused
+#   5 - X11
+#   6 - reboot (Do NOT set initdefault to this)
+#
+id:<strong>5</strong>:initdefault:</code>
+
+	<h5>Init Systeme</h5>
+	<p>
+	  Je nach Runlevel werden Service Skripte, die von /etc/init.d in die jeweiligen /etc/rc?.d Verzeichnisse verlinkt werden.
+	  Diese SystemV Services werden ebenso wie xinetd Services bequem mit dem chkconfig Kommando konfiguriert. <br>
+	  Darüberhinaus gibt es in RHEL6 noch das upstart init System, welches durch Skripte im /etc/init Verzeichnis gesteuert wird.
+	</p>
+	
+	<h6>SystemV</h6>
+	<p>
+	  <code>[root@tester1 ~]# <strong>chkconfig --list</strong>
+abrt-ccpp      	0:off	1:off	2:off	3:on	4:off	5:on	6:off
+abrtd          	0:off	1:off	2:off	3:on	4:off	5:on	6:off
+acpid          	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+atd            	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+auditd         	0:off	1:off	2:on	3:off	4:on	5:on	6:off
+autofs         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+blk-availability	0:off	1:on	2:on	3:on	4:on	5:on	6:off
+cpuspeed       	0:off	1:on	2:on	3:on	4:on	5:on	6:off
+crond          	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+haldaemon      	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+ip6tables      	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+iptables       	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+irqbalance     	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+kdump          	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+libvirt-guests 	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+lvm2-monitor   	0:off	1:on	2:on	3:on	4:on	5:on	6:off
+mdmonitor      	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+messagebus     	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+netconsole     	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+netfs          	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+network        	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+nfs            	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+nfslock        	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+ntpd           	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+ntpdate        	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+postfix        	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+psacct         	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+quota_nld      	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+rdisc          	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+restorecond    	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+rngd           	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+rpcbind        	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+rpcgssd        	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+rpcidmapd      	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+rpcsvcgssd     	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+rsyslog        	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+saslauthd      	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+smartd         	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+sshd           	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+svnserve       	0:off	1:off	2:off	3:off	4:off	5:off	6:off
+sysstat        	0:off	1:on	2:on	3:on	4:on	5:on	6:off
+udev-post      	0:off	1:on	2:on	3:on	4:on	5:on	6:off
+xinetd         	0:off	1:off	2:off	3:on	4:on	5:on	6:off
+
+xinetd based services:
+	chargen-dgram: 	off
+	chargen-stream:	off
+	daytime-dgram: 	off
+	daytime-stream:	off
+	discard-dgram: 	off
+	discard-stream:	off
+	echo-dgram:    	off
+	echo-stream:   	off
+	rsync:         	off
+	tcpmux-server: 	off
+	time-dgram:    	off
+	time-stream:   	off</code>
+	</p>
+	<p>
+	  <code>[root@tester1 ~]# <strong>chkconfig rsync on</strong>
+[root@tester1 ~]# <strong>chkconfig --level 2 kdump on</strong></code>
+	</p>
+	<p>
+	  <code>[root@tester1 ~]# <strong>service sshd</strong>
+Usage: /etc/init.d/sshd {start|stop|restart|reload|force-reload|condrestart|try-restart|status}</code>
+	</p>
+
+	<h6>upstart Beispielskript /etc/init/ttyS0.conf</h6>
+	<code># ttyS0 - agetty
+stop on runlevel [016]
+start on runlevel [345]
+instance ttyS0
+respawn
+pre-start exec /sbin/securetty ttyS0
+exec /sbin/agetty /dev/ttyS0 115200 vt100-nav</code>
+
+
+        <h3>Install Red Hat Enterprise Linux automatically using Kickstart.</h3>
+
+        <h3>Configure a physical machine to host virtual guests.</h3>
+
+        <h3>Install Red Hat Enterprise Linux systems as virtual guests.</h3>
+
+
+        <h3>Configure systems to launch virtual machines at boot.</h3>
+	<code>root@serenity:~&gt; <strong>virsh autostart server1.example.com</strong>
+Domain server1.example.com marked as autostarted</code>
+
+
+        <h3>Configure network services to start automatically at boot.</h3>
+	<p>
+	  Netzwerkdienste können global mit dem folgenden Schalter in der /etc/sysconfig/network (de-)aktiviert werden:
+	</p>
+	<p>
+	  <code>NETWORKING=yes</code>
+	</p>
+	<p>
+	  Einzelner Interface verfügen in der /etc/sysconfig/network-services/ifcfg-&lt;device&gt; über den folgenden Schalter:
+	</p>
+	<p>
+	  <code>ONBOOT=yes</code>
+	</p>
+
+
+        <h3>Configure a system to run a default configuration HTTP server.</h3>
+
+        <h3>Configure a system to run a default configuration FTP server.</h3>
+
+
+        <h3>Configure a system to use time services.</h3>
+	<h6>/etc/sysconfig/clock contains the time zone for the redhat tools</h6>
+	<p>
+	  <code># The time zone of the system is defined by the contents of /etc/localtime.
+# This file is only for evaluation by system-config-date, do not rely on its
+# contents elsewhere.
+ZONE="Europe/Berlin"</code>
+	</p>
+	<h6>/etc/ntp.conf enthält die ntp client Konfiguration</h6>
+	<p>
+	  <code># For more information about this file, see the man pages
+# ntp.conf(5), ntp_acc(5), ntp_auth(5), ntp_clock(5), ntp_misc(5), ntp_mon(5).
+
+driftfile /var/lib/ntp/drift
+
+# Permit time synchronization with our time source, but do not
+# permit the source to query or modify the service on this system.
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+
+# Permit all access over the loopback interface.  This could
+# be tightened as well, but to do so would effect some of
+# the administrative functions.
+restrict 127.0.0.1
+restrict -6 ::1
+
+# Hosts on local network are less restricted.
+#restrict 192.168.1.0 mask 255.255.255.0 nomodify notrap
+
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+<strong>server 0.centos.pool.ntp.org
+server 1.centos.pool.ntp.org
+server 2.centos.pool.ntp.org</strong>
+
+#broadcast 192.168.1.255 autokey        # broadcast server
+#broadcastclient                        # broadcast client
+#broadcast 224.0.1.1 autokey            # multicast server
+#multicastclient 224.0.1.1              # multicast client
+#manycastserver 239.255.254.254         # manycast server
+#manycastclient 239.255.254.254 autokey # manycast client
+
+# Undisciplined Local Clock. This is a fake driver intended for backup
+# and when no outside source of synchronized time is available.
+#server 127.127.1.0                     # local clock
+#fudge 127.127.1.0 stratum 10
+
+# Enable public key cryptography.
+#crypto
+
+includefile /etc/ntp/crypto/pw
+
+# Key file containing the keys and key identifiers used when operating
+# with symmetric key cryptography.
+keys /etc/ntp/keys
+
+# Specify the key identifiers which are trusted.
+#trustedkey 4 8 42
+
+# Specify the key identifier to use with the ntpdc utility.
+#requestkey 8
+
+# Specify the key identifier to use with the ntpq utility.
+#controlkey 8
+
+# Enable writing of statistics records.
+#statistics clockstats cryptostats loopstats peerstats</code>
+	</p>
+
+
+        <h3>Install and update software packages from Red Hat Network, a remote repository, or from the local file system.</h3>
+	<h4>RPM</h4>
+	<p>
+	  Das altbekannte rpm Tool bildet die Grundlage des Paketmanagements unter RedHat und andere Tools wie z.B. yum bauen darauf auf.<br>
+	  Die Aufgaben von rpm lassen sich in 4 Kernbereiche unterglieden:<br>
+	  <ul>
+	    <li>Download, Installation, Update und Entfernen von Paketen</li>
+	    <li>Recherche in der Paketdatenbank</li>
+	    <li>Verifikation der bereits installierten Pakete</li>
+	    <li>Sicherheit der Paketquellen gewährleisten</li>
+	  </ul>
+	  RPM Pakete tragen den folgenden Namen: &lt;software&gt;-&lt;version&gt;-&lt;release&gt;.&lt;os major release&gt;.&lt;architecture&gt;.rpm
+	</p>
+	<p>
+	  Stellt rpm bei dem Update eines Paketes fest, dass Konfigurationsdateien überschrieben würden, die vom Benutzer geändert wurden, so werden diese wie folgt gesichert:
+	  <table>
+	    <caption>Sicherung von Konfigurationsdateien</caption>
+	    <tr>
+	      <th>*.rpmsave</th>
+	      <td>Bereits bestehende Konfigurationsdatei wird mit dem Postfix .rpmsave versehen und gesichert, da diese mit der neuen Version der Software nicht mehr kompatibel ist.</td>
+	    </tr>
+	    <tr>
+	      <th>*.rpmnew</th>
+	      <td>Die neue Konfigurationsdatei wird mit dem Postfix .rpmnew versehen und gesichert um vom Nutzer vorgenommene Veränderungen nicht zu überschreiben. 
+		Dies ist möglich, da das Format der Konfigurationsdatei noch kompatibel zur neuen Softwareversion ist.</td>
+	    </tr>
+	  </table>
+	</p>
+
+	<h5>Pakete downloaden, installieren, updaten und entfernen</h5>
+	
+	<h6>Paket upgraden oder installieren, falls es noch nicht installiert ist</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Uvh &lt;paket&gt;</strong></code>
+	
+	<h6>Installation eines Pakets</h6>
+	<code>root@tester1:~&gt; <strong>rpm -ivh kernel-2.6.32-358.18.1.el6.x86_64</strong></code>
+	<p class="note">
+	  sollte nur bei Kernelpaketen verwendet werden
+	</p>
+
+	<h6>Auffrischen von Paketen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -F &lt;paket&gt;</strong></code>
+	<p class="note">
+	  Paket wird nur aktualisiert, wenn es bereits installiert ist.
+	</p>
+
+	<h6>Paket reinstallieren</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Uvh --replace-pkgs &lt;paket&gt;</strong></code>
+	
+	<h6>Paket downgraden</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Uvh --oldpackage &lt;paket&gt;</strong></code>
+	
+	<h6>Dateikonflikte ignorieren</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Uvh --replace-files &lt;paket&gt;</strong></code>
+	
+	<h6>Paket deinstallieren</h6>
+	<code>root@tester1:~&gt; <strong>rpm -e &lt;paket&gt;</strong></code>
+	
+	
+	<h5>Recherche in der Paketdatenbank</h5>
+	<p>
+	  Für die Recherche in der Paketdatenbank stellt rpm die query (-q) Option zur Verfügung. Um die Paketdatenbank zu durchsuchen nutzt man folgende Syntax:
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>rpm -q [selection options] [query options] &lt;paket&gt;</strong></code>
+	</p>
+	<p>
+	  wobei die "selection options" und "query options" den beiden folgenden Tabellen entnommen werden können.
+	</p>
+        <p>
+	  <table>
+	    <caption>rpm -q selection options</caption>
+	    <tr>
+	      <th>-a</th>
+	      <td>alle installierten Pakete</td>
+	    </tr>
+	    <tr>
+	      <th>-f &lt;datei&gt;</th>
+	      <td>zu welchem Paket gehört die &lt;datei&gt;</td>
+	    </tr>
+	    <tr>
+	      <th>-p &lt;paketdatei&gt;</th>
+	      <td>durchsucht die angegebene Paketdatei und nicht die bereits installierten Pakete</td>
+	    </tr>
+	  </table>
+	</p>
+	<p>
+	  <table>
+	    <caption>rpm -q query options</caption>
+	    <tr>
+	      <th>-i</th>
+	      <td>Informationen über das Paket</td>
+	    </tr>
+	    <tr>
+	      <th>-l</th>
+	      <td>Liste der Dateien im Paket</td>
+	    </tr>
+	    <tr>
+	      <th>-s</th>
+	      <td>Status der Dateien im Paket</td>
+	    </tr>
+	    <tr>
+	      <th>-d</th>
+	      <td>Dokumentationsdateien im Paket</td>
+	    </tr>
+	    <tr>
+	      <th>-c</th>
+	      <td>Konfigurationsdateien im Paket</td>
+	    </tr>
+	  </table>
+	</p>
+	<p>
+	  Nachfolgend einige Beispiele für rpm queries:
+	</p>
+
+	<h6>Zu welchem Paket gehört die Datei?</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qf /usr/bin/ghostscript</strong></code>
+
+
+	<h6>Wo finde ich die Dokumentation zu einer Datei?</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qdf /usr/bin/free</strong></code>
+
+
+	<h6>Informationen über lokal vorliegendes Paket auslesen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qip tree-1.5.3-2.el6.x86_64.rpm</strong></code>
+
+	<h6>Welche Dateien installiert das lokal vorliegendes Paket?</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qlp tree-1.5.3-2.el6.x86_64.rpm</strong></code>
+
+
+	<h5>Verifikation der installierten Pakete</h5>
+	<p>
+	  Mit rpm kann man auch wunderbar die bereits installierten Dateien gegenüber der Paketdatenbank auf Änderungen verifizieren.
+	  Dabei zeigt rpm für jede Datei ein Flagset aus den folgenden "Verification Flags" mit Abweichungen zusammen.
+	</p>
+	<p>
+	  <table>
+	    <caption>rpm -V Verification Flags</caption>
+	    <tr>
+	      <th>5</th>
+	      <td>MD5 Checksumme</td>
+	    </tr>
+	    <tr>
+	      <th>S</th>
+	      <td>Dateigröße</td>
+	    </tr>
+	    <tr>
+	      <th>L</th>
+	      <td>Symbolischer Link</td>
+	    </tr>
+	    <tr>
+	      <th>T</th>
+	      <td>Modification Time</td>
+	    </tr>
+	    <tr>
+	      <th>D</th>
+	      <td>Device</td>
+	    </tr>
+	    <tr>
+	      <th>U</th>
+	      <td>User</td>
+	    </tr>
+	    <tr>
+	      <th>G</th>
+	      <td>Gruppe</td>
+	    </tr>
+	    <tr>
+	      <th>M</th>
+	      <td>Mode, also permissions, Dateityp etc.</td>
+	    </tr>
+	    <tr>
+	      <th>?</th>
+	      <td>Datei ist nicht lesbar und kann daher auch nicht verifiziert werden</td>
+	    </tr>
+	  </table>
+	</p>
+	<p>
+	  Nachfolgend einige Beispiele für rpm Verifikationen:
+	</p>
+
+	<h6>Alle installieren Pakete verifizieren</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Va</strong></code>
+
+	<h6>Installation eines Pakets überprüfen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -V &lt;paket&gt;</strong></code>
+
+	<h6>Installation eines Paketes, zu dem diese Datei gehört prüfen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Vf /usr/bin/tree</strong></code>
+
+	<h6>Installation gegen eine vorliegende rpm-Datei prüfen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -Vp tree-1.5.3-2.el6.x86_64.rpm</strong></code>
+
+	<h5>Sicherheit der Paketquellen gewährleisten</h5>
+	<p>
+	  Um die Herkunft von Paketen eindeutig sicherzustellen bedient sich rpm des Schlüsselmechanismus von gpg. 
+	  Jedes Paket aus einer offiziellen Quelle verfügt über einen Herkunftsschlüssel, der gegen eine Datenbank von erlaubten Schlüsseln abgeglichen wird.
+	  Exisitiert der Schlüssel das Pakets nicht im /etc/pki/rpm-gpg/ Verzeichnisses wird der Nutzer darauf hingewiesen.<br>
+	  Die nachfolgenden Beispiele dienen der Veranschaulichung des Umgangs mit den rpm keys:
+	</p>
+
+	<h6>Paketsignatur prüfen, wenn der Key noch nicht installiert ist</h6>
+	<code>root@tester1:~&gt; <strong>rpm -K --no-signature &lt;paketdatei&gt;</strong></code>
+
+	<h6>Paketsignatur gegen installierten Key prüfen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -K &lt;paketdatei&gt;</strong></code>
+
+	<h6>Key importieren</h6>
+	<code>root@tester1:~&gt; <strong>rpm --import /usr/share/rhn/RPM-GPG-KEY</strong></code>
+
+	<h6>Installierte Keys anzeigen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qa gpg-pubkey*</strong></code>
+
+	<h6>Details eines Keys anzeigen</h6>
+	<code>root@tester1:~&gt; <strong>rpm -qi gpg-pubkey-db42a60e-37ea5438</strong></code>
+
+
+	<h4>YUM</h4>
+	<p>
+	  Das die Auflösung von Abhängigkeiten zwischen den Paketen via rpm mitunter sehr nerv- und zeitraubend war, wurde ein weiteres Werkzeug zum Paketmanagement
+	  entwickelt, das auf rpm aufsetzt und dieses um zahlreiche Funktionen ergänzt, wie <br>
+	  <ul>
+	    <li>Paketabhängigkeiten bei der Installation auflösen</li>
+	    <li>Verwalten von Paketquellen (repositories)</li>
+	    <li>Installation von Paketen und Paketgruppen</li>
+	    <li>Transaktionsverwaltung</li>
+	  </ul>
+	</p>
+
+	<h5>Paketmanagement</h5>
+
+	<h6>Pakete installieren</h6>
+	<code>root@tester1:~&gt; <strong>yum install &lt;paket&gt;</strong>
+                <strong>yum install &lt;paket&gt;.&lt;architektur&gt;</strong>
+                <strong>yum install &lt;paket*&gt;</strong>
+                <strong>yum install /path/to/binary</strong></code>
+
+	<h6>Pakete deinstallieren</h6>
+	<code>root@tester1:~&gt; <strong>yum remove &lt;paket&gt;</strong>
+                <strong>yum remove &lt;paket&gt;.&lt;architektur&gt;</strong>
+                <strong>yum remove &lt;paket*&gt;</strong>
+                <strong>yum remove /path/to/binary</strong></code>
+
+	<h6>Paketgruppen installieren</h6>
+	<code>root@tester1:~&gt; <strong>yum groupinstall &lt;paketgruppen name&gt;</strong>
+                <strong>yum groupinstall &lt;paketgruppen id&gt;.&lt;architektur&gt;</strong>
+                <strong>yum install @&lt;paketgruppe&gt;</strong></code>
+
+	<h6>Paketgruppen deinstallieren</h6>
+	<code>root@tester1:~&gt; <strong>yum groupremove &lt;paketgruppen name&gt;</strong>
+                <strong>yum groupremove &lt;paketgruppen id&gt;.&lt;architektur&gt;</strong>
+                <strong>yum remove @&lt;paketgruppe&gt;</strong></code>
+	<p class="note">
+	  Vorsicht! Je nach Schalterstellung der "group_remove_leaf_only"-Direktive in der /etc/yum.conf Datei werden bei einem groupremove entweder alle 
+	  in der Gruppe aufgeführten Pakete entfernt (0 und ist der default) oder nur diejenigen, die nicht durch Abhängigkeiten mit anderen Paket(-gruppen)
+	  noch benötigt werden (1).
+	</p>
+
+
+	<h6>Prüfen auf Updates</h6>
+	<code>root@tester1:~&gt; <strong>yum check-updates</strong></code>
+
+	<h6>Einzelnes Paket updaten</h6>
+	<code>root@tester1:~&gt; <strong>yum update &lt;paket&gt;</strong></code>
+
+	<h6>Komplettes System updaten</h6>
+	<code>root@tester1:~&gt; <strong>yum update</strong></code>
+
+	<h6>Name, Beschreibung und Zusammenfassungen der Paketdatenbanken durchsuchen</h6>
+	<code>root@tester1:~&gt; <strong>yum search &lt;suchbegriff&gt;</strong></code>
+
+	<h6>Pakete, Paketgruppen und Repositories auflisten</h6>
+	<code>root@tester1:~&gt; <strong>yum list gnome\*</strong></code>
+
+	<h6>Alle Pakete auflisten, die entweder installiert oder verfügbar oder beides sind</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum list installed</strong></code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum list available</strong></code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum list all</strong></code>
+	</p>
+
+	<h6>Paketgruppen auflisten</h6>
+	<code>root@tester1:~&gt; <strong>yum grouplist</strong></code>
+
+	<h6>Repositories auflisten</h6>
+	<code>root@tester1:~&gt; <strong>yum repolist</strong></code>
+
+	<h6>Paketinformationen anzeigen</h6>
+	<code>root@tester1:~&gt; <strong>yum info &lt;paket&gt;</strong></code>
+
+	<h6>yum Datenbank nach weiteren Infos durchforsten</h6>
+	<code>root@tester1:~&gt; <strong>yumdb info &lt;paket&gt;</strong></code>
+
+	<h6>Welches Paket beinhaltet diese Datei?</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum provides /path/to/binary</strong></code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum provides */binary</strong></code>
+	</p>
+
+
+	<h5>yum Transaktionshistorie</h5>
+	<p>
+	  yum loggt jede Transaktion in einer eigenen Historie unter /var/lib/yum/history ab und gibt dem Administrator Mittel zur Hand diese auch effektiv zu nutzen.
+	  Eine solche Transaktionshistorie können wir nachfolgend sehen, die einzelnen Felder sind zum einen die eindeutige TransaktionsID, der User, der die Transaktion durchgeführt hat,
+	  der Zeitpunkt der Änderung, die durchgeführte Aktion (siehe nachfolgende Actions-Tabelle), die Anzahl der geänderten Pakete und im Falle eines Fehlers oder einer Warnung
+	  entsprechende Flags,die in der Fehlertabelle näher erläutert werden.
+	</p>
+	<p>
+	  <code>ID     | Login user               | Date and time    | Action(s)      | Altered
+-------------------------------------------------------------------------------
+    37 | root &lt;root&gt;              | 2013-11-18 14:28 | Install        |    1
+    36 | Michael ... &lt;mleimenm&gt;   | 2013-11-13 13:39 | Install        |    1
+    35 | Michael ... &lt;mleimenm&gt;   | 2013-11-13 13:08 | Install        |    2
+    34 | Michael ... &lt;mleimenm&gt;   | 2013-11-11 18:45 | Install        |   22
+    33 | Michael ... &lt;mleimenm&gt;   | 2013-11-11 18:42 | Install        |    2
+    32 | Michael ... &lt;mleimenm&gt;   | 2013-11-11 17:40 | Install        |    1
+    31 | Michael ... &lt;mleimenm&gt;   | 2013-11-08 13:41 | Install        |    1
+    30 | Michael ... &lt;mleimenm&gt;   | 2013-11-04 22:52 | Install        |    1
+    29 | root &lt;root&gt;              | 2013-11-04 14:14 | Install        |    1
+    28 | Michael ... &lt;mleimenm&gt;   | 2013-11-03 08:54 | Install        |    9
+    27 | Michael ... &lt;mleimenm&gt;   | 2013-11-03 08:52 | Install        |    3
+    26 | 500                      | 2013-11-02 01:14 | Erase          |    4
+    25 | 500                      | 2013-11-02 01:13 | Erase          |    1
+    24 | 500                      | 2013-11-02 01:12 | Erase          |    2
+    23 | 500                      | 2013-11-02 00:01 | Install        |    1
+    22 | 500                      | 2013-11-01 08:56 | Install        |    1
+    21 | 500                      | 2013-11-01 08:52 | Install        |    9
+    20 | System &lt;unset&gt;           | 2013-11-01 06:02 | Install        |   50
+    19 | System &lt;unset&gt;           | 2013-11-01 05:55 | Install        |   50
+    18 | System &lt;unset&gt;           | 2013-11-01 05:53 | Install        |    5</code>
+	</p>
+	<p>
+	  <table>
+	    <caption>Mögliche Aktionen in der yum Transaktionshistorie</caption>
+	    <tr> <th>D</th> <td>Downgrade</td>	</tr>
+	    <tr> <th>E</th> <td>Erase</td>	</tr>
+	    <tr> <th>I</th> <td>Install</td>	</tr>
+	    <tr> <th>O</th> <td>Obsoleting</td> </tr>
+	    <tr> <th>R</th> <td>Reinstall</td>	</tr>
+	    <tr> <th>U</th> <td>Update</td>	</tr>
+	  </table>
+	</p>
+	<p>
+	  <table>
+	    <caption>Fehler und Warnungen in der yum Transaktionshistorie</caption>
+	    <tr> <th>&lt;</th>	<td>Vor Ende der Transaktion wurde die RPM Datebank von aussen verändert.</td>	</tr>
+	    <tr> <th>&gt;</th>	<td>Nach Ende der Transaktion wurde die RPM Datebank von aussen verändert.</td>	</tr>
+	    <tr> <th>*</th>	<td>Fehler vor Beendigung; Transaktion wurde NICHT durchgeführt.</td>		</tr>
+	    <tr> <th>#</th>	<td>Transaktion wurde durchgeführt, aber yum gab einen return code ungleich 0 zurück.</td>	</tr>
+	    <tr> <th>E</th>	<td>Transaktion wurde durchgeführt, aber es tauchten Fehler oder Warnungen auf.</td>	</tr>
+	    <tr> <th>P</th>	<td>Transaktion wurde durchgeführt, es wurden aber Problem in der RPM Datenbank festgestellt.</td>	</tr>
+	    <tr> <th>S</th>	<td>Transaktion wurde durchgeführt, aber der schlaue Admin meinte Abhängigkeiten einfach via --skip-broken ignorieren zu müssen.</td>	</tr>
+	  </table>
+	</p>
+
+
+	<h6>Historie anzeigen lassen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history list [all]</strong>
+	           <strong>yum history list start..end</strong>
+	           <strong>yum history list &lt;paket&gt;*</strong></code>
+	</p>
+
+	<h6>Zusammenfassungen zeigen lassen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history summary</strong>
+	           <strong>yum history summary start..end</strong>
+	           <strong>yum history summary &lt;paket&gt;*</strong></code>
+	</p>
+
+	<h6>Historie für ein einzelnes Paket anzeigen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history package-list &lt;paket&gt;*</strong></code>
+	</p>
+
+	<h6>Transaktionsdetails einsehen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history info &lt;id&gt;</strong>
+	           <strong>yum history info start..end</strong>
+	           <strong>yum history info [last]</strong></code>
+	</p>
+
+	<h6>Details zum Transaktionsenvironment einsehen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history addoninfo &lt;id&gt;</strong>
+	           <strong>yum history addon-info [last]</strong></code>
+	</p>
+
+	<h6>Transaktionen zurückrufen / erneut durchführen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history undo &lt;id&gt;</strong>
+	           <strong>yum history redo &lt;id&gt;</strong></code>
+	</p>
+
+	<h6>Transaktionshistorie zurücksetzen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum history new</strong></code>
+	</p>
+
+	<h6>Transaktion auf anderem System replizieren</h6>
+	<p class="note">
+	  Dazu muss die Version der rpm Datenbank identisch sein, was sich mit Hilfe von "yum version nogroups" überprüfen lässt.
+	</p>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>yum -q history addon-info &lt;id&gt; saved_tx > &lt;datei&gt;</strong></code>
+	</p>
+	<p>
+	  <code>root@<em>tester1</em>:~&gt; <strong>yum load-transaction &lt;datei&gt;</strong></code>
+	</p>
+
+	
+	<h5>Repositories</h5>
+	<p>
+	  yum pflegt unter /etc/yum.repos.d/*.repo eine Anzahl konfigurierter Repositories, die einzeln (de-) aktiviert werden können.
+	</p>
+	<h6>Repository hinzufügen</h6>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>yum-config-manager --add-repo &lt;url&gt;</strong></code>
+	</p>
+
+	<h6>Repository (de-) aktivieren</h6>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>yum-config-manager --enable &lt;repo&gt;*</strong>
+                            <strong>yum-config-manager --disable &lt;repo&gt;*</strong></code>
+	</p>
+	<h6>Eigenes Repository erstellen</h6>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>yum install createrepo</strong></code>
+	</p>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>cp *.rpm /mnt/newrepo/</strong></code>
+	</p>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>createrepo --database /mnt/newrepo</strong></code>
+	</p>
+	
+	<h5>Konfiguration</h5>
+	<p>
+	  Die Konfiguration von yum erfolgt in der globalen /etc/yum.conf, sowie in den einzelnen Repository Konfigurationen unter /etc/yum.repos.d/*.repo.<br>
+	  Beispiele für die globale Konfiguration sowie eines Repositories folgen unten.
+	</p>
+	
+	<h6>Konfiguration anzeigen lassen</h6>
+	<p>
+	  <code>root@<em>server1</em>:~&gt; <strong>yum-config-manager [sektion]</strong></code>
+	</p>
+	
+
+	<h6>/etc/yum.conf</h6>
+	<p>
+	  <code>[main]
+cachedir=/var/cache/yum/$basearch/$releasever
+keepcache=0
+debuglevel=2
+logfile=/var/log/yum.log
+exactarch=1
+obsoletes=1
+gpgcheck=1
+plugins=1
+installonly_limit=5
+bugtracker_url=http://bugs.centos.org/set_project.php?project_id=16&ref=http://bugs.centos.org/bug_report_page.php?category=yum
+distroverpkg=centos-release
+
+#  This is the default, if you make this bigger yum won't see if the metadata
+# is newer on the remote and so you'll "gain" the bandwidth of not having to
+# download the new metadata and "pay" for it by yum not having correct
+# information.
+#  It is esp. important, to have correct metadata, for distributions like
+# Fedora which don't keep old packages around. If you don't like this checking
+# interupting your command line usage, it's much better to have something
+# manually check the metadata once an hour (yum-updatesd will do this).
+# metadata_expire=90m
+
+# PUT YOUR REPOS HERE OR IN separate files named file.repo
+# in /etc/yum.repos.d</code>
+	</p>
+
+	<h6>/etc/yum.repos.d/CentOS-Base.repo</h6>
+	<p>
+	  <code># CentOS-Base.repo
+#
+# The mirror system uses the connecting IP address of the client and the
+# update status of each mirror to pick mirrors that are updated to and
+# geographically close to the client.  You should use this for CentOS updates
+# unless you are manually picking other mirrors.
+#
+# If the mirrorlist= does not work for you, as a fall back you can try the
+# remarked out baseurl= line instead.
+#
+#
+
+[base]
+name=CentOS-$releasever - Base
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os
+#baseurl=http://mirror.centos.org/centos/$releasever/os/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+#released updates
+[updates]
+name=CentOS-$releasever - Updates
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates
+#baseurl=http://mirror.centos.org/centos/$releasever/updates/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+#additional packages that may be useful
+[extras]
+name=CentOS-$releasever - Extras
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras
+#baseurl=http://mirror.centos.org/centos/$releasever/extras/$basearch/
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+#additional packages that extend functionality of existing packages
+[centosplus]
+name=CentOS-$releasever - Plus
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=centosplus
+#baseurl=http://mirror.centos.org/centos/$releasever/centosplus/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6
+
+#contrib - packages by Centos Users
+[contrib]
+name=CentOS-$releasever - Contrib
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=contrib
+#baseurl=http://mirror.centos.org/centos/$releasever/contrib/$basearch/
+gpgcheck=1
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6</code>
+	</p>
+
+	<h5>Verschiedenes</h5>
+	<h6>Cache leeren bei Problemen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum clean all</strong></code>
+	</p>
+
+
+        <h3>Update the kernel package appropriately to ensure a bootable system.</h3>
+	<p>
+	  Im Gegensatz zu regulären Paketen möchte man bei der Installation von neuen Kernelpaketen nicht die bestehende Version ersetzen, sondern vielmehr den
+	  neuen Kernel parallel zu dem alten installieren. Aus diesem Grund sollte man entweder direkt yum oder aber die rpm -i Option nutzen.
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>yum install kernel-2.6.32-358.18.1.el6.x86_64</strong>
+Loaded plugins: fastestmirror, security
+Loading mirror speeds from cached hostfile
+ * base: mirror2.hs-esslingen.de
+ * extras: mirror.skylink-datacenter.de
+ * updates: mirror.skylink-datacenter.de
+Setting up Install Process
+Resolving Dependencies
+--> Running transaction check
+---> Package kernel.x86_64 0:2.6.32-358.18.1.el6 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=======================================================================================================================
+ Package                Arch                   Version                                Repository               Size
+=======================================================================================================================
+Installing:
+ kernel                 x86_64                 2.6.32-358.18.1.el6                    updates                  26 M
+
+Transaction Summary
+=======================================================================================================================
+Install       1 Package(s)
+
+Total download size: 26 M
+Installed size: 116 M
+Is this ok [y/N]: y
+Downloading Packages:
+kernel-2.6.32-358.18.1.el6.x86_64.rpm                                                               |  26 MB     00:10
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+Warning: RPMDB altered outside of yum.
+** Found 1 pre-existing rpmdb problem(s), 'yum check' output follows:
+kernel-firmware-2.6.32-358.23.2.el6.noarch is a duplicate with kernel-firmware-2.6.32-358.el6.noarch
+  Installing : kernel-2.6.32-358.18.1.el6.x86_64                                                                                                                                                        1/1
+  Verifying  : kernel-2.6.32-358.18.1.el6.x86_64                                                                                                                                                        1/1
+
+Installed:
+  kernel.x86_64 0:2.6.32-358.18.1.el6
+
+Complete!</code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>rpm -iv http://mirror.centos.org/centos-6/6.4/updates/x86_64/Packages/kernel-2.6.32-358.23.2.el6.x86_64.rpm http://mirror.centos.org/centos-6/6.4/updates/x86_64/Packages/kernel-firmware-2.6.32-358.23.2.el6.noarch.rpm</strong>
+Empfange http://mirror.centos.org/centos-6/6.4/updates/x86_64/Packages/kernel-2.6.32-358.23.2.el6.x86_64.rpm
+Empfange http://mirror.centos.org/centos-6/6.4/updates/x86_64/Packages/kernel-firmware-2.6.32-358.23.2.el6.noarch.rpm
+Vorbereiten der Pakete für die Installation...
+kernel-firmware-2.6.32-358.23.2.el6
+kernel-2.6.32-358.23.2.el6</code>
+	</p>
+
+        <h3>Modify the system bootloader.</h3>
+	<p>
+	  Der Systembootloader ist bei RHEL 6 der grub 1. Dieser wird in einer einzigen Konfigurationsdatei unter /boot/grub/grub.conf 
+	  bzw. auf einem UEFI System unter /boot/efi/EFI/*/grub.cfg konfiguriert.
+	</p>
+	<code># grub.conf generated by anaconda
+#
+# Note that you do not have to rerun grub after making changes to this file
+# NOTICE:  You do not have a /boot partition.  This means that
+#          all kernel and initrd paths are relative to /, eg.
+#          root (hd0,0)
+#          kernel /boot/vmlinuz-version ro root=/dev/hda1
+#          initrd /boot/initrd-version.img
+#boot=/dev/hda
+serial --unit=0 --speed=57600
+terminal serial
+password $6$c9NkswtwZis2WIJc$/AGSCtMRDUk9YCeUnJVJf/NqEKQH9Jn.wV962lynaDZPUVR.d7A/vgwGuisI/bK6VJJmFEw3jUdz7dhG4Gp2A1
+#password --md5 $1$bshIS1$touCKlSnWtsfPQ5D5iXei0
+
+default=0
+timeout=5
+
+
+title CentOS (2.6.32-358.23.2.el6.x86_64)
+    root (hd0,0)
+    kernel /vmlinuz-2.6.32-358.23.2.el6.x86_64 root=/dev/md1 console=tty0 console=ttyS0,57600 nomodeset crashkernel=512M SYSFONT=latarcyrheb-sun16 LANG=de_DE.UTF-8 KEYTABLE=de
+    initrd /initramfs-2.6.32-358.23.2.el6.x86_64.img
+
+title CentOS (2.6.32-358.18.1.el6.x86_64)
+    root (hd0,0)
+    kernel /vmlinuz-2.6.32-358.18.1.el6.x86_64 root=/dev/md1 console=tty0 console=ttyS0,57600 nomodeset crashkernel=512M SYSFONT=latarcyrheb-sun16 LANG=de_DE.UTF-8 KEYTABLE=de
+    initrd /initramfs-2.6.32-358.18.1.el6.x86_64.img</code>
+	
+        <p>
+	  Ein Passwort kann einfach mit grub-crypt bzw. grub-md5-crypt erzeugt werden. <br>
+	  Steckt man einmal mit einem defekten bootmanager im grub> prompt fest hilft ausser beten noch der Versuch an die noch vorhandenen Bootinformationen zu kommen und diese 
+	  mit dem root, kernel und initrd Kommando manuell einzubinden und mit dem boot Kommando zu booten. Dazu können die folgenden beiden grub Kommandos sehr hilfreich sein.
+	</p>
+	<p>
+	  <code>grub> <strong>find /grub/grub.conf</strong>
+(hd0,0)</code>
+	</p>
+	<p>
+	  <code>grub> <strong>cat (hd0,0)/grub/grub.conf</strong></code>
+	</p>
+
+
+
+	<div class="page-break"></div>
+        <h2>Manage users and groups</h2>
+        <h3>Create, delete, and modify local user accounts.</h3>
+
+	<h6>Benutzer hinzufügen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>useradd testuser && echo redhat | passwd --stdin testuser</strong></code>
+	</p>
+
+	<h6>Benutzer ändern</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>usermod -G users testuser</strong></code>
+	</p>
+
+	<h6>Benutzer löschen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>userdel testuser</strong></code>
+	</p>
+
+	<h6>Benutzer bearbeiten</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>vipw</strong></code>
+	</p>
+
+	<h6>/etc/passwd Konfiguration prüfen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>pwck</strong></code>
+	</p>
+
+
+        <h3>Change passwords and adjust password aging for local user accounts.</h3>
+	<h6></h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>chage -l mleimenm</strong>
+Last password change				  : Oct 30, 2013
+Password expires				  : never
+Password inactive				  : never
+Account expires					  : never
+Minimum number of days between password change	  : 0
+Maximum number of days between password change	  : 99999
+Number of days of warning before password expires : 7</code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>chage -E 2014-01-31 mleimenm</strong></code>
+	</p>
+
+
+        <h3>Create, delete, and modify local groups and group memberships.</h3>
+	<h6>Gruppe erstellen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong></strong></code>
+	</p>
+
+	<h6>Gruppe modifizieren</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>groupadd gruppe</strong></code>
+	</p>
+
+	<h6>Gruppen bearbeiten</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>groupmod -n testgruppe gruppe</strong></code>
+	</p>
+
+	<h6>Gruppenzugehörigkeiten ändern</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>groupmems -g wheel -l</strong>
+senioradm  junioradm</code>
+	</p>
+	<p>
+	  <code>root@tester1:~&gt; <strong>groupmems -g wheel -a mleimenm</strong></code>
+	</p>
+
+
+	<h6>Gruppe löschen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>groupdel testgruppe</strong></code>
+	</p>
+
+	<h6>/etc/group Konfiguration prüfen</h6>
+	<p>
+	  <code>root@tester1:~&gt; <strong>grpck</strong></code>
+	</p>
+
+
+
+        <h3>Configure a system to use an existing LDAP directory service for user and group information.</h3>
+	<p>
+	</p>
+
+	<h6>LDAP Pakete installieren</h6>
+	<p>
+	  <code>root@server1:~&gt; <strong>yum install openldap-clients pam_ldap openldap</strong></code>
+	</p>
+
+	<h6>/etc/pam_ldap.conf</h6>
+	<p>
+	  Um die Sache etwas zu vereinfachen führen ich hier nur die notwendigen Parameter und nicht die gesamte Konfigurationsdatei auf.
+	</p>
+	<p>
+	  <code>host 127.0.0.1
+base dc=example,dc=com
+uri ldap://127.0.0.1
+ssl start-tls
+tls_cacertdir /etc/openldap/cacerts
+pam_password exop</code>
+	</p>
+	<p>
+	  <table>
+	    <caption>Wichtige Parameter in der /etc/pam_ldap.conf</caption>
+	    <tr>
+	      <th>host</th>
+	      <td>Verweist auf die IP Adresse des LDAP-Servers.</td>
+	    </tr>
+	    <tr>
+	      <th>base</th>
+	      <td>Basis dn (distinguished name), sollte auf den Domainnamen des zu bedienenden Netzwerkes geändert werden, z.B. dc=example,dc=com für example.com.</td>
+	    </tr>
+	    <tr>
+	      <th>uri</th>
+	      <td>URI des LDAP Servers, z.B. ldap://127.0.0.1 wenn der LDAP Server lokal läuft. Für verschlüsselte Verbindungen evtl. zu ldaps://127.0.0.1 ändern.</td>
+	    </tr>
+	    <tr>
+	      <th>ssl</th>
+	      <td>Sollte auf start_tls stehen, wenn TLS benutzt wird um die Passwörter, die zum LDAP Server geschickt werden zu verschlüsseln.
+	      Steht der Parameter auf on wird ldaps (port 636) statt ldap (port 389) genutzt.</td>
+	    </tr>
+	    <tr>
+	      <th>tls_cacertdir</th>
+	      <td>Bei verschlüsselten Verbindungen muss der Ort, an dem die Zertifikate aufbewahrt werden, mit dieser Direktive festgelegt werden.</td>
+	    </tr>
+	    <tr>
+	      <th>pam_password</th>
+	      <td>Sollte auf md5 oder exop für SHA512 gesetzt werden, kann aber auch auf crypt, nds (Novell Directory Services) oder ad (Active Directory) gesetzt werden.</td>
+	    </tr>
+	  </table>
+	  
+	<h6>/etc/openldap/ldap.conf</h6>
+	<p>
+	  Default Vorgabe für die LDAP Verbindung, in der die meisten Parameter denen in der pam_ldap Konfiguration oben entsprechen. Diese Vorgaben können vom Benutzer jederzeit
+	  mit Hilfe einer $HOME/.ldaprc Datei überschrieben werden.<br>
+	  Zwingend notwendige Teile sind fett hervorgehoben.
+	<p>
+	  <code>#
+# LDAP Defaults
+#
+
+# See ldap.conf(5) for details
+# This file should be world readable but not world writable.
+
+<strong>#BASE	dc=example,dc=com
+#URI	ldap://ldap.example.com ldap://ldap-master.example.com:666
+#HOST   localhost.localdomain</strong>
+
+#SIZELIMIT	12
+#TIMELIMIT	15
+#DEREF		never
+
+<strong>TLS_CACERTDIR	/etc/openldap/certs</strong></code>
+	</p>
+
+	<h6>/etc/nsswitch.conf Namensauflösung anpassen</h6>
+	<p>
+	  Tabellen, die man aus dem LDAP beziehen möchte müssen in der Reihenfolge der Namensauflösung in der /etc/nsswitch.conf eingetragen werden.
+	<p>
+	  <code><strong>passwd:     files ldap
+shadow:     files ldap
+group:      files ldap</strong>
+
+#hosts:     db files nisplus nis dns
+<strong>hosts:      files ldap dns</strong>
+
+# Example - obey only what nisplus tells us...
+#services:   nisplus [NOTFOUND=return] files
+#networks:   nisplus [NOTFOUND=return] files
+#protocols:  nisplus [NOTFOUND=return] files
+#rpc:        nisplus [NOTFOUND=return] files
+#ethers:     nisplus [NOTFOUND=return] files
+#netmasks:   nisplus [NOTFOUND=return] files
+
+bootparams: nisplus [NOTFOUND=return] files
+
+ethers:     files
+netmasks:   files
+networks:   files
+protocols:  files
+rpc:        files
+services:   files
+
+netgroup:   nisplus
+
+publickey:  nisplus
+
+automount:  files nisplus
+aliases:    files nisplus</code>
+	</p>
+
+	<h5>Andere Werkzeuge zur Einrichtung</h5>
+	<p>
+	  Für manche ist es vielleicht einfache die LDAP Clientanbindung mit einem Werkzeug vorzunehmen. Dazu stehen einem "system-config-authentication" für die GUI oder
+	  "authconfig-tui" für die Kommandozeile zur Verfügung.
+	</p>
+
+	<h6>system-config-authentication</h6>
+	<p>
+	  <img class="main" src="images/system-config-authentication_main.png" alt="Identität & Authentifizierungsreiter im system-config-authentication Werkzeug">
+	</p>
+	<p>
+	  <img class="main" src="images/system-config-authentication_options.png" alt="Reiter für erweiterte Optionen im system-config-authentication Werkzeug">
+	</p>
+
+	<h6>authconfig-tui</h6>
+	<p>
+	  <img class="main" src="images/authconfig-tui_main.png" alt="Eingangsmenüim authconfig-tui Werkzeug">
+	</p>
+	<p>
+	  <img class="main" src="images/authconfig-tui_ldap.png" alt="LDAP Optionen im authconfig-tui Werkzeug">
+	</p>
+	
+
+	<div class="page-break"></div>
+        <h2>Manage security</h2>
+        <h3>Configure firewall settings using system-config-firewall or iptables.</h3>
+	<p>
+	  Um die Firewall zu konfigurieren stehen einem das iptables Kommando, sowie zwei Konfigurationsoberflächen zur Verfügung: "system-config-firewall" für das graphische User Interface (GUI), sowie
+	  "system-config-firewall-tui" für das Terminal (User Interface, oder kurz TUI).
+	</p>
+	<p>
+	  <h6>system-config-firewall Graphical User Interface</h6>
+	  <img class="main" src="images/system-config-firewall.png" alt="Screenshot of the system-config-firewall GUI">
+	</p>
+	<p>
+	  <h6>system-config-firewall-tui Terminal User Interface</h6>
+	  <img class="main" src="images/system-config-firewall-tui.png" alt="Screenshot of the system-config-firewall-tui Terminal User Interface">
+	</p>
+	<p>
+	  <h6>/etc/sysconfig/iptables</h6>
+	  <p>
+	    Einfache Firewall Konfiguration mit offenen ports für eingehende Serververbindungen:
+	  </p>
+	  <code>*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+# ssh
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+# telnet
+-A INPUT -m state --state NEW -m tcp -p tcp -s 192.168.122.151 --dport 23 -j ACCEPT
+# http / https
+-A INPUT -m state --state NEW -m multiport -p tcp --dport 80,443 -j ACCEPT
+# nfs v2+3
+-A INPUT -m state --state NEW -m multiport -p tcp --dport 111,892,2049,32803 -j ACCEPT
+-A INPUT -m state --state NEW -m multiport -p udp --dport 111,892,2049,32769 -j ACCEPT
+# vnc :1 up to :9
+-A INPUT -m state --state NEW -m tcp -p tcp --dport 5900:5909 -j ACCEPT
+-A INPUT -j REJECT --reject-with icmp-host-prohibited
+-A FORWARD -j REJECT --reject-with icmp-host-prohibited
+COMMIT</code>
+        </p>
+	<p>
+	  Und dazu passend der aktuelle Output der IPv4 Firewallketten:
+	  <code>[root@server1 ~]# <strong>iptables -vL</strong>
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+   32  2384 ACCEPT     all  --  any    any     anywhere             anywhere            state RELATED,ESTABLISHED 
+    0     0 ACCEPT     icmp --  any    any     anywhere             anywhere            
+    0     0 ACCEPT     all  --  lo     any     anywhere             anywhere            
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere            state NEW tcp dpt:ssh 
+    0     0 ACCEPT     tcp  --  any    any     tester1              anywhere            state NEW tcp dpt:telnet 
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere            state NEW multiport dports http,https 
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere            state NEW multiport dports sunrpc,892,nfs,32803 
+    0     0 ACCEPT     udp  --  any    any     anywhere             anywhere            state NEW multiport dports sunrpc,892,nfs,filenet-rpc 
+    0     0 ACCEPT     tcp  --  any    any     anywhere             anywhere            state NEW tcp dpts:vnc-server:5909 
+    0     0 REJECT     all  --  any    any     anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 REJECT     all  --  any    any     anywhere             anywhere            reject-with icmp-host-prohibited 
+
+Chain OUTPUT (policy ACCEPT 17 packets, 1748 bytes)
+ pkts bytes target     prot opt in     out     source               destination         </code>
+	</p>
+
+
+        <h3>Set enforcing and permissive modes for SELinux.</h3>
+	<p>
+	  <code>root@firefly:~&gt; <strong>setenforce permissive</strong></code>
+	</p>
+
+	<p>
+	  <code>root@firefly:~&gt; <strong>sestatus</strong>
+SELinux status:                 enabled
+SELinuxfs mount:                /selinux
+Current mode:                   permissive
+Mode from config file:          enforcing
+Policy version:                 24
+Policy from config file:        targeted</code>
+	</p>
+
+	<p>
+	  <code>root@firefly:~&gt; <strong>getenforce</strong>
+Permissive</code>
+	</p>
+
+	<p>
+	  <code>root@firefly:~&gt; <strong>setenforce enforcing</strong></code>
+	</p>
+
+	<p>
+	  <code>root@firefly:~&gt; <strong>getenforce</strong>
+Enforcing</code>
+	</p>
+
+
+        <h3>List and identify SELinux file and process context.</h3>
+	<p>
+	  SELinux Kontexte bestehen aus einer Kombination aus einem SELinux-Benutzer (_u), einer Rolle (_r), einem Typ (_t) und einem Gültigkeitsbereich (s0[-s0:c0.c1023]), 
+	  der für "Multi Level Security (MLS)" relevant ist, für "targeted" aber vernachlässigt werden kann.
+	</p>
+
+	<h6>Dateikontext anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ls -Z </strong>
+-rw-------. root root system_u:object_r:admin_home_t:s0 anaconda-ks.cfg
+-rw-r--r--. root root system_u:object_r:admin_home_t:s0 install.log
+-rw-r--r--. root root system_u:object_r:admin_home_t:s0 install.log.syslog
+-rw-------. root root unconfined_u:object_r:admin_home_t:s0 mleimenm
+-rw-r--r--. root root unconfined_u:object_r:admin_home_t:s0 sosreport.log</code>
+
+	<h6>Prozesskontext anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>ps Z</strong>
+LABEL                             PID TTY      STAT   TIME COMMAND
+system_u:system_r:getty_t:s0     2748 tty2     Ss+    0:00 /sbin/mingetty /dev/tty2
+system_u:system_r:getty_t:s0     2752 tty3     Ss+    0:00 /sbin/mingetty /dev/tty3
+system_u:system_r:getty_t:s0     2755 tty4     Ss+    0:00 /sbin/mingetty /dev/tty4
+system_u:system_r:getty_t:s0     2757 tty5     Ss+    0:00 /sbin/mingetty /dev/tty5
+system_u:system_r:getty_t:s0     2759 tty6     Ss+    0:00 /sbin/mingetty /dev/tty6
+system_u:system_r:xserver_t:s0-s0:c0.c1023 2853 tty1 Ss+   0:00 /usr/bin/Xorg :0 -nr -verbose -audit 4 -auth /var/run/gdm/auth-for-gdm-SWEg3N/database -nolisten tcp vt1
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3365 pts/0 S   0:00 sudo su -
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3371 pts/0 S   0:00 su -
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3372 pts/0 S   0:00 -bash
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 3416 pts/0 R+   0:00 ps Z</code>
+
+	<h5>SELinux Benutzer</h5>
+	<p>
+	  Einem Unix Benutzer wird ein eindeutiger SELinux Benutzer zugewiesen, der wiederum über n-fache Zuordnungen zu SELinux Rollen verfügt. 
+	  Diese Rollen entscheiden letztlich darüber was der User darf oder nicht darf. Daraus ergibt sich in der default-Rollenzuordnung folgende Tabelle:
+	  <table>
+	    <tr>
+	      <th>SELinux Nutzer</th>
+	      <th>Authorisierungen</th>
+	    </tr>
+	    <tr>
+	      <td>guest_u</td>
+	      <td>Keine GUI, kein Netzwerkzugriff, kein Zugriff auf su oder sudo</td>
+	    </tr>
+	    <tr>
+	      <td>xguest_u</td>
+	      <td>GUI, Netzwerkzugriff ausschliesslich via Firefox, kein Zugriff auf su oder sudo</td>
+	    </tr>
+	    <tr>
+	      <td>user_u</td>
+	      <td>GUI, Netzwerkzugriff, kein Zugriff auf su oder sudo</td>
+	    </tr>
+	    <tr>
+	      <td>staff_u</td>
+	      <td>GUI, Netzwerkzugriff, Zugriff auf su oder sudo</td>
+	    </tr>
+	    <tr>
+	      <td>unconfined_u</td>
+	      <td>Unterliegt keinerlei SELinux Beschränkungen (confinements) und hat daher vollen Zugriff auf das System</td>
+	    </tr>
+	  </table>
+	</p>
+
+	<h6>Userkontext anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>id -Z</strong>
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023</code>
+	
+        <h6>Unix Nutzer und ihre SELinux Nutzer Zuordnung anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>semanage login -l</strong>
+
+Login Name                SELinux User              MLS/MCS Range
+
+__default__               unconfined_u              s0-s0:c0.c1023
+joe_guest                 guest_u                   s0
+joe_staff                 staff_u                   s0-s0:c0.c1023
+joe_user                  user_u                    s0
+joe_xguest                xguest_u                  s0
+root                      unconfined_u              s0-s0:c0.c1023
+system_u                  system_u                  s0-s0:c0.c1023</code>
+
+        <h6>SELinux Nutzer und ihre Rollenzuordnung anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>semanage user -l</strong>
+
+                Labelling  MLS/       MLS/
+SELinux User    Prefix     MCS Level  MCS Range                      SELinux Roles
+
+git_shell_u     user       s0         s0                             git_shell_r
+guest_u         user       s0         s0                             guest_r
+root            user       s0         s0-s0:c0.c1023                 staff_r sysadm_r system_r unconfined_r
+staff_u         user       s0         s0-s0:c0.c1023                 staff_r sysadm_r system_r unconfined_r
+sysadm_u        user       s0         s0-s0:c0.c1023                 sysadm_r
+system_u        user       s0         s0-s0:c0.c1023                 system_r unconfined_r
+unconfined_u    user       s0         s0-s0:c0.c1023                 system_r unconfined_r
+user_u          user       s0         s0                             user_r
+xguest_u        user       s0         s0                             xguest_r</code>
+
+	<h6>Unix User einem SELinux Nutzer zuweisen</h6>
+	<code>root@server1:~&gt; <strong>semanage login -a -s "user_u" -r s0 rick</strong></code>
+
+	<h6>Default Benutzerzuweisung ändern / zurücksetzen</h6>
+	<code>root@server1:~&gt; <strong>semanage login -m -S targeted -s "user_u" -r s0 __default__</strong></code>
+	<p>
+	  <code>root@server1:~&gt; <strong>semanage login -m -S targeted -s "unconfined_u" -r s0-s0:c0-c1023 __default__</strong></code>
+	</p>
+
+
+        <h3>Restore default file contexts.</h3>
+	<h6>Dateikontext setzen</h6>
+	<code>root@firefly:~&gt; <strong>chcon -u system_u -r object_r -t home_root_t -l s0 /www</strong></code>
+	<code>root@firefly:~&gt; <strong>chcon --reference /var/www /www</strong></code>
+	
+	<h6>Dateikontext auf Voreinstellungen zurücksetzen</h6>
+	<code>root@firefly:~&gt; <strong>restorecon /www</strong></code>
+
+	
+        <h3>Use boolean settings to modify system SELinux settings.</h3>
+	<h6>Boolesche Variablen anzeigen</h6>
+	<code>root@firefly:~&gt; <strong>getsebool -a | grep ftp</strong>
+allow_ftpd_anon_write --> off
+allow_ftpd_full_access --> off
+allow_ftpd_use_cifs --> off
+allow_ftpd_use_nfs --> off
+ftp_home_dir --> off
+ftpd_connect_db --> off
+ftpd_use_passive_mode --> off
+httpd_enable_ftp_server --> off
+tftp_anon_write --> off</code>
+
+        <h6>Status einer booleschen Variable abfragen</h6>
+	<code>root@firefly:~&gt; <strong>getsebool httpd_enable_homedirs</strong>
+httpd_enable_homedirs --> on</code>
+
+        <h6>Boolesche Variable (mit -P persistent) setzen</h6>
+	<code>root@firefly:~&gt; <strong>setsebool httpd_enable_homedirs off</strong></code>
+
+	<code>root@firefly:~&gt; <strong>setsebool -P httpd_enable_homedirs on</strong></code>
+
+
+        <h3>Diagnose and address routine SELinux policy violations</h3>
+	<code>root@h2160029:~&gt; <strong>sealert -a /var/log/audit/audit.log</strong>
+100% donefound 90 alerts in /var/log/audit/audit.log
+--------------------------------------------------------------------------------
+
+SELinux is preventing /usr/sbin/NetworkManager from unlink access on the file resolv.conf.
+
+*****  Plugin catchall_labels (83.8 confidence) suggests  ********************
+
+If you want to allow NetworkManager to have unlink access on the resolv.conf file
+Then you need to change the label on resolv.conf
+Do
+# semanage fcontext -a -t FILE_TYPE 'resolv.conf'
+where FILE_TYPE is one of the following: named_cache_t, NetworkManager_tmp_t, NetworkManager_log_t, dhcpc_state_t, NetworkManager_var_lib_t, NetworkManager_var_run_t, dhcpc_var_run_t, net_conf_t, pppd_var_run_t, dnsmasq_var_run_t, root_t. 
+Then execute: 
+restorecon -v 'resolv.conf'
+
+
+*****  Plugin catchall (17.1 confidence) suggests  ***************************
+
+If you believe that NetworkManager should be allowed unlink access on the resolv.conf file by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# grep NetworkManager /var/log/audit/audit.log | audit2allow -M mypol
+# semodule -i mypol.pp
+
+
+--------------------------------------------------------------------------------
+
+SELinux is preventing /usr/libexec/gdm-session-worker from 'read, write' accesses on the directory root.
+
+*****  Plugin catchall_boolean (89.3 confidence) suggests  *******************
+
+If you want to enable polyinstantiated directory support.
+Then you must tell SELinux about this by enabling the 'allow_polyinstantiation'boolean.
+Do
+setsebool -P allow_polyinstantiation 1
+
+*****  Plugin catchall (11.6 confidence) suggests  ***************************
+
+If you believe that gdm-session-worker should be allowed read write access on the root directory by default.
+Then you should report this as a bug.
+You can generate a local policy module to allow this access.
+Do
+allow this access for now by executing:
+# grep gdm-session-wor /var/log/audit/audit.log | audit2allow -M mypol
+# semodule -i mypol.pp
+
+
+--------------------------------------------------------------------------------</code>
+
+
+	<h3>Other Topics</h3>
+	<h5>Schneller Weg eine Datei zu erstellen</h5>
+	<p>
+	  Möchte man eine Datei erstellen, z.B. eine virtuelle Disk für kvm, so geht dies am schnellsten, wenn
+	  man mit dem dd Kommando genau ein byte hinter die gewünschte Größe (z.B. 2G) schreibt.<br>
+	  Leider funktioniert dies nicht für swapfiles, da diese kein "Loch" haben dürfen.
+	</p>
+        <p>
+	  <code>root@server1:~&gt; <strong>dd if=/dev/zero of=/var/lib/libvirt/images/disk.img bs=1 count=1 seek=2G</strong>
+1+0 records in
+1+0 records out
+1 byte (1 B) copied, 5.8157e-05 s, 17.2 kB/s</code>
+	</p>
+        <p>
+	  <code>root@server1:~&gt; <strong>ls -lh /var/lib/libvirt/images/disk.img</strong>
+-rw-r--r--. 1 root root 2.1G Nov 19 12:18 /var/lib/libvirt/images/disk.img</code>
+	</p>
+
+	<h5>/tmp aufräumen (wird periodisch via cron per default konfiguriert)</h5>
+	<code><strong>tmpwatch</strong></code>
+
+      </div>      <!-- maincontents -->
+
+
+      <div id="footer"> 
+	© 2013, Michael Leimenmeier <br>
+        All Rights reserved. 
+      </div>      <!-- footer --> 
+
+
+    </div>        <!-- contents -->
+  </body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>RHEL 7 Cheat Sheet</title>
+    <link rel="stylesheet" type="text/css" href="standard.css" />
+    <link rel="stylesheet" type="text/css" href="druck.css" media="print">
+    <meta name="google-translate-customization" content="f2f52d23790f216e-e14bb519d115ee50-g1c5848ab8654a98e-20"></meta>  
+</head>
+
+  <body>
+    <div id="contents">
+
+      <div id="header">
+	<img src="images/header.png" alt="Site Header">
+      </div>
+
+      <nav>
+	<ul>
+	  <li><a href="index.html">HOME</a></li>
+	  <li><a href="RHCSA Exam Objectives.html">RHCSA</a></li>
+	  <li><a href="RHCE Exam Objectives.html">RHCE</a></li>
+	  <li class="selected"><a href="RHEL7.html">RHCE</a></li>
+	  <li><a href="kurse.html">KURSE</a></li>
+	  <li><a href="puppet.html">PUPPET</a></li>
+          <li><a href="docker.html">DOCKER</a></li>
+          <li><a href="openshift.html">OPENSHIFT</a></li>
+	  <li><a href="notizen.html">NOTIZEN</a></li>
+	  <li><a href="impressum.html">IMPRESSUM</a></li>
+	</ul>
+      </nav>
+
+      <div id="maincontents">
+
+<!--  
+	<div id="google_translate_element"></div>
+	<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'de', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+	</script>
+	<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+-->
+
+	<h1>RHEL 7 Cheat Sheet</h1>
+
+
+<!--	<div class="page-break"></div> -->
+	<div id="systemconfig">
+	  <h2>Grundlegende Systemkonfiguration</h2>
+	  <h3>Sprache und Tastatur</h3>
+	  <p>
+	    Aktuelle Einstellungen anzeigen:
+	  </p>
+	  <p><code>root@server1:~&gt; <strong>localectl status</strong>
+   System Locale: LANG=en_GB.UTF-8
+       VC Keymap: de
+      X11 Layout: de
+     X11 Variant: nodeadkeys</code></p>
+
+	  <p> Erhältliche Keymaps anzeigen lassen: </p>
+	  <p><code>root@server1:~&gt; <strong>localectl list-keymaps</strong> </code></p>
+
+	  <p> Keymap festlegen für Konsole und X11 festlegen: </p>
+	  <p><code>root@server1:~&gt; <strong>localectl set-keymap &lt;map&gt; [model] [variant] [options] </strong> </code></p>
+	  
+	  <p> Keymap nur für Konsole oder X11 festlegen: </p>
+	  <p><code>root@server1:~&gt; <strong>localectl --no-convert set-keymap     &lt;map&gt;  [model] [variant] [options] </strong>
+root@server1:~&gt; <strong>localectl --no-convert set-X11-keymap &lt;map&gt;  [model] [variant] [options] </strong> </code></p>
+
+
+	  <h3>Datum und Uhrzeit</h3>
+	  <p>Ausgabe von Datum und Uhrzeit:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl</strong> 
+      Local time: Tue 2014-11-11 09:30:48 GMT
+  Universal time: Tue 2014-11-11 09:30:48 UTC
+        RTC time: Tue 2014-11-11 09:30:48
+        Timezone: Europe/Berlin (GMT, +0000)
+     NTP enabled: yes
+NTP synchronized: yes
+ RTC in local TZ: no
+      DST active: no
+ Last DST change: DST ended at
+                  Sun 2014-10-26 01:59:59 BST
+                  Sun 2014-10-26 01:00:00 GMT
+ Next DST change: DST begins (the clock jumps one hour forward) at
+                  Sun 2015-03-29 00:59:59 GMT
+                  Sun 2015-03-29 02:00:00 BST</code></p>
+
+	  <p>Datum setzen:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl set-time YYYY-MM-DD</strong> </code></p>
+
+	  <p>Zeit setzen:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl set-time HH:MM:SS</strong> </code></p>
+
+	  <p>Hardware Clock auf Lokale Zeit (yes) bzw. UTC (no) setzen:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl set-local-rtc [yes|no]</strong> </code></p>
+
+	  <p>Erhältliche Zeitzonen anzeigen:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl list-timezones</strong> </code></p>
+	  
+	  <p>Zeitzone setzen:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl set-timezone &lt;timezone&gt;</strong> </code></p>
+
+	  <p>Zeit soll mit ntp Server synchronisiert werden:</p>
+	  <p><code>root@server1:~&gt; <strong>timedatectl set-ntp &lt;yes|no&gt;</strong> </code></p>
+
+	  
+
+	</div> <!-- systemconfig -->
+
+      </div> <!-- maincontents -->
+
+
+
+
+
+      <div id="footer">
+	&copy; 2013, Michael Leimenmeier
+	<br>
+	All Rights reserved.
+      </div> <!-- footer -->
+
+    </div> <!-- contents -->
+  </body>
+</html>
