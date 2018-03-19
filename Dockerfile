@@ -1,4 +1,4 @@
-FROM 189tuxsat001.gfi.ihk.de:5000/linux-prod-openshift-docker-nginx:latest
+FROM nginx:latest
 
 COPY html /usr/share/nginx/html
 RUN touch /var/run/nginx.pid && \
