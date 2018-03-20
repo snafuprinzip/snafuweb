@@ -37,24 +37,24 @@
 	<div id="OpenShift">
 	  <p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte eines Entwicklers f&uuml;r die Implementation seines Microservices in einen Docker Container innerhalb des OpenShift Clusters zu erl&auml;utern.</p>
 
-
-	  <ol>
-	    <li><a href="#architecture"><h7>Architektur</h7></a></li>
-	    <ol>
-	      <li><a href="#objekte"><h8>Objekte im OpenShift</h8></a></li>
-	    </ol>
-	    <li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
-	    <li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
-	    <li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
-	    <ol>
-	      <li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
-	      <li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
-	      <li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
-	    </ol>
-	    <li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
-	    <li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
-	  </ol>
-
+		<div id="toc">
+			<ol>
+				<li><a href="#architecture"><h7>Architektur</h7></a></li>
+				<ol>
+					<li><a href="#objekte"><h8>Objekte im OpenShift</h8></a></li>
+				</ol>
+				<li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
+				<li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
+				<li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
+				<ol>
+					<li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
+					<li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
+					<li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
+				</ol>
+				<li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
+				<li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
+			</ol>
+		</div>
 	  <a name="architecture"/>
 	  <h2>Architektur</h2>
 	  <p>

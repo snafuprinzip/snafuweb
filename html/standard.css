@@ -54,6 +54,20 @@
   width:            1186px;
 }
 
+#toc {
+  position: fixed;
+  right: 0;
+  top: 0;
+  background-color:#FFF;
+}
+
+#toc #full { /* Hide the full TOC by default */
+  display: none; 
+} 
+
+#toc:hover #full{
+  display: block; /* Show it on hover */
+}
 
 h1 {
    font-size:        200%;
