@@ -258,7 +258,7 @@ nav ul li {
 nav ul li a:link, nav ul li a:visited {
     color:	        #954b4b;
     border-bottom:	none;
-    font-weight:	bold:
+    font-weight:	bold;
 }
 
 nav ul li.selected {
