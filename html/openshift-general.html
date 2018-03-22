@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--- regex replacemant for command prompt:
-[0-9][0-9]:.*mleimenmeier.*+:[A-Za-z~]*+> -> <strong>\&</strong>
-[0-9][0-9]:.*leimm.*+:[A-Za-z~]*+> -> <strong>\&</strong>
---->
-
 <html>
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
@@ -16,266 +11,261 @@
 				<img src="images/header.png" alt="Site Header">
       </div> <!-- header -->
 
-<nav>
-	<ul>
-			<li><a href="index.html">HOME</a></li>
-			<li class="selected"><a href="openshift-general.html">OpenShift Allgemein</a></li>
-			<li><a href="openshift-user.html">OpenShift f&uuml;r Benutzer</a></li>
-			<li><a href="openshift-admin.html">OpenShift f&uuml;r Administratoren</a></li>
-			<li><a href="impressum.html">IMPRESSUM</a></li>
-	</ul>
-</nav>
+			<nav>
+				<ul>
+						<li><a href="index.html">HOME</a></li>
+						<li class="selected"><a href="openshift-general.html">OpenShift Allgemein</a></li>
+						<li><a href="openshift-user.html">OpenShift f&uuml;r Benutzer</a></li>
+						<li><a href="openshift-developer.html">OpenShift f&uuml;r Entwickler</a></li>
+						<li><a href="openshift-admin.html">OpenShift f&uuml;r Administratoren</a></li>
+						<li><a href="impressum.html">IMPRESSUM</a></li>
+				</ul>
+			</nav>
 
-<div id="maincontents">
-	<a name="top"/>
-	<h1>OpenShift Allgemein</h1>
-	<div id="OpenShift">
-	  <p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte des Admins eines OpenShift Clusters zu erl&auml;utern.</p>
+			<div id="maincontents">
+				<a name="top"/>
+				<h1>OpenShift Allgemein</h1>
+				<div id="OpenShift">
+					<p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte des Admins eines OpenShift Clusters zu erl&auml;utern.</p>
+					<ol>
+						<li><a href="#architecture"><h7>Architektur</h7></a></li>
+						<ol>
+							<li><a href="#objekte"><h8>Objekte im OpenShift</h8></a></li>
+						</ol>
+						<li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
+						<li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
+						<li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
+						<ol>
+							<li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
+							<li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
+							<li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
+						</ol>
+						<li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
+						<li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
+					</ol>
 
-		<!-- <div id="toc" class="sidenav">
-			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-			<ol>
-				<li><a href="#architecture"><h7>Architektur</h7></a></li>
-				<ol>
-					<li><a href="#objekte"><h8>Objekte im OpenShift</h8></a></li>
-				</ol>
-				<li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
-				<li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
-				<li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
-				<ol>
-					<li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
-					<li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
-					<li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
-				</ol>
-				<li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
-				<li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
-			</ol>
-		</div> -->
-
-		<span onclick="openNav()">Inhaltsverzeichnis</span>
-
-	  <a name="architecture"/>
-	  <h2>Architektur</h2>
-	  <p>
-	    <table class="serviceinfo">
-	      <tr>
-					<th></th>
-					<th>Entwicklung</th>
-					<th>Test</th>
-					<th>Produktion</th>
-					<th>DMZ</th>
-	      </tr>
-	      <tr>
-					<th>API URL</th>
-					<td><a href="https://openshift-nonprod.gfi.ihk.de:8443">https://openshift-nonprod.gfi.ihk.de:8443</a></td>
-					<td><a href="https://openshift-test.gfi.ihk.de:8443">https://openshift-test.gfi.ihk.de:8443</a></td>
-					<td><a href="https://openshift-intern.gfi.ihk.de:8443">https://openshift-intern.gfi.ihk.de:8443</a></td>
-					<td><a href="https://openshift-extern.gfi.ihk.de:8443"> https://openshift-extern.gfi.ihk.de:8443</a></td>
-				</tr>
-				<tr>
-					<th>CloudForms</th>
-					<td>189tuxclf001</td>
-					<td>189tuxclf001</td>
-					<td>189tuxclf001</td>
-					<td>189tuxclf001</td>
-				</tr>
-				<tr>
-					<th>OpenShift Master</th>
-					<td>189tuxosm001<br/>189tuxosm002<br/>189tuxosm003</td>
-					<td>189tuxosm101<br/>189tuxosm102<br/>189tuxosm103</td>
-					<td>189tuxosm201<br/>189tuxosm202<br/>189tuxosm203</td>
-					<td>189tuxosm301<br/>189tuxosm302<br/>189tuxosm303</td>
-				</tr>
-				<tr>
-					<th>Application Nodes</th>
-					<td>189tuxosn001<br/>189tuxosn002<br/>...<br/>189tuxosn099</td>
-					<td>189tuxosn101<br/>189tuxosn102<br/>...<br/>189tuxosn199</td>
-					<td>189tuxosn201<br/>189tuxosn202<br/>...<br/>189tuxosn299</td>
-					<td>189tuxosn301<br/>189tuxosn302<br/>...<br/>189tuxosn399</td>
-				</tr>
-				<tr>
-					<th>etcd Knoten</th>
-					<td>189tuxose001<br/>189tuxose002<br/>189tuxose003</td>
-					<td>189tuxose101<br/>189tuxose102<br/>189tuxose103</td>
-					<td>189tuxose201<br/>189tuxose202<br/>189tuxose203</td>
-					<td>189tuxose301<br/>189tuxose302<br/>189tuxose303</td>
-				</tr>
-				<tr>
-					<th>Container Native<br/>Storage</th>
-					<td>189tuxoss001<br/>189tuxoss002<br/>189tuxoss003</td>
-					<td>189tuxoss101<br/>189tuxoss102<br/>189tuxoss103</td>
-					<td>189tuxoss201<br/>189tuxoss202<br/>189tuxoss203</td>
-					<td>189tuxoss301<br/>189tuxoss302<br/>189tuxoss303</td>
-				</tr>
-				<tr>
-					<th>NFS Server</th>
-					<td>189tuxnfs001</td>
-					<td>189tuxnfs101</td>
-					<td>189tuxnfs201</td>
-					<td>189tuxnfs301</td>
-				</tr>
-				<tr>
-					<th>Git Repository</th>
-					<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
-					<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
-					<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
-					<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
-	      </tr>
-	    </table>
-	  </p>
-	  <p>
-			Ein OpenShift Cluster besteht aus mehreren Systemen: drei OpenShift Mastern, einem 3-Node etcd Cluster, der als Konfigurationsdatenbank dient, 
-			drei Container Native Storage Nodes (GlusterFS), mindestens drei Application Nodes sowie einem dedizierten NFS Server.
-			Alle Systeme sind virtuelle Maschinen auf Basis der RedHat Enterprise Virtualisierung.<br/>
-	    Administrative T&auml;tigkeiten am Cluster k&ouml;nnen von den Mastern aus durchgef&uuml;hrt werden. Der dortige root User verf&uuml;gt &uuml;ber cluster:admin Berechtigung.<br/>
-	    Auf den Application Nodes laufen die eigentlichen Docker Container, die von Google Kubernetes orchestriert werden. Auf diesem Kubernetes Framework setzt OpenShift wiederum auf.<br/>
-	    Zwischen den Systemen spannt der Kubernetes ein virtuelles Netzwerk &uuml;ber das die Pods (die kleinste von Kubernetes verwaltete Einheit, bestehend aus 
-	    &uuml;blicherweise einem, im Ausnahmefall aber auch aus mehreren Containern) intern kommunizieren. <br/>
-			Die Container Native Storage Nodes stellen dem Cluster hochverf&uuml;gbare persistente Volumes auf Basis des GlusterFS bereit, w&auml;hrend der NFS Server storage f&uuml;r 
-			bereit stellt, der nicht hochverf&uuml;gbar sein muss. <br/>
-	    Kein direkter Bestandteil des OpenShift Clusters, aber dennoch f&uuml;r die Arbeit mit diesem unerl&auml;sslich ist ein git Repository auf dem die Quellcodes 
-	    f&uuml;r die Anwendungen die auf dem Cluster laufen sollen und die f&uuml;r einen Docker Build n&ouml;tigen Dockerfiles.
-	  </p>
-	  <p>
-			<img class="table" src="images/OpenShift_Cluster_Architecture.png" alt="Anatomie eines OpenShift Clusters" />
-		</p>
-		<p>
-			Geplant sind aktuell 4 voneinander getrennte OpenShift Cluster:
-			<ul>
-				<li><em>NonProd</em> beherbergt die ENTW, FREI und SQA Umgebungen</li>
-				<li><em>Test</em> dient dem Infrastrukturbetrieb zum Testen von Upgrades, Changes etc.</li>
-				<li><em>Prod Intern</em> beherbergt die PILOT und die Produktionsumgebung, die nur im Kammernetz erreichbar sein soll</li>
-				<li><em>Prod Extern</em> beherbergt die Produktionsumgebung in der DMZ, die im Internet erreichbar sein soll</li>
-			</ul>
-		</p>
-		<p>
-			In der folgenden Illustration sind die externen Services aufgef&uuml;hrt mit denen der OpenShift kommuniziert.
-		</p>
-		<p>	
-			<img class="table" src="images/OpenShift_Environment.png" alt="Clusterumgebung" />
-	  </p>
+					<a name="architecture"/>
+					<h2>Architektur</h2>
+					<p>
+						<table class="serviceinfo">
+							<tr>
+								<th></th>
+								<th>Entwicklung</th>
+								<th>Test</th>
+								<th>Produktion</th>
+								<th>DMZ</th>
+							</tr>
+							<tr>
+								<th>API URL</th>
+								<td><a href="https://openshift-nonprod.gfi.ihk.de:8443">https://openshift-nonprod.gfi.ihk.de:8443</a></td>
+								<td><a href="https://openshift-test.gfi.ihk.de:8443">https://openshift-test.gfi.ihk.de:8443</a></td>
+								<td><a href="https://openshift-intern.gfi.ihk.de:8443">https://openshift-intern.gfi.ihk.de:8443</a></td>
+								<td><a href="https://openshift-extern.gfi.ihk.de:8443"> https://openshift-extern.gfi.ihk.de:8443</a></td>
+							</tr>
+							<tr>
+								<th>CloudForms</th>
+								<td>189tuxclf001</td>
+								<td>189tuxclf001</td>
+								<td>189tuxclf001</td>
+								<td>189tuxclf001</td>
+							</tr>
+							<tr>
+								<th>OpenShift Master</th>
+								<td>189tuxosm001<br/>189tuxosm002<br/>189tuxosm003</td>
+								<td>189tuxosm101<br/>189tuxosm102<br/>189tuxosm103</td>
+								<td>189tuxosm201<br/>189tuxosm202<br/>189tuxosm203</td>
+								<td>189tuxosm301<br/>189tuxosm302<br/>189tuxosm303</td>
+							</tr>
+							<tr>
+								<th>Application Nodes</th>
+								<td>189tuxosn001<br/>189tuxosn002<br/>...<br/>189tuxosn099</td>
+								<td>189tuxosn101<br/>189tuxosn102<br/>...<br/>189tuxosn199</td>
+								<td>189tuxosn201<br/>189tuxosn202<br/>...<br/>189tuxosn299</td>
+								<td>189tuxosn301<br/>189tuxosn302<br/>...<br/>189tuxosn399</td>
+							</tr>
+							<tr>
+								<th>etcd Knoten</th>
+								<td>189tuxose001<br/>189tuxose002<br/>189tuxose003</td>
+								<td>189tuxose101<br/>189tuxose102<br/>189tuxose103</td>
+								<td>189tuxose201<br/>189tuxose202<br/>189tuxose203</td>
+								<td>189tuxose301<br/>189tuxose302<br/>189tuxose303</td>
+							</tr>
+							<tr>
+								<th>Container Native<br/>Storage</th>
+								<td>189tuxoss001<br/>189tuxoss002<br/>189tuxoss003</td>
+								<td>189tuxoss101<br/>189tuxoss102<br/>189tuxoss103</td>
+								<td>189tuxoss201<br/>189tuxoss202<br/>189tuxoss203</td>
+								<td>189tuxoss301<br/>189tuxoss302<br/>189tuxoss303</td>
+							</tr>
+							<tr>
+								<th>NFS Server</th>
+								<td>189tuxnfs001</td>
+								<td>189tuxnfs101</td>
+								<td>189tuxnfs201</td>
+								<td>189tuxnfs301</td>
+							</tr>
+							<tr>
+								<th>Git Repository</th>
+								<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
+								<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
+								<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
+								<td><a href="https://bitbucket.gfi.ihk.de">https://bitbucket.gfi.ihk.de</a></td>
+							</tr>
+						</table>
+					</p>
+					<p>
+						Ein OpenShift Cluster besteht aus mehreren Systemen: drei OpenShift Mastern, einem 3-Node etcd Cluster, der als Konfigurationsdatenbank dient, 
+						drei Container Native Storage Nodes (GlusterFS), mindestens drei Application Nodes sowie einem dedizierten NFS Server.
+						Alle Systeme sind virtuelle Maschinen auf Basis der RedHat Enterprise Virtualisierung.<br/>
+						Administrative T&auml;tigkeiten am Cluster k&ouml;nnen von den Mastern aus durchgef&uuml;hrt werden. Der dortige root User verf&uuml;gt &uuml;ber cluster:admin Berechtigung.<br/>
+						Auf den Application Nodes laufen die eigentlichen Docker Container, die von Google Kubernetes orchestriert werden. Auf diesem Kubernetes Framework setzt OpenShift wiederum auf.<br/>
+						Zwischen den Systemen spannt der Kubernetes ein virtuelles Netzwerk &uuml;ber das die Pods (die kleinste von Kubernetes verwaltete Einheit, bestehend aus 
+						&uuml;blicherweise einem, im Ausnahmefall aber auch aus mehreren Containern) intern kommunizieren. <br/>
+						Die Container Native Storage Nodes stellen dem Cluster hochverf&uuml;gbare persistente Volumes auf Basis des GlusterFS bereit, w&auml;hrend der NFS Server storage f&uuml;r 
+						bereit stellt, der nicht hochverf&uuml;gbar sein muss. <br/>
+						Kein direkter Bestandteil des OpenShift Clusters, aber dennoch f&uuml;r die Arbeit mit diesem unerl&auml;sslich ist ein git Repository auf dem die Quellcodes 
+						f&uuml;r die Anwendungen die auf dem Cluster laufen sollen und die f&uuml;r einen Docker Build n&ouml;tigen Dockerfiles.
+					</p>
+					<p>
+						<img class="table" src="images/OpenShift_Cluster_Architecture.png" alt="Anatomie eines OpenShift Clusters" />
+					</p>
+					<p>
+						Geplant sind aktuell 4 voneinander getrennte OpenShift Cluster:
+						<ul>
+							<li><em>NonProd</em> beherbergt die ENTW, FREI und SQA Umgebungen</li>
+							<li><em>Test</em> dient dem Infrastrukturbetrieb zum Testen von Upgrades, Changes etc.</li>
+							<li><em>Prod Intern</em> beherbergt die PILOT und die Produktionsumgebung, die nur im Kammernetz erreichbar sein soll</li>
+							<li><em>Prod Extern</em> beherbergt die Produktionsumgebung in der DMZ, die im Internet erreichbar sein soll</li>
+						</ul>
+					</p>
+					<p>
+						In der folgenden Illustration sind die externen Services aufgef&uuml;hrt mit denen der OpenShift kommuniziert.
+					</p>
+					<p>	
+						<img class="table" src="images/OpenShift_Environment.png" alt="Clusterumgebung" />
+					</p>
 
 
-	  <p><a href="#top">Back to top</a></p>
+					<p><a href="#top">Back to top</a></p>
 
 
-	  <a name="objekte"/>
-	  <h3>Objekte im OpenShift</h3>
-	  <p>
-			Eine Applikation im OpenShift Cluster besteht aus mehreren Objekten unterschiedlichen Typs, die erst im Zusammenspiel eine funktionsf&auml;hige Applikation ergeben.
-	    Die meistgenutzten Objekttypen sind:
-	  </p>
-	  <h4>Container</h4>
-	  <p>
-	    Eine Definition wie man einen oder mehrere Prozesse in einer portablen, Linux-basierten Umgebung ausf&uuml;hren kann. Container werden aus einem Image heraus erzeugt
-	    und sind von anderen Containern auf dem gleichen System isoliert.
-	  </p>
-	  <h4>Image</h4>
-	  <p>
-	    Ein geschichtetes Linux Dateisystem auf dem sich der Applikationscode, notwendige Abh&auml;ngigkeiten und Betriebssystembibliotheken befinden. 
-	    Ein Image wird anhand eines Namens identifiziert, der entweder nur im lokalen Cluster bekannt ist oder aber auf eine extern Docker Registry verweist.
-	  </p>
-	  <h4>Pods [pod]</h4>
-	  <p>
-	    Ein oder mehrere Container die gemeinsam auf einen Host deployed werden und sich dort die IP-Adresse und den persistenten Storage miteinander teilt.
-	    In den Pods werden die Sicherheitseinstellungen und Laufzeitparameter f&uuml;r jeden Container definiert.
-	  </p>
-	  <h4>Labels</h4>
-	  <p>
-	    Labels sind einfache Schl&uuml;ssel/Wert-Paare die jeder Ressource zwecks Identifikation, Gruppierung und Selektion zugewiesen werden k&ouml;nnen.
-	    H&auml;ufig nutzen Ressourcen dieses Verfahren um andere Ressourcen auszuw&auml;hlen. Labels erleichtern die Verwaltung der Ressourcen deutlich, so
-	    versieht das <code>oc new-app --name=&lt;appname&gt; &lt;repository&gt;</code> Kommando jede Ressource die es erzeugt mit einem Label <em>app=&lt;appname&gt;</em>, 
-	    so dass weitere Kommandos wie z.B. <code>oc get pods -l app=&lt;appname&gt;</code> oder <code>oc delete all -l app=&lt;appname&gt;</code> diese Labels
-	    nutzen k&ouml;nnen.
-	  </p>
-	  <h4>Volumes</h4>
-	  <p>
-	    Container sind von Natur aus nicht persistent; jeder Neustart findet auf einem frischen System statt. Volumes sind gemountete Dateisysteme, die den Pods und deren
-	    Containern zur Verf&uuml;gung gestellt werden und im Hintergrund von einer Anzahl an Hostinternen oder NAS Endpunkten realisiert werden kann.<br/>
-	    Der einfachste Volume Typ ist das EmptyDir bei dem es sich um ein tempor&auml;res Verzeichnis auf dem lokalen Host handelt. Der Administrator kann aber erlauben, dass
-	    persistente Volumes angefordert werden d&uuml;rfen die dann automatisch an die Pods geh&auml;ngt werden.
-	  </p>
-	  <h4>Nodes [node]</h4>
-	  <p>
-	    Maschinen, die im Cluster daf&uuml;r vorgesehen sind die laufenden Container zu beheimaten. Als regul&auml;rer Benutzer hat man nur indirekt mit diesen zu tun.
-	  </p>
-	  <h4>Services [svc]</h4>
-	  <p>
-	    Ein Name der eine bestimmte Menge von Pods oder externen Servern repr&auml;sentiert die von anderen Pods genutzt werden. Der Service bekommt eine eigene IP Adresse und 
-	    einen DNS Eintrag und kann nach aussen mit Hilfe einer Route exponiert werden. Ausserdem erm&ouml;glicht ein Service den einfachen Zugriff auf die darunter befindlichen
-	    Dienste dadurch, dass in jeden Pod eine Environment Variable mit dem Namen &lt;SERVICE&gt;_HOST injiziert wird.
-	  </p>
-	  <h4>Routes [route]</h4>
-	  <p>
-	    Bei einer Route handelt es sich um einen externen DNS Eintrag, der dazu dient eine interne Service Ressource ausserhalb des Clusters sichtbar zu machen.
-	    In unserem Cluster erf&uuml;llen HAProxy Container auf jedem Node diesen Zweck.
-	  </p>
-	  <h4>Replication Controllers [rc]</h4>
-	  <p>
-	    Ein Replication Controller kontrolliert, dass immer eine festgelegte Anzahl an Pods l&auml;ft. Diese Anzahl wird in einem Template festgelegt, ebenso
-	    welche Pods anhand eines festzulegenden Labels der Kontrolle dieses Replication Controllers unterliegen. Werden Pods gel&ouml;scht, z.B. weil der Node
-	    auf dem der Pod lief abst&uuml;rzte, erstellt der Replication Controller eine frische Kopie des Pods. &Uuml;blicherweise repr&auml;sentiert ein Replication
-	    Controller ein einzelnes Deployment eines Teils der Anwendung basierend auf einem Image.
-	  </p>
-	  <h4>Deployment Configuration [dc]</h4>
-	  <p>
-	    Definiert die Vorlage f&uuml;r einen Pod und managed das Deployment neuer Images oder &Auml;nderungen an der Konfiguration wenn diese auftauchen.
-	    Eine einzelne DeploymentConfig entspricht zumeist einem einzelnen MicroService und unterst&uuml;tzt eine Vielzahl von Deployment Strategien, unter anderem 
-	    den vollst&auml;ndigen Restart, konfigurierbare Rolling Upgrades, eigene Implementationen sowie pre- und posthooks.<br/>
-	    Jedes Deployment in OpenShift wird durch einen Replication Controller repr&auml;sentiert.
-	  </p>
-	  <h4>Build Configuration [bc]</h4>
-	  <p>
-	    Eine Beschreibung wie man den Source Code baut und aus diesen und einem Basisimage ein lauff&auml;higes Applikationsimage erzeugt - der prim&auml;r verwendeten
-	    Methode um &Auml;nderungen an der Applikation vorzunehmen. Builds k&ouml;nnen entweder Quellcodebasierts sein und Builder Images f&uuml;r gebr&auml;chliche 
-	    Sprachen wie z.B. Java, PHP, Ruby oder Python nutzen, oder aber dockerbasiert sein und das neue Image anhand der Anweisungen in einem Dockerfile erzeugen.
-	    Jeder BuildConfig verf&uuml;gt &uuml;ber Webhooks und kann bei &Auml;nderungen an Quellcode oder Basis Image automatisch benachrichtigt werden.
-	  </p>
-	  <h4>Builds [build]</h4>
-	  <p>
-	    Builds erzeugen ein neues Image aus dem Quellcode, anderen Images, Dockerfiles oder bin&auml;rem Input. Ein Build l&auml;uft in einem Container und unterliegt
-	    damit den gleichen Beschr&auml;nkungen wie anderen Pods. Ein Build resultiert &uuml;blicherweise in einem Image welches abschliessend in die Docker Registry
-	    hochgeladen wird kann aber genauso gut stattdessen post-build Tests anstossen, die nicht in einem Upload des Images resultieren.
-	  </p>
-	  <h4>Image Streams und ImageStreamTags [is,istag]</h4>
-	  <p>
-	    Analog zu einem Branch in einem Quellcode Repository gruppiert ein ImageStream zusammengeh&ouml;rende Images mit Hilfe von Tags in einen ImageStream.
-	    Jeder ImageStream hat ein oder mehrere Tags (default: latest) die entweder auf eine externe Docker Registry, andere Tags im gleichen ImageStream oder direkt auf
-	    bekannte Images verweisen kann. Dar&uuml;ber hinaus k&ouml;nnen images &uuml;ber die interne Docker Registry direkt in einen ImageStreamTag gepusht werden.
-	  </p>
-	  <h4>Secrets [secret]</h4>
-	  <p>
-	    Ein Secret kann geheime Text- oder Bin&auml;rdaten enthalten, die an die eigenen Pods zugestellt werden. Standardm&auml;ssig beinhaltet jeder Pod ein einzelnes
-	    Secret welches einen Token enth&auml;lt mit dessen Hilfe man eingeschr&auml;nkten Zugriff auf die API unter /var/run/secrets/kubernetes.io/serviceaccount hat.
-	    Man kann aber jederzeit neue Secrets erzeugen und in seinen Pods verf&uuml;gbar machen oder Secrets aus Builds referenzieren (um sich mit Remote Servern zu verbinden)
-	    oder aber um mit deren Hilfe entfernte Images in einen ImageStream zu importieren.
-	  </p>
-	  <h4>Projects [project]</h4>
-	  <p>
-	    Alle oben beschriebenen Ressourcen existieren im Rahmen eines Projektes.
-	    Projekte verf&uuml;gen &uuml;ber eine Liste von Mitgliedern und ihren Rollen, wie z.B. <em>viewer</em>, <em>editor</em> oder <em>admin</em>, einem Set von 
-	    Sicherheitskontrollen auf die laufenden Pods und Beschr&auml;nkungen hinsichtlich der zur Verf&uuml;gung stehenden Ressourcen (CPU, Memory, etc.).
-	    Die Namen der Ressourcen m&uuml;ssen innerhalb eines Projektes eindeutig sein. Benutzer k&ouml;nnen Projekte hinzuf&uuml;gen, hinsichtlich der Ressourcen
-	    die dem Projekt zur Verf&uuml;gung gestellt werden hat aber der Admin das letzte Wort.
-	  </p>
+					<a name="objekte"/>
+					<h3>Objekte im OpenShift</h3>
+					<p>
+						Eine Applikation im OpenShift Cluster besteht aus mehreren Objekten unterschiedlichen Typs, die erst im Zusammenspiel eine funktionsf&auml;hige Applikation ergeben.
+						Die meistgenutzten Objekttypen sind:
+					</p>
+					<h4>Container</h4>
+					<p>
+						Eine Definition wie man einen oder mehrere Prozesse in einer portablen, Linux-basierten Umgebung ausf&uuml;hren kann. Container werden aus einem Image heraus erzeugt
+						und sind von anderen Containern auf dem gleichen System isoliert.
+					</p>
+					<h4>Image</h4>
+					<p>
+						Ein geschichtetes Linux Dateisystem auf dem sich der Applikationscode, notwendige Abh&auml;ngigkeiten und Betriebssystembibliotheken befinden. 
+						Ein Image wird anhand eines Namens identifiziert, der entweder nur im lokalen Cluster bekannt ist oder aber auf eine extern Docker Registry verweist.
+					</p>
+					<h4>Pods [pod]</h4>
+					<p>
+						Ein oder mehrere Container die gemeinsam auf einen Host deployed werden und sich dort die IP-Adresse und den persistenten Storage miteinander teilt.
+						In den Pods werden die Sicherheitseinstellungen und Laufzeitparameter f&uuml;r jeden Container definiert.
+					</p>
+					<h4>Labels</h4>
+					<p>
+						Labels sind einfache Schl&uuml;ssel/Wert-Paare die jeder Ressource zwecks Identifikation, Gruppierung und Selektion zugewiesen werden k&ouml;nnen.
+						H&auml;ufig nutzen Ressourcen dieses Verfahren um andere Ressourcen auszuw&auml;hlen. Labels erleichtern die Verwaltung der Ressourcen deutlich, so
+						versieht das <code>oc new-app --name=&lt;appname&gt; &lt;repository&gt;</code> Kommando jede Ressource die es erzeugt mit einem Label <em>app=&lt;appname&gt;</em>, 
+						so dass weitere Kommandos wie z.B. <code>oc get pods -l app=&lt;appname&gt;</code> oder <code>oc delete all -l app=&lt;appname&gt;</code> diese Labels
+						nutzen k&ouml;nnen.
+					</p>
+					<h4>Volumes</h4>
+					<p>
+						Container sind von Natur aus nicht persistent; jeder Neustart findet auf einem frischen System statt. Volumes sind gemountete Dateisysteme, die den Pods und deren
+						Containern zur Verf&uuml;gung gestellt werden und im Hintergrund von einer Anzahl an Hostinternen oder NAS Endpunkten realisiert werden kann.<br/>
+						Der einfachste Volume Typ ist das EmptyDir bei dem es sich um ein tempor&auml;res Verzeichnis auf dem lokalen Host handelt. Der Administrator kann aber erlauben, dass
+						persistente Volumes angefordert werden d&uuml;rfen die dann automatisch an die Pods geh&auml;ngt werden.
+					</p>
+					<h4>Nodes [node]</h4>
+					<p>
+						Maschinen, die im Cluster daf&uuml;r vorgesehen sind die laufenden Container zu beheimaten. Als regul&auml;rer Benutzer hat man nur indirekt mit diesen zu tun.
+					</p>
+					<h4>Services [svc]</h4>
+					<p>
+						Ein Name der eine bestimmte Menge von Pods oder externen Servern repr&auml;sentiert die von anderen Pods genutzt werden. Der Service bekommt eine eigene IP Adresse und 
+						einen DNS Eintrag und kann nach aussen mit Hilfe einer Route exponiert werden. Ausserdem erm&ouml;glicht ein Service den einfachen Zugriff auf die darunter befindlichen
+						Dienste dadurch, dass in jeden Pod eine Environment Variable mit dem Namen &lt;SERVICE&gt;_HOST injiziert wird.
+					</p>
+					<h4>Routes [route]</h4>
+					<p>
+						Bei einer Route handelt es sich um einen externen DNS Eintrag, der dazu dient eine interne Service Ressource ausserhalb des Clusters sichtbar zu machen.
+						In unserem Cluster erf&uuml;llen HAProxy Container auf jedem Node diesen Zweck.
+					</p>
+					<h4>Replication Controllers [rc]</h4>
+					<p>
+						Ein Replication Controller kontrolliert, dass immer eine festgelegte Anzahl an Pods l&auml;ft. Diese Anzahl wird in einem Template festgelegt, ebenso
+						welche Pods anhand eines festzulegenden Labels der Kontrolle dieses Replication Controllers unterliegen. Werden Pods gel&ouml;scht, z.B. weil der Node
+						auf dem der Pod lief abst&uuml;rzte, erstellt der Replication Controller eine frische Kopie des Pods. &Uuml;blicherweise repr&auml;sentiert ein Replication
+						Controller ein einzelnes Deployment eines Teils der Anwendung basierend auf einem Image.
+					</p>
+					<h4>Deployment Configuration [dc]</h4>
+					<p>
+						Definiert die Vorlage f&uuml;r einen Pod und managed das Deployment neuer Images oder &Auml;nderungen an der Konfiguration wenn diese auftauchen.
+						Eine einzelne DeploymentConfig entspricht zumeist einem einzelnen MicroService und unterst&uuml;tzt eine Vielzahl von Deployment Strategien, unter anderem 
+						den vollst&auml;ndigen Restart, konfigurierbare Rolling Upgrades, eigene Implementationen sowie pre- und posthooks.<br/>
+						Jedes Deployment in OpenShift wird durch einen Replication Controller repr&auml;sentiert.
+					</p>
+					<h4>Build Configuration [bc]</h4>
+					<p>
+						Eine Beschreibung wie man den Source Code baut und aus diesen und einem Basisimage ein lauff&auml;higes Applikationsimage erzeugt - der prim&auml;r verwendeten
+						Methode um &Auml;nderungen an der Applikation vorzunehmen. Builds k&ouml;nnen entweder Quellcodebasierts sein und Builder Images f&uuml;r gebr&auml;chliche 
+						Sprachen wie z.B. Java, PHP, Ruby oder Python nutzen, oder aber dockerbasiert sein und das neue Image anhand der Anweisungen in einem Dockerfile erzeugen.
+						Jeder BuildConfig verf&uuml;gt &uuml;ber Webhooks und kann bei &Auml;nderungen an Quellcode oder Basis Image automatisch benachrichtigt werden.
+					</p>
+					<h4>Builds [build]</h4>
+					<p>
+						Builds erzeugen ein neues Image aus dem Quellcode, anderen Images, Dockerfiles oder bin&auml;rem Input. Ein Build l&auml;uft in einem Container und unterliegt
+						damit den gleichen Beschr&auml;nkungen wie anderen Pods. Ein Build resultiert &uuml;blicherweise in einem Image welches abschliessend in die Docker Registry
+						hochgeladen wird kann aber genauso gut stattdessen post-build Tests anstossen, die nicht in einem Upload des Images resultieren.
+					</p>
+					<h4>Image Streams und ImageStreamTags [is,istag]</h4>
+					<p>
+						Analog zu einem Branch in einem Quellcode Repository gruppiert ein ImageStream zusammengeh&ouml;rende Images mit Hilfe von Tags in einen ImageStream.
+						Jeder ImageStream hat ein oder mehrere Tags (default: latest) die entweder auf eine externe Docker Registry, andere Tags im gleichen ImageStream oder direkt auf
+						bekannte Images verweisen kann. Dar&uuml;ber hinaus k&ouml;nnen images &uuml;ber die interne Docker Registry direkt in einen ImageStreamTag gepusht werden.
+					</p>
+					<h4>Secrets [secret]</h4>
+					<p>
+						Ein Secret kann geheime Text- oder Bin&auml;rdaten enthalten, die an die eigenen Pods zugestellt werden. Standardm&auml;ssig beinhaltet jeder Pod ein einzelnes
+						Secret welches einen Token enth&auml;lt mit dessen Hilfe man eingeschr&auml;nkten Zugriff auf die API unter /var/run/secrets/kubernetes.io/serviceaccount hat.
+						Man kann aber jederzeit neue Secrets erzeugen und in seinen Pods verf&uuml;gbar machen oder Secrets aus Builds referenzieren (um sich mit Remote Servern zu verbinden)
+						oder aber um mit deren Hilfe entfernte Images in einen ImageStream zu importieren.
+					</p>
+					<h4>Projects [project]</h4>
+					<p>
+						Alle oben beschriebenen Ressourcen existieren im Rahmen eines Projektes.
+						Projekte verf&uuml;gen &uuml;ber eine Liste von Mitgliedern und ihren Rollen, wie z.B. <em>viewer</em>, <em>editor</em> oder <em>admin</em>, einem Set von 
+						Sicherheitskontrollen auf die laufenden Pods und Beschr&auml;nkungen hinsichtlich der zur Verf&uuml;gung stehenden Ressourcen (CPU, Memory, etc.).
+						Die Namen der Ressourcen m&uuml;ssen innerhalb eines Projektes eindeutig sein. Benutzer k&ouml;nnen Projekte hinzuf&uuml;gen, hinsichtlich der Ressourcen
+						die dem Projekt zur Verf&uuml;gung gestellt werden hat aber der Admin das letzte Wort.
+					</p>
 
 
-	  <p><a href="#top">Back to top</a></p>
-	  <div class="page-break"></div>
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
 
 
-		<a name="client"/>
-		<h2>OpenShift Client</h2>
-		<p>
-			Der OpenShift Cluster kann zum grossen Teil mit Hilfe der WebGUI konfiguriert werden, &uuml;ber die volle Bandbreite der Funktionalit&auml;t verf&uuml;gt man aber 
-			nur mit dem Kommandozeilen Client <em>oc</em>. Arbeitet man als Benutzer in seinem Projekt sollte die Anmeldung wie unten beschrieben von der eigenen Workstation aus
-			mit dem AD Benutzer erfolgen, f&uuml;r administrative Aufgaben dient der root account auf den Mastern, der &uuml;ber volle <em>cluster:admin</em> Rechte verf&uuml;gt. 
-			Dazu steht nebem dem <em>oc</em> Kommando noch das <em>oadm</em> bereit, welches im Grund aber nur ein Alias f&uuml;r <em>oc adm</em> darstellt.
-		</p>
-		<p>
-			Das <em>oc</em> Kommando hat eine Onlinehilfe integriert, die f&uuml;r jede Funktion aufgerufen werden kann, z.B.:
-			<h4>Wenn notwendige Argumente fehlen gibt er eine Auswahl der M&ouml;glichkeiten zur&uuml;ck</h4>
-			<code><pre><strong>root@189tuxosm001:~></strong> oc get
+					<a name="client"/>
+					<h2>OpenShift Client</h2>
+					<p>
+						Der OpenShift Cluster kann zum grossen Teil mit Hilfe der WebGUI konfiguriert werden, &uuml;ber die volle Bandbreite der Funktionalit&auml;t verf&uuml;gt man aber 
+						nur mit dem Kommandozeilen Client <em>oc</em>. Arbeitet man als Benutzer in seinem Projekt sollte die Anmeldung wie unten beschrieben von der eigenen Workstation aus
+						mit dem AD Benutzer erfolgen, f&uuml;r administrative Aufgaben dient der root account auf den Mastern, der &uuml;ber volle <em>cluster:admin</em> Rechte verf&uuml;gt. 
+						Dazu steht nebem dem <em>oc</em> Kommando noch das <em>oadm</em> bereit, welches im Grund aber nur ein Alias f&uuml;r <em>oc adm</em> darstellt.
+					</p>
+					<p>
+						Das <em>oc</em> Kommando hat eine Onlinehilfe integriert, die f&uuml;r jede Funktion aufgerufen werden kann, z.B.:
+						<h4>Wenn notwendige Argumente fehlen gibt er eine Auswahl der M&ouml;glichkeiten zur&uuml;ck</h4>
+						<code><pre><strong>root@189tuxosm001:~></strong> oc get
 You must specify the type of resource to get. Valid resource types include:
 
     * all
@@ -331,8 +321,8 @@ You must specify the type of resource to get. Valid resource types include:
 Use "oc explain <resource>" for a detailed description of that resource (e.g. oc explain pods).
 See 'oc get -h' for help and examples.</pre></code>
 
-			<h4>Hilfe explizit anfragen liefert Parameter und Einsatzbeispiele</h4>
-			<code><pre><strong>root@189tuxosm001:~></strong> oc help get
+					<h4>Hilfe explizit anfragen liefert Parameter und Einsatzbeispiele</h4>
+					<code><pre><strong>root@189tuxosm001:~></strong> oc help get
 Display one or many resources
 
 Possible resources include builds, buildConfigs, services, pods, etc. To see a list of common resources, use 'oc get'.
@@ -400,8 +390,8 @@ template format is golang templates [http://golang.org/pkg/text/template/#pkg-ov
 
 Use "oc options" for a list of global command-line options (applies to all commands).</pre></code>
 							
-			<h4>Mit der <em>explain</em> Funktion Ressourcen oder Eintr&auml;ge der yaml Config erkl&auml;ren lassen</h4>
-			<code><pre><strong>root@189tuxosm001:~></strong> oc explain configmaps
+					<h4>Mit der <em>explain</em> Funktion Ressourcen oder Eintr&auml;ge der yaml Config erkl&auml;ren lassen</h4>
+					<code><pre><strong>root@189tuxosm001:~></strong> oc explain configmaps
 DESCRIPTION:
 ConfigMap holds configuration data for pods to consume.
 
@@ -426,7 +416,7 @@ FIELDS:
 		value, and may reject unrecognized values. More info:
 		http://releases.k8s.io/HEAD/docs/devel/api-conventions.md#resources</pre></code>
 
-			<code><pre><strong>root@189tuxosm001:~></strong> cat elpdj_001_entw_jast_log-pvc.yaml
+					<code><pre><strong>root@189tuxosm001:~></strong> cat elpdj_001_entw_jast_log-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -446,10 +436,10 @@ DESCRIPTION:
 	Requests is omitted for a container, it defaults to Limits if that is
 	explicitly specified, otherwise to an implementation-defined value. More
 	info: http://kubernetes.io/docs/user-guide/compute-resources/</pre></code>
-		</p>
+					</p>
 
-		<h4>Images in bestehenden Imagestream kopieren</h4>
-		<code><pre><strong>root@189tuxosm001:~></strong> oc import-image linux-prod-openshift-docker-swagger-ui:v3.11.0 --from=189tuxsat001.gfi.ihk.de:5000/linux-prod-openshift-docker-swagger-ui:v3.11.0
+					<h4>Images in bestehenden Imagestream kopieren</h4>
+					<code><pre><strong>root@189tuxosm001:~></strong> oc import-image linux-prod-openshift-docker-swagger-ui:v3.11.0 --from=189tuxsat001.gfi.ihk.de:5000/linux-prod-openshift-docker-swagger-ui:v3.11.0
 The import completed successfully.
 
 Name:			linux-prod-openshift-docker-swagger-ui
@@ -510,23 +500,23 @@ Environment:	PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 		PORT=8080
 		BASE_URL=</pre></code>
 
-	  <p><a href="#top">Back to top</a></p>
-	  <div class="page-break"></div>
+				<p><a href="#top">Back to top</a></p>
+				<div class="page-break"></div>
 
-	  <a name="login"/>
-	  <h2>Anmelden am OpenShift Cluster</h2>
-	  <ol>
-	    <li>Die Anmeldung erfolgt entweder &uuml;ber einen Webbrowser oder mit dem <code><pre>oc login</pre></code> Kommando (<a href="https://github.com/openshift/origin/releases/latest">https://github.com/openshift/origin/releases/latest</a>).</li>
-	    <li>Die n&ouml;tige URL ist entweder <a href="https://openshift-intern.gfi.ihk.de">https://openshift-intern.gfi.ihk.de:8443</a> f&uuml;r die Testumgebung oder <a href="https://openshift-nonprod.gfi.ihk.de:8443">https://openshift-nonprod.gfi.ihk.de:8443</a>
-	    </li>
-	    <li>Jedes Projekt hat einen Projektbenutzer unter dem vom Projektverantwortlichen das eigentliche Projekt angelegt und Zugriffsrechte f&uuml;r personalisierte Benutzeraccounts verwaltet werden.</li>
-	    <li>Jeder Benutzer sollte &uuml;ber einen pers&ouml;nlichen Account (z.B. mleimenmeier f&uuml;r Michael Leimenmeier) verf&uuml;gen, mit dem er sich wie in Punkt 5 dargestellt anmelden kann.</li>
-	    <li>
-	      <code><pre>oc login [-u username] [-p password] https://openshift-nonprod.gfi.ihk.de:8443</pre></code>
-	    </li>
-	  </ol>
-	  <p>
-	    <code><pre><strong>07:57:10 leimm@189tuxlem001:workbench></strong> oc login -u spielwiese https://openshift-nonprod.gfi.ihk.de:8443
+				<a name="login"/>
+				<h2>Anmelden am OpenShift Cluster</h2>
+				<ol>
+					<li>Die Anmeldung erfolgt entweder &uuml;ber einen Webbrowser oder mit dem <code><pre>oc login</pre></code> Kommando (<a href="https://github.com/openshift/origin/releases/latest">https://github.com/openshift/origin/releases/latest</a>).</li>
+					<li>Die n&ouml;tige URL ist entweder <a href="https://openshift-intern.gfi.ihk.de">https://openshift-intern.gfi.ihk.de:8443</a> f&uuml;r die Testumgebung oder <a href="https://openshift-nonprod.gfi.ihk.de:8443">https://openshift-nonprod.gfi.ihk.de:8443</a>
+					</li>
+					<li>Jedes Projekt hat einen Projektbenutzer unter dem vom Projektverantwortlichen das eigentliche Projekt angelegt und Zugriffsrechte f&uuml;r personalisierte Benutzeraccounts verwaltet werden.</li>
+					<li>Jeder Benutzer sollte &uuml;ber einen pers&ouml;nlichen Account (z.B. mleimenmeier f&uuml;r Michael Leimenmeier) verf&uuml;gen, mit dem er sich wie in Punkt 5 dargestellt anmelden kann.</li>
+					<li>
+						<code><pre>oc login [-u username] [-p password] https://openshift-nonprod.gfi.ihk.de:8443</pre></code>
+					</li>
+				</ol>
+				<p>
+					<code><pre><strong>07:57:10 leimm@189tuxlem001:workbench></strong> oc login -u spielwiese https://openshift-nonprod.gfi.ihk.de:8443
 Authentication required for https://openshift-nonprod.gfi.ihk.de:8443 (openshift)
 Username: spielwiese
 Password:
@@ -535,37 +525,32 @@ Login successful.
 You don't have any projects. You can try to create a new project, by running
 
     $ oc new-project &lt;projectname&gt;</pre></code>
-	  </p>
-	  <p>
-	    <img class="table" src="images/GUI_Welcome.png" alt="Willkommensbildschirm der OpenShift WebGUI." />
-	  </p>
+				</p>
+				<p>
+					<img class="table" src="images/GUI_Welcome.png" alt="Willkommensbildschirm der OpenShift WebGUI." />
+				</p>
 
 
-	  <p><a href="#top">Back to top</a></p>
-	  <div class="page-break"></div>
-	  
-         </div> <!-- OpenShift -->
-	
-	  
-      </div> <!-- maincontents -->
+				<p><a href="#top">Back to top</a></p>
+				<div class="page-break"></div>
+				
 
-      <div id="footer">
-				&copy; 2016, Michael Leimenmeier
-				<br>
-				All Rights reserved.
-      </div> <!-- footer -->
+				<a name="appnatomy"/>
+				<h2>Applikationen</h2>
+				
+				<p><a href="#top">Back to top</a></p>
+				<div class="page-break"></div>
 
-    </div> <!-- contents -->
+			</div> <!-- OpenShift -->
+		</div> <!-- maincontents -->
+
+		<div id="footer">
+			&copy; 2018, Michael Leimenmeier
+			<br>
+			All Rights reserved.
+		</div> <!-- footer -->
+
+		</div> <!-- contents -->
   </body>
 </html>
 
-
-<!--
-	  <h4></h4>
-	  <p>
-	    <code><pre></pre></code>
-	  </p>
-	  <p>
-	    <img class="table" src="images/" alt=""/>
-	  </p>
--->
