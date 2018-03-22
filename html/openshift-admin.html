@@ -1,78 +1,225 @@
 <!DOCTYPE html>
-<!--- regex replacemant for command prompt:
-[0-9][0-9]:.*mleimenmeier.*+:[A-Za-z~]*+> -> <strong>\&</strong>
-[0-9][0-9]:.*leimm.*+:[A-Za-z~]*+> -> <strong>\&</strong>
---->
 
 <html>
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <title>OpenShift f&uuml; Administratoren</title>
+    <title>OpenShift f&uuml;r Administratoren</title>
     <link rel="stylesheet" type="text/css" href="standard.css" />
   </head>
   <body>
     <div id="contents">
 
       <div id="header">
-	<img src="images/header.png" alt="Site Header">
+				<img src="images/header.png" alt="Site Header">
       </div> <!-- header -->
 
-<nav>
-	<ul>
-			<li><a href="index.html">HOME</a></li>
-			<li><a href="openshift-general.html">OpenShift Allgemein</a></li>
-			<li><a href="openshift-user.html">OpenShift f&uuml;r Benutzer</a></li>
-			<li><a href="openshift-developer.html">OpenShift f&uuml;r Entwickler</a></li>
-			<li class="selected"><a href="openshift-admin.html">OpenShift f&uuml;r Administratoren</a></li>
-			<li><a href="impressum.html">IMPRESSUM</a></li>
-	</ul>
-</nav>
+			<nav>
+				<ul>
+						<li><a href="index.html">HOME</a></li>
+						<li><a href="openshift-general.html">OpenShift Allgemein</a></li>
+						<li><a href="openshift-user.html">OpenShift f&uuml;r Benutzer</a></li>
+						<li><a href="openshift-developer.html">OpenShift f&uuml;r Entwickler</a></li>
+						<li class="selected"><a href="openshift-admin.html">OpenShift f&uuml;r Administratoren</a></li>
+						<li><a href="impressum.html">IMPRESSUM</a></li>
+				</ul>
+			</nav>
 
-<div id="maincontents">
-	<a name="top"/>
-	<h1>OpenShift f&uuml;r Administratoren</h1>
-	<div id="OpenShift">
-	  <p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte des Admins eines OpenShift Clusters zu erl&auml;utern.</p>
+			<div id="maincontents">
+				<a name="top"/>
+				<h1>OpenShift f&uuml;r Administratoren</h1>
+				<div id="OpenShift">
+					<p>Diese Anleitung soll dabei helfen die g&auml;ngigsten Arbeitsschritte des Admins eines OpenShift Clusters zu erl&auml;utern.</p>
 
-			<ol>
-				<li><a href="#architecture"><h7>Architektur</h7></a></li>
-				<ol>
-					<li><a href="#objekte"><h8>Objekte im OpenShift</h8></a></li>
-				</ol>
-				<li><a href="#login"><h7>Anmelden am Openshift Cluster</h7></a></li>
-				<li><a href="#new-project"><h7>Projekt erstellen</h7></a></li>
-				<li><a href="#new-app"><h7>Applikation erstellen</h7></a></li>
-				<ol>
-					<li><a href="#new-app-template"><h8>Installation einer MongoDB via Template</h8></a></li>
-					<li><a href="#new-app-s2i"><h8>Installation einer Python Applikation via S2I Builder Image</h8></a></li>
-					<li><a href="#new-app-dockerfile"><h8>Installation einer Applikation via Docker Build Strategie</h8></a></li>
-				</ol>
-				<li><a href="#ssh-keys"><h7>SSH Schl&uuml;ssel hinterlegen</h7></a></li>
-				<li><a href="#webhooks"><h7>Webhooks konfigurieren</h7></a></li>
-			</ol>
+					
+					
+					
+					<ol>
+						<li><a href="#systemd"><h7>SystemD Services</h7></a></li>
+						<li><a href="#infrastructure"><h7>Infrastruktur Management</h7></a></li>
+						<ol>
+								<li><a href="#cluster"><h8>OpenShift Cluster</h8></a></li>
+								<li><a href="#master"><h8>Master Server</h8></a></li>
+								<li><a href="#node"><h8>Application Nodes</h8></a></li>
+								<li><a href="#etcd"><h8>etcd Konfigurationsdatenbank</h8></a></li>
+						</ol>	
+						<li><a href="#user"><h7>Benutzer</h7></a></li>
+						<li><a href="#imagestreams"><h7>Images / Imagestreams</h7></a></li>
+						<li><a href="#storage"><h7>Persistenter Storage</h7></a></li>
+						<li><a href="#services"><h7>Services im OpenShift</h7></a></li>
+						<ol>
+								<li><a href="#registry"><h8>Registry</h8></a></li>
+								<li><a href="#router"><h8>Router</h8></a></li>
+								<li><a href="#logging"><h8>Logging</h8></a></li>
+								<li><a href="#metrics"><h8>Metriken</h8></a></li>
+						</ol>
+						<li><a href="#cloudforms"><h7>cloudForms</h7></a></li>						
+					</ol>
+
+
+
+
+					<a name="systemd"/>
+					<h2>SystemD Services</h2>
+					<p>
+						<table class="services">
+
+						</table>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="infrastructure"/>
+					<h2>OpenShift Infrastruktur</h2>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="cluster"/>
+					<h3>Cluster Management</h3>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="master"/>
+					<h3>Master Server</h3>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="node"/>
+					<h3>Application Nodes</h3>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="etcd"/>
+					<h3>etcd Konfigurationsdatenbank</h3>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="imagestreams"/>
+					<h2>OpenShift Infrastruktur</h2>
+					<p>
+					</p>
+
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
+
+
+
+
+					<a name="user"/>
+					<h2>Benutzer</h2>
+					<p>
+						Benutzer ben&ouml;tigen Zugriff auf den OpenShift Cluster sowie auf die Projekte f&uuml;r die sie entweder
+						verantwortlich sind oder denen sie zugeteilt wurden. Um Zugriff auf den Cluster zu erhalten muss sein Account
+						im Windows AD Mitglied der entsprechenden Gruppe sein.<br/>
+						Je nach Rolle im Unternehmen ben&ouml;tigt der Mitarbeiter auch Zugriff auf die Projekte, dies wird &uuml;ber
+						die nachfolgenden Kommandos realisiert.
+					</p>
+					<p>
+						<table class="direktiven">
+							<tr>
+								<th></th>
+								<th>Test</th>
+								<th>NonProd</th>
+								<th>Prod Intern</th>
+								<th>Prod Extern</th>
+							</tr>
+							<tr>
+								<th>AD Gruppe</th>
+								<td>GF189SEC_OpenShift_Users_Test</td>
+								<td>GF189SEC_OpenShift_Users_NonProd</td>
+								<td>GF189SEC_OpenShift_Users_Intern</td>
+								<td>GF189SEC_OpenShift_Users_Extern</td>
+							</tr>
+							<tr>
+								<th>Projektverantwortlicher</th>
+								<td></td>
+								<td>admin</td>
+								<td>view</td>
+								<td>view</td>
+							</tr>
+							<tr>
+								<th>ServiceDesk</th>
+								<td></td>
+								<td>view</td>
+								<td>view</td>
+								<td>view</td>
+							</tr>
+								<tr>
+								<th>Entwickler</th>
+								<td></td>
+								<td>edit</td>
+								<td>view</td>
+								<td>view</td>
+							</tr>
+							<tr>
+								<th>Softwarekonfigurationsmanagement
+								</th>
+								<td>admin</td>
+								<td>edit</td>
+								<td>edit</td>
+								<td>edit</td>
+							</tr>
+							<tr>
+								<th>Administrator</th>
+								<td>admin</td>
+								<td>admin</td>
+								<td>admin</td>
+								<td>admin</td>
+							</tr>
+						</table>
+					</p>
+					<p>
+						<code><pre>oc adm policy add-role-to-user &lt;ROLLE&gt; &lt;BENUTZER&gt; -n &lt;PROJEKT&gt;</pre></code>
+						<code><pre>oc adm policy remove-role-from-user &lt;ROLLE&gt; &lt;BENUTZER&gt; -n &lt;PROJEKT&gt;</pre></code>
+						<code><pre>oc adm policy add-role-to-user &lt;ROLLE&gt; &lt;BENUTZER&gt; -n &lt;PROJEKT&gt;</pre></code>
+						<code><pre>oc adm policy remove-role-from-user &lt;ROLLE&gt; &lt;BENUTZER&gt; -n &lt;PROJEKT&gt;</pre></code>
+					</p>
+					
+					<p><a href="#top">Back to top</a></p>
+					<div class="page-break"></div>
 
          </div> <!-- OpenShift -->
-	
-	  
       </div> <!-- maincontents -->
 
       <div id="footer">
-	&copy; 2018, Michael Leimenmeier
-	<br>
-	All Rights reserved.
+				&copy; 2018, Michael Leimenmeier
+				<br>
+				All Rights reserved.
       </div> <!-- footer -->
 
     </div> <!-- contents -->
   </body>
 </html>
-
-
-<!--
-	  <h4></h4>
-	  <p>
-	    <code><pre></pre></code>
-	  </p>
-	  <p>
-	    <img class="table" src="images/" alt=""/>
-	  </p>
--->

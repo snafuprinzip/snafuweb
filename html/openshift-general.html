@@ -169,6 +169,31 @@
 					<p>
 						Ein oder mehrere Container die gemeinsam auf einen Host deployed werden und sich dort die IP-Adresse und den persistenten Storage miteinander teilt.
 						In den Pods werden die Sicherheitseinstellungen und Laufzeitparameter f&uuml;r jeden Container definiert.
+						Ein Pod kann im Laufe seines kurzen Lebens die folgenden Status annehmen:
+						<table class="direktiven">
+							<tr>
+								<th>Pending</th>
+								<td>Pod wurde von OpenShift akzeptiert, vom Scheduler aber noch keinem node zugewiesen</td>
+							</tr>
+							<tr>
+								<th>Running</th>
+								<td>Pod ist vom Scheduler ein node zugewiesen worden und der Zustand verifiziert</td>
+							</tr>
+							<tr>
+									<th>Succeeded</th>
+									<td>Alle Container in einem pod haben sich sauber beendet und werden daher nicht neu gestartet</td>
+							</tr>
+							<tr>
+									<th>Failed</th>
+									<td>Ein oder mehrere Container in dem pod konnten nicht gestartet werden. Es wird kein weiterer Versuch
+										unternommen den pod neu zu starten.
+									</td>
+							</tr>
+							<tr>
+									<th>Unknown</th>
+									<td>Etwas lief schief und OpenShift war es nicht m&ouml;glich weitere Informationen zu erhalten</td>
+							</tr>
+						</table>
 					</p>
 					<h4>Labels</h4>
 					<p>
